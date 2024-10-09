@@ -9,6 +9,7 @@ import LoginPage from "./pages/login";
 import ForgotPassword from "./pages/forgotPassword";
 import AcademicPage from "./Modules/Academic/index";
 import ValidateAuth from "./helper/validateauth";
+import OtherAcadProcedures from "./Modules/OtherAcademicProcedures/OtherAcadProcedures";
 
 export default function App() {
   const location = useLocation();
@@ -37,6 +38,14 @@ export default function App() {
           element={
             <Layout>
               <AcademicPage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/otherAcadProcedures"
+          element={
+            <Layout>
+              <OtherAcadProcedures />
             </Layout>
           }
         />

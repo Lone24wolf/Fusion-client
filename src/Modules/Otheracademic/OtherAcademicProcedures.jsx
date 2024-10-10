@@ -3,7 +3,7 @@ import { Tabs, Button, Flex, Text } from "@mantine/core";
 import { useState, useRef } from "react";
 import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
-import LeaveForm from "./LeaveForm";
+import LeaveCombined from "./Leave/LeaveCombined";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
@@ -25,8 +25,6 @@ function OtherAcadProcedures() {
       behavior: "smooth",
     });
   };
-
-  // console.log(activeTab);
 
   return (
     <>
@@ -90,7 +88,7 @@ function OtherAcadProcedures() {
         <div>Put the bonafied component here</div>
       ) : activeTab === "1" ? (
         <div>
-          <LeaveForm />{" "}
+          <LeaveCombined />
         </div>
       ) : (
         <div>Put the no dues component here</div>

@@ -278,7 +278,7 @@ function LeaveForm() {
       </Center>
 
       {/* Display Submitted Values (For debugging, remove later) */}
-      <Text mt="md">Submitted values:</Text>
+      <Text mt="md">Submitted values (For debugging, remove later):</Text>
       <Code block>
         {submittedValues ? JSON.stringify(submittedValues, null, 2) : "–"}
       </Code>

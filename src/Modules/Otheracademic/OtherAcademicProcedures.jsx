@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
+import GraduateStatus from "./Graduate_Seminar/graduate_status";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
@@ -12,6 +13,7 @@ function OtherAcadProcedures() {
     { title: "Bonafied" },
     { title: "Leave" },
     { title: "No dues" },
+    { title: "Graduate Status" },
   ];
 
   const handleTabChange = (direction) => {
@@ -90,9 +92,11 @@ function OtherAcadProcedures() {
         <div>
           <LeaveCombined />
         </div>
-      ) : (
+      ) : activeTab === "2" ? (
         <div>Put the no dues component here</div>
-      )}
+      ) : activeTab === "3" ? (
+        <GraduateStatus />
+      ) : null}
     </>
   );
 }

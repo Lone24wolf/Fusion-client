@@ -15,7 +15,7 @@ function GraduateStatus() {
     {
       rollNo: "22MCS020",
       semester: "4th",
-      seminarDate: "2024-11-20",
+      seminarDate: "2024-12-20",
       mentor: "Dr. Durgesh Singh",
       venue: "Room L202",
       title: "AI in Healthcare",

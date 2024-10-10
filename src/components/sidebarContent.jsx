@@ -145,10 +145,10 @@ const Modules = [
     url: "/",
   },
   {
-    label: "Other Academic Procedure",
+    label: "Other Academic Procedures",
     id: "other_academics",
     icon: <OtherAcademicIcon size={18} />,
-    url: "/",
+    url: "/otherAcadProcedures",
   },
 ];
 

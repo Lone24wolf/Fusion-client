@@ -13,6 +13,7 @@ function OtherAcadProcedures() {
     { title: "Bonafide" },
     { title: "Leave" },
     { title: "No dues" },
+    { title: "TA" },
   ];
 
   const handleTabChange = (direction) => {
@@ -91,11 +92,9 @@ function OtherAcadProcedures() {
         <div>
           <LeaveCombined />
         </div>
-      ) : (
-        <div>
-          <NoDuesCombined />
-        </div>
-      )}
+      ) : activeTab === "2" ? (
+        <NoDuesCombined />
+      ) : null}
     </>
   );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Text, Badge, Grid, Paper, ScrollArea } from "@mantine/core";
+import { Table, Text, Grid, Paper, ScrollArea } from "@mantine/core";
 
 function NoDuesStatus() {
   // Dummy status data for each department
@@ -17,6 +17,7 @@ function NoDuesStatus() {
   // Render the no-dues status table
   const rows = noDuesStatus.map((item) => (
     <tr key={item.department}>
+      {/* Department column inside shadowed boxes */}
       <td
         style={{
           padding: "10px 20px",
@@ -24,18 +25,47 @@ function NoDuesStatus() {
           paddingLeft: "200px",
         }}
       >
-        <Text>{item.department}</Text>
+        <Paper
+          shadow="sm"
+          radius="md"
+          p="sm"
+          style={{
+            width: "300px",
+            height: "35px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "8px",
+          }}
+        >
+          <Text>{item.department}</Text>
+        </Paper>
       </td>
+
       <td
         style={{
           padding: "10px 20px",
           textAlign: "center",
-          paddingRight: "120px",
+          paddingRight: "30px",
         }}
       >
-        <Badge color={item.status === "Clear" ? "green" : "red"}>
-          {item.status}
-        </Badge>
+        <Paper
+          shadow="sm"
+          radius="md"
+          p="sm"
+          style={{
+            width: "250px",
+            height: "35px",
+            backgroundColor: item.status === "Clear" ? "#d4edda" : "#f8d7da",
+            color: item.status === "Clear" ? "#155724" : "#721c24",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "8px",
+          }}
+        >
+          <Text>{item.status}</Text>
+        </Paper>
       </td>
     </tr>
   ));
@@ -60,10 +90,10 @@ function NoDuesStatus() {
               <thead>
                 <tr>
                   <th style={{ padding: "10px 20px", textAlign: "left" }}>
-                    <div style={{ marginLeft: "180px" }}>Department</div>
+                    <div style={{ marginLeft: "280px" }}>Department</div>
                   </th>
                   <th style={{ padding: "10px 20px", textAlign: "center" }}>
-                    <div style={{ marginRight: "100px" }}>Status</div>
+                    <div style={{ marginRight: "230px" }}>Status</div>
                   </th>
                 </tr>
               </thead>

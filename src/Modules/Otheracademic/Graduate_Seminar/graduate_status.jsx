@@ -1,41 +1,59 @@
 import React from "react";
-import "./GraduateStatus.css";
+import { Table, Title, Container, Paper } from "@mantine/core";
 
 function GraduateStatus() {
+  // Define the rows data
+  const rows = [
+    {
+      rollNo: "20MCS010",
+      semester: "3rd",
+      seminarDate: "2024-10-15",
+      mentor: "Dr. Shivdayal Patel",
+      venue: "Room L101",
+      title: "Blockchain and Security",
+    },
+    {
+      rollNo: "22MCS021",
+      semester: "4th",
+      seminarDate: "2024-11-20",
+      mentor: "Dr. Durgesh Singh",
+      venue: "Room L202",
+      title: "AI in Healthcare",
+    },
+  ];
+
   return (
-    <div className="graduate-status-container">
-      <h2>Graduate Status</h2>
-      <table className="graduate-status-table">
-        <thead>
-          <tr>
-            <th>Roll No.</th>
-            <th>Semester</th>
-            <th>Seminar Date</th>
-            <th>Mentor</th>
-            <th>Venue</th>
-            <th>Title</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>20MCS010</td>
-            <td>3rd</td>
-            <td>2024-10-15</td>
-            <td>Dr. Shivdayal Patel</td>
-            <td>Room L101</td>
-            <td>Blockchain and Security</td>
-          </tr>
-          <tr>
-            <td>22MCS021</td>
-            <td>4th</td>
-            <td>2024-11-20</td>
-            <td>Dr. Durgesh Singh</td>
-            <td>Room L202</td>
-            <td>AI in Healthcare</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <Container size="lg" style={{ marginTop: "50px" }}>
+      <Paper padding="md" shadow="xs">
+        <Title order={2} align="center">
+          Graduate Status
+        </Title>
+        <Table striped highlightOnHover>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th style={{ width: "15%" }}>Roll No.</Table.Th>
+              <Table.Th style={{ width: "10%" }}>Semester</Table.Th>
+              <Table.Th style={{ width: "15%" }}>Seminar Date</Table.Th>
+              <Table.Th style={{ width: "20%" }}>Mentor</Table.Th>
+              <Table.Th style={{ width: "10%" }}>Venue</Table.Th>
+              <Table.Th style={{ width: "20%" }}>Title</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            {rows.map((row, index) => (
+              <Table.Tr key={index}>
+                <Table.Td>{row.rollNo}</Table.Td>
+                <Table.Td>{row.semester}</Table.Td>
+                <Table.Td>{row.seminarDate}</Table.Td>
+                <Table.Td>{row.mentor}</Table.Td>
+                <Table.Td>{row.venue}</Table.Td>
+                <Table.Td>{row.title}</Table.Td>
+              </Table.Tr>
+            ))}
+          </Table.Tbody>
+        </Table>
+      </Paper>
+    </Container>
   );
 }
 

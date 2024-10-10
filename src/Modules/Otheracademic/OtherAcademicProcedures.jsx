@@ -5,6 +5,7 @@ import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
 import GraduateStatus from "./Graduate_Seminar/graduate_status";
+import BonafideCombined from "./Bonafide/BonafideCombined";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
@@ -87,7 +88,10 @@ function OtherAcadProcedures() {
         </Flex>
       </Flex>
       {activeTab === "0" ? (
-        <div>Put the bonafied component here</div>
+        <div>
+          {" "}
+          <BonafideCombined />
+        </div>
       ) : activeTab === "1" ? (
         <div>
           <LeaveCombined />

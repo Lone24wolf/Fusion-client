@@ -13,7 +13,7 @@ function GraduateStatus() {
       title: "Blockchain and Security",
     },
     {
-      rollNo: "22MCS021",
+      rollNo: "22MCS020",
       semester: "4th",
       seminarDate: "2024-11-20",
       mentor: "Dr. Durgesh Singh",

@@ -87,20 +87,30 @@ function OtherAcadProcedures() {
           </Button>
         </Flex>
       </Flex>
-      {activeTab === "0" ? (
-        <div>
-          {" "}
-          <BonafideCombined />
-        </div>
-      ) : activeTab === "1" ? (
-        <div>
-          <LeaveCombined />
-        </div>
-      ) : activeTab === "2" ? (
-        <div>Put the no dues component here</div>
-      ) : activeTab === "3" ? (
-        <GraduateStatus />
-      ) : null}
+      <div
+        style={{
+          backgroundColor: "#ffffff",
+          padding: "20px",
+          borderRadius: "8px",
+          marginTop: "20px",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {activeTab === "0" ? (
+          <div>
+            {" "}
+            <BonafideCombined />
+          </div>
+        ) : activeTab === "1" ? (
+          <div>
+            <LeaveCombined />
+          </div>
+        ) : activeTab === "2" ? (
+          <div>Put the no dues component here</div>
+        ) : activeTab === "3" ? (
+          <GraduateStatus />
+        ) : null}
+      </div>
     </>
   );
 }

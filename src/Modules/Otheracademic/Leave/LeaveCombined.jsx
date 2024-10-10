@@ -15,10 +15,16 @@ function LeaveCombined() {
           justifyContent: "space-evenly",
         }}
       >
-        <Button variant="outline" onClick={() => setTab(0)}>
+        <Button
+          variant={tab === 0 ? "filled" : "outline"}
+          onClick={() => setTab(0)}
+        >
           Leave Form
         </Button>
-        <Button variant="outline" onClick={() => setTab(1)}>
+        <Button
+          variant={tab === 1 ? "filled" : "outline"}
+          onClick={() => setTab(1)}
+        >
           Leave Status
         </Button>
       </div>

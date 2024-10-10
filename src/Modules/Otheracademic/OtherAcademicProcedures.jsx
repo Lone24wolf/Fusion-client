@@ -4,12 +4,13 @@ import { useState, useRef } from "react";
 import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
+import NoDuesCombined from "./NoDues/NoDuesCombined";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
   const [activeTab, setActiveTab] = useState("0");
   const tabItems = [
-    { title: "Bonafied" },
+    { title: "Bonafide" },
     { title: "Leave" },
     { title: "No dues" },
   ];
@@ -85,13 +86,15 @@ function OtherAcadProcedures() {
         </Flex>
       </Flex>
       {activeTab === "0" ? (
-        <div>Put the bonafied component here</div>
+        <div>Put the bonafide component here</div>
       ) : activeTab === "1" ? (
         <div>
           <LeaveCombined />
         </div>
       ) : (
-        <div>Put the no dues component here</div>
+        <div>
+          <NoDuesCombined />
+        </div>
       )}
     </>
   );

@@ -5,15 +5,17 @@ import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
 import GraduateStatus from "./Graduate_Seminar/graduate_status";
+import TAForm from "./Assistantship/Supervisors/TA_supervisor"; // adjust the path accordingly
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
   const [activeTab, setActiveTab] = useState("0");
   const tabItems = [
-    { title: "Bonafied" },
+    { title: "Bonafide" },
     { title: "Leave" },
     { title: "No dues" },
     { title: "Graduate Status" },
+    { title: "TA Supervisor" },
   ];
 
   const handleTabChange = (direction) => {
@@ -50,7 +52,6 @@ function OtherAcadProcedures() {
               weight="light"
             />
           </Button>
-
           <div className={classes.fusionTabsContainer} ref={tabsListRef}>
             <Tabs value={activeTab} onChange={setActiveTab}>
               <Tabs.List style={{ display: "flex", flexWrap: "nowrap" }}>
@@ -86,8 +87,10 @@ function OtherAcadProcedures() {
           </Button>
         </Flex>
       </Flex>
+
+      {/* Render the appropriate component based on the active tab */}
       {activeTab === "0" ? (
-        <div>Put the bonafied component here</div>
+        <div>Put the bonafide component here</div>
       ) : activeTab === "1" ? (
         <div>
           <LeaveCombined />
@@ -96,6 +99,8 @@ function OtherAcadProcedures() {
         <div>Put the no dues component here</div>
       ) : activeTab === "3" ? (
         <GraduateStatus />
+      ) : activeTab === "4" ? (
+        <TAForm />
       ) : null}
     </>
   );

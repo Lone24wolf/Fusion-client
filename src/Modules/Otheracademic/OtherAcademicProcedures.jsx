@@ -6,6 +6,7 @@ import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
 import GraduateStatus from "./Graduate_Seminar/graduate_status";
 import BonafideCombined from "./Bonafide/BonafideCombined";
+import NoDuesCombined from "./NoDues/NoDuesCombined";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
@@ -106,7 +107,9 @@ function OtherAcadProcedures() {
             <LeaveCombined />
           </div>
         ) : activeTab === "2" ? (
-          <div>Put the no dues component here</div>
+          <div>
+            <NoDuesCombined />
+          </div>
         ) : activeTab === "3" ? (
           <GraduateStatus />
         ) : null}

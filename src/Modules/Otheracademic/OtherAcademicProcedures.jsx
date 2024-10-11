@@ -5,7 +5,9 @@ import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
 import GraduateStatus from "./Graduate_Seminar/graduate_status";
+
 import TAForm from "./Assistantship/Supervisors/TA_supervisor"; // adjust the path accordingly
+import BonafideCombined from "./Bonafide/BonafideCombined";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
@@ -88,20 +90,32 @@ function OtherAcadProcedures() {
         </Flex>
       </Flex>
 
-      {/* Render the appropriate component based on the active tab */}
-      {activeTab === "0" ? (
-        <div>Put the bonafide component here</div>
-      ) : activeTab === "1" ? (
-        <div>
-          <LeaveCombined />
-        </div>
-      ) : activeTab === "2" ? (
-        <div>Put the no dues component here</div>
-      ) : activeTab === "3" ? (
-        <GraduateStatus />
-      ) : activeTab === "4" ? (
-        <TAForm />
-      ) : null}
+      <div
+        style={{
+          backgroundColor: "#ffffff",
+          padding: "20px",
+          borderRadius: "8px",
+          marginTop: "20px",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {activeTab === "0" ? (
+          <div>
+            {" "}
+            <BonafideCombined />
+          </div>
+        ) : activeTab === "1" ? (
+          <div>
+            <LeaveCombined />
+          </div>
+        ) : activeTab === "2" ? (
+          <div>Put the no dues component here</div>
+        ) : activeTab === "3" ? (
+          <GraduateStatus />
+        ) : activeTab === "4" ? (
+          <TAForm />
+        ) : null}
+      </div>
     </>
   );
 }

@@ -1,36 +1,39 @@
 import { useState } from "react";
 import { Button } from "@mantine/core";
-import LeaveForm from "../../../pages/Otheracademic/Leave/LeaveForm";
-import LeaveStatus from "./LeaveStatus";
+import BonafideForm from "./Bonafideform";
+import BonafideFormStatus from "./BonafideFormStatus";
 
-function LeaveCombined() {
+function BonafideCombined() {
   const [tab, setTab] = useState(0);
+
   return (
     <>
       <div
         style={{
           margin: "20px 0 0 40px",
-          width: "300px",
+          width: "350px",
           display: "flex",
-          justifyContent: "space-evenly",
+          justifyContent: "space-between",
         }}
       >
         <Button
           variant={tab === 0 ? "filled" : "outline"}
           onClick={() => setTab(0)}
+          style={{ marginRight: "10px", flexGrow: 1 }}
         >
-          Leave Form
+          Bonafide Form
         </Button>
         <Button
           variant={tab === 1 ? "filled" : "outline"}
           onClick={() => setTab(1)}
+          style={{ flexGrow: 1 }}
         >
-          Leave Status
+          Bonafide Form Status
         </Button>
       </div>
-      {tab === 0 ? <LeaveForm /> : <LeaveStatus />}
+      {tab === 0 ? <BonafideForm /> : <BonafideFormStatus />}
     </>
   );
 }
 
-export default LeaveCombined;
+export default BonafideCombined;

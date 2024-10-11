@@ -15,11 +15,17 @@ function NoDuesCombined() {
           justifyContent: "space-evenly",
         }}
       >
-        <Button variant="outline" onClick={() => setTab(0)}>
-          Nodues Form
+        <Button
+          variant={tab === 0 ? "filled" : "outline"}
+          onClick={() => setTab(0)}
+        >
+          NoDues Form
         </Button>
-        <Button variant="outline" onClick={() => setTab(1)}>
-          Nodues Status
+        <Button
+          variant={tab === 1 ? "filled" : "outline"}
+          onClick={() => setTab(1)}
+        >
+          NoDues Status
         </Button>
       </div>
       {tab === 0 ? <NoduesForm /> : <NoDuesStatus />}

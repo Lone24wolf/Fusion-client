@@ -4,14 +4,18 @@ import { useState, useRef } from "react";
 import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
+import GraduateStatus from "./Graduate_Seminar/graduate_status";
+import BonafideCombined from "./Bonafide/BonafideCombined";
+import NoDuesCombined from "./NoDues/NoDuesCombined";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
   const [activeTab, setActiveTab] = useState("0");
   const tabItems = [
-    { title: "Bonafide" },
+    { title: "Bonafied" },
     { title: "Leave" },
     { title: "No dues" },
+    { title: "Graduate Status" },
   ];
 
   const handleTabChange = (direction) => {
@@ -84,15 +88,32 @@ function OtherAcadProcedures() {
           </Button>
         </Flex>
       </Flex>
-      {activeTab === "0" ? (
-        <div>Put the bonafied component here</div>
-      ) : activeTab === "1" ? (
-        <div>
-          <LeaveCombined />
-        </div>
-      ) : (
-        <div>Put the no dues component here</div>
-      )}
+      <div
+        style={{
+          backgroundColor: "#ffffff",
+          padding: "20px",
+          borderRadius: "8px",
+          marginTop: "20px",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {activeTab === "0" ? (
+          <div>
+            {" "}
+            <BonafideCombined />
+          </div>
+        ) : activeTab === "1" ? (
+          <div>
+            <LeaveCombined />
+          </div>
+        ) : activeTab === "2" ? (
+          <div>
+            <NoDuesCombined />
+          </div>
+        ) : activeTab === "3" ? (
+          <GraduateStatus />
+        ) : null}
+      </div>
     </>
   );
 }

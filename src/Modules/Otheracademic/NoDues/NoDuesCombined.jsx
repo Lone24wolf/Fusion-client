@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Button } from "@mantine/core";
+
 import NoDuesStatus from "./NoDuesStatus";
-import NoduesForm from "../../../pages/Otheracademic/NoDues/NoduesForm";
+import NoduesForm from "./NoduesForm";
+
+// import NoDuesStatus from "./NoDuesStatus";
 
 function NoDuesCombined() {
   const [tab, setTab] = useState(0);

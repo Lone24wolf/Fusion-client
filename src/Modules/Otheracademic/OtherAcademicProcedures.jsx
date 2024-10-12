@@ -4,7 +4,8 @@ import { useState, useRef } from "react";
 import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
-import GraduateStatus from "./Graduate_Seminar/graduate_status";
+import GraduateStatus from "./Graduate_Seminar/graduate_status"; // Adjusted to PascalCase
+import TAform from "./Assistantship/Supervisors/TA_supervisorCombined"; // Adjusted name to PascalCase
 import BonafideCombined from "./Bonafide/BonafideCombined";
 import NoDuesCombined from "./NoDues/NoDuesCombined";
 
@@ -12,10 +13,11 @@ function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
   const [activeTab, setActiveTab] = useState("0");
   const tabItems = [
-    { title: "Bonafied" },
+    { title: "Bonafide" },
     { title: "Leave" },
     { title: "No dues" },
     { title: "Graduate Status" },
+    { title: "TA Supervisor" },
   ];
 
   const handleTabChange = (direction) => {
@@ -52,7 +54,6 @@ function OtherAcadProcedures() {
               weight="light"
             />
           </Button>
-
           <div className={classes.fusionTabsContainer} ref={tabsListRef}>
             <Tabs value={activeTab} onChange={setActiveTab}>
               <Tabs.List style={{ display: "flex", flexWrap: "nowrap" }}>
@@ -88,6 +89,7 @@ function OtherAcadProcedures() {
           </Button>
         </Flex>
       </Flex>
+
       <div
         style={{
           backgroundColor: "#ffffff",
@@ -99,7 +101,6 @@ function OtherAcadProcedures() {
       >
         {activeTab === "0" ? (
           <div>
-            {" "}
             <BonafideCombined />
           </div>
         ) : activeTab === "1" ? (
@@ -112,6 +113,8 @@ function OtherAcadProcedures() {
           </div>
         ) : activeTab === "3" ? (
           <GraduateStatus />
+        ) : activeTab === "4" ? (
+          <TAform />
         ) : null}
       </div>
     </>

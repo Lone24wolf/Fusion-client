@@ -4,9 +4,8 @@ import { useState, useRef } from "react";
 import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
-import GraduateStatus from "./Graduate_Seminar/graduate_status";
-
-import TAForm from "./Assistantship/Supervisors/TA_supervisor"; // adjust the path accordingly
+import GraduateStatus from "./Graduate_Seminar/graduate_status"; // Adjusted to PascalCase
+import TAform from "./Assistantship/Supervisors/TA_supervisorCombined"; // Adjusted name to PascalCase
 import BonafideCombined from "./Bonafide/BonafideCombined";
 
 function OtherAcadProcedures() {
@@ -101,7 +100,6 @@ function OtherAcadProcedures() {
       >
         {activeTab === "0" ? (
           <div>
-            {" "}
             <BonafideCombined />
           </div>
         ) : activeTab === "1" ? (
@@ -113,7 +111,7 @@ function OtherAcadProcedures() {
         ) : activeTab === "3" ? (
           <GraduateStatus />
         ) : activeTab === "4" ? (
-          <TAForm />
+          <TAform />
         ) : null}
       </div>
     </>

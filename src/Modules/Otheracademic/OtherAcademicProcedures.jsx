@@ -5,8 +5,7 @@ import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
 import GraduateStatus from "./Graduate_Seminar/graduate_status";
-import LabInchargeNoDuesStatus from "./Incharge/LabInchargeNoDuesStatus";
-// import
+import LabInchargeNoDuesStatus from "./Incharge/InchargeLab";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);

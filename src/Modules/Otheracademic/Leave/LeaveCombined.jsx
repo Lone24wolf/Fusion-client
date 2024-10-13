@@ -28,7 +28,15 @@ function LeaveCombined() {
           Leave Status
         </Button>
       </div>
-      {tab === 0 ? <LeaveForm /> : <LeaveStatus />}
+      <div
+        style={{
+          margin: "45px 60px 0 60px",
+          backgroundColor: "#f0f2f5",
+          borderRadius: "20px",
+        }}
+      >
+        {tab === 0 ? <LeaveForm /> : <LeaveStatus />}
+      </div>
     </>
   );
 }

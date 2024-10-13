@@ -5,6 +5,8 @@ import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
 import GraduateStatus from "./Graduate_Seminar/graduate_status";
+import LabInchargeNoDuesStatus from "./Incharge/LabInchargeNoDuesStatus";
+// import
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
@@ -14,6 +16,7 @@ function OtherAcadProcedures() {
     { title: "Leave" },
     { title: "No dues" },
     { title: "Graduate Status" },
+    { title: "No dues Lab incharge" },
   ];
 
   const handleTabChange = (direction) => {
@@ -96,6 +99,8 @@ function OtherAcadProcedures() {
         <div>Put the no dues component here</div>
       ) : activeTab === "3" ? (
         <GraduateStatus />
+      ) : activeTab === "4" ? (
+        <LabInchargeNoDuesStatus />
       ) : null}
     </>
   );

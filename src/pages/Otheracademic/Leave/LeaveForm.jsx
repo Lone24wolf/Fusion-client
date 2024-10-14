@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   Button,
-  Code,
   Text,
   TextInput,
   Select,
@@ -10,58 +9,49 @@ import {
   Grid,
   Center,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
 
 function LeaveForm() {
-  const form = useForm({
-    mode: "uncontrolled",
-    initialValues: {
-      dateFrom: "",
-      dateTo: "",
-      leaveType: "",
-      documents: null,
-      address: "",
-      purpose: "",
-      hodCredential: "",
-      mobileNumber: "",
-      parentsMobile: "",
-      mobileDuringLeave: "",
-      semester: "",
-      academicYear: "",
-      dateOfApplication: "",
-    },
-
-    validate: {
-      dateFrom: (value) => (!value ? "Please select a start date" : null),
-      dateTo: (value) => (!value ? "Please select an end date" : null),
-    },
+  const [formValues, setFormValues] = useState({
+    dateFrom: "",
+    dateTo: "",
+    leaveType: "",
+    documents: null,
+    address: "",
+    purpose: "",
+    hodCredential: "",
+    mobileNumber: "",
+    parentsMobile: "",
+    mobileDuringLeave: "",
+    semester: "",
+    academicYear: "",
+    dateOfApplication: "",
   });
 
-  const [submittedValues, setSubmittedValues] = useState(null);
+  const handleChange = (field, value) => {
+    setFormValues((prev) => ({ ...prev, [field]: value }));
+  };
 
-  const handleSubmit = (values) => {
-    setSubmittedValues(values);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(formValues); // Submit your form here
   };
 
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Grid justify="center" gutter={{ base: 30 }}>
+    <form onSubmit={handleSubmit}>
+      <Grid justify="space-around" gutter={{ base: 30 }}>
         <Grid.Col span={5}>
           {/* Date From */}
           <div style={{ marginBottom: "1rem" }}>
             <Text mt="md" size="sm" htmlFor="dateFrom">
               <span style={{ fontWeight: "600", marginLeft: "1px" }}>
-                {" "}
-                Date From:{" "}
+                Date From:
               </span>
             </Text>
             <input
               type="date"
               id="dateFrom"
-              value={form.values.dateFrom}
-              onChange={(event) =>
-                form.setFieldValue("dateFrom", event.currentTarget.value)
-              }
+              value={formValues.dateFrom}
+              onChange={(e) => handleChange("dateFrom", e.target.value)}
               style={{
                 width: "100%",
                 padding: "10px",
@@ -86,17 +76,14 @@ function LeaveForm() {
           <div style={{ marginBottom: "1rem" }}>
             <Text mt="md" size="sm" htmlFor="dateTo">
               <span style={{ fontWeight: "600", marginLeft: "1px" }}>
-                {" "}
-                Date To:{" "}
+                Date To:
               </span>
             </Text>
             <input
               type="date"
               id="dateTo"
-              value={form.values.dateTo}
-              onChange={(event) =>
-                form.setFieldValue("dateTo", event.currentTarget.value)
-              }
+              value={formValues.dateTo}
+              onChange={(e) => handleChange("dateTo", e.target.value)}
               style={{
                 width: "100%",
                 padding: "10px",
@@ -122,8 +109,8 @@ function LeaveForm() {
             withAsterisk
             placeholder="Select Leave Type"
             data={["Casual", "Medical"]}
-            value={form.values.leaveType}
-            onChange={(value) => form.setFieldValue("leaveType", value)}
+            value={formValues.leaveType}
+            onChange={(value) => handleChange("leaveType", value)}
           />
         </Grid.Col>
 
@@ -132,8 +119,8 @@ function LeaveForm() {
             label="Documents"
             withAsterisk
             placeholder="Choose file"
-            value={form.values.documents}
-            onChange={(file) => form.setFieldValue("documents", file)}
+            value={formValues.documents}
+            onChange={(file) => handleChange("documents", file)}
           />
         </Grid.Col>
 
@@ -144,10 +131,8 @@ function LeaveForm() {
             autosize
             minRows={2}
             maxRows={4}
-            value={form.values.address}
-            onChange={(event) =>
-              form.setFieldValue("address", event.currentTarget.value)
-            }
+            value={formValues.address}
+            onChange={(e) => handleChange("address", e.target.value)}
           />
         </Grid.Col>
 
@@ -158,10 +143,8 @@ function LeaveForm() {
             autosize
             minRows={2}
             maxRows={4}
-            value={form.values.purpose}
-            onChange={(event) =>
-              form.setFieldValue("purpose", event.currentTarget.value)
-            }
+            value={formValues.purpose}
+            onChange={(e) => handleChange("purpose", e.target.value)}
           />
         </Grid.Col>
 
@@ -169,10 +152,8 @@ function LeaveForm() {
           <TextInput
             label="HOD (Credential)"
             placeholder="Enter HOD credential"
-            value={form.values.hodCredential}
-            onChange={(event) =>
-              form.setFieldValue("hodCredential", event.currentTarget.value)
-            }
+            value={formValues.hodCredential}
+            onChange={(e) => handleChange("hodCredential", e.target.value)}
           />
         </Grid.Col>
 
@@ -180,21 +161,17 @@ function LeaveForm() {
           <TextInput
             label="Mobile Number"
             placeholder="Enter your mobile number"
-            value={form.values.mobileNumber}
-            onChange={(event) =>
-              form.setFieldValue("mobileNumber", event.currentTarget.value)
-            }
+            value={formValues.mobileNumber}
+            onChange={(e) => handleChange("mobileNumber", e.target.value)}
           />
         </Grid.Col>
 
         <Grid.Col span={5}>
           <TextInput
             label="Parents Mobile Number"
-            placeholder="Enter your parents mobile number"
-            value={form.values.parentsMobile}
-            onChange={(event) =>
-              form.setFieldValue("parentsMobile", event.currentTarget.value)
-            }
+            placeholder="Enter your parents' mobile number"
+            value={formValues.parentsMobile}
+            onChange={(e) => handleChange("parentsMobile", e.target.value)}
           />
         </Grid.Col>
 
@@ -202,10 +179,8 @@ function LeaveForm() {
           <TextInput
             label="Mobile Number during leave"
             placeholder="Enter your mobile number during leave"
-            value={form.values.mobileDuringLeave}
-            onChange={(event) =>
-              form.setFieldValue("mobileDuringLeave", event.currentTarget.value)
-            }
+            value={formValues.mobileDuringLeave}
+            onChange={(e) => handleChange("mobileDuringLeave", e.target.value)}
           />
         </Grid.Col>
 
@@ -213,10 +188,8 @@ function LeaveForm() {
           <TextInput
             label="Semester"
             placeholder="Enter your current semester"
-            value={form.values.semester}
-            onChange={(event) =>
-              form.setFieldValue("semester", event.currentTarget.value)
-            }
+            value={formValues.semester}
+            onChange={(e) => handleChange("semester", e.target.value)}
           />
         </Grid.Col>
 
@@ -224,10 +197,8 @@ function LeaveForm() {
           <TextInput
             label="Academic Year"
             placeholder="Enter your current academic year"
-            value={form.values.academicYear}
-            onChange={(event) =>
-              form.setFieldValue("academicYear", event.currentTarget.value)
-            }
+            value={formValues.academicYear}
+            onChange={(e) => handleChange("academicYear", e.target.value)}
           />
         </Grid.Col>
 
@@ -236,19 +207,15 @@ function LeaveForm() {
           <div style={{ marginBottom: "1rem" }}>
             <Text mt="md" size="sm" htmlFor="dateOfApplication">
               <span style={{ fontWeight: "600", marginLeft: "1px" }}>
-                {" "}
-                Date of Application:{" "}
+                Date of Application:
               </span>
             </Text>
             <input
               type="date"
               id="dateOfApplication"
-              value={form.values.dateOfApplication}
-              onChange={(event) =>
-                form.setFieldValue(
-                  "dateOfApplication",
-                  event.currentTarget.value,
-                )
+              value={formValues.dateOfApplication}
+              onChange={(e) =>
+                handleChange("dateOfApplication", e.target.value)
               }
               style={{
                 width: "100%",
@@ -272,16 +239,10 @@ function LeaveForm() {
 
       {/* Submit Button */}
       <Center>
-        <Button type="submit" mt="md">
+        <Button type="submit" mt="md" style={{ marginBottom: "20px" }}>
           Submit
         </Button>
       </Center>
-
-      {/* Display Submitted Values (For debugging, remove later) */}
-      <Text mt="md">Submitted values (For debugging, remove later):</Text>
-      <Code block>
-        {submittedValues ? JSON.stringify(submittedValues, null, 2) : "–"}
-      </Code>
     </form>
   );
 }

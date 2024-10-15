@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@mantine/core";
 import LeaveForm from "../../../pages/Otheracademic/Leave/LeaveForm";
 import LeaveStatus from "./LeaveStatus";
-
+// import ApproveLeave from "./ApproveLeave";
 function LeaveCombined() {
   const [tab, setTab] = useState(0);
   return (
@@ -27,6 +27,12 @@ function LeaveCombined() {
         >
           Leave Status
         </Button>
+        {/* <Button
+          variant={tab === 2 ? "filled" : "outline"}
+          onClick={() => setTab(2)}
+        >
+          Approve
+        </Button> */}
       </div>
 
       {tab === 0 ? (

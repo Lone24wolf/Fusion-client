@@ -8,6 +8,10 @@ import GraduateStatus from "./Graduate_Seminar/graduate_status"; // Adjusted to 
 import TAform from "./Assistantship/Supervisors/TA_supervisorCombined"; // Adjusted name to PascalCase
 import BonafideCombined from "./Bonafide/BonafideCombined";
 import NoDuesCombined from "./NoDues/NoDuesCombined";
+import ApproveLeave from "./Leave/ApproveLeave";
+import AdminBonafideRequests from "./Bonafide/AdminBonafideRequests";
+import ApproveLeaveTA from "./Leave/ApproveLeaveTA";
+import ApproveLeaveThesis from "./Leave/ApproveLeaveThesis";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
@@ -18,6 +22,10 @@ function OtherAcadProcedures() {
     { title: "No dues" },
     { title: "Graduate Status" },
     { title: "TA Supervisor" },
+    { title: "Leave Requests HOD" },
+    { title: "Bonafide Request" },
+    { title: "Leave TA" },
+    { title: "Leave Thesis" },
   ];
 
   const handleTabChange = (direction) => {
@@ -115,6 +123,14 @@ function OtherAcadProcedures() {
           <GraduateStatus />
         ) : activeTab === "4" ? (
           <TAform />
+        ) : activeTab === "5" ? (
+          <ApproveLeave />
+        ) : activeTab === "6" ? (
+          <AdminBonafideRequests />
+        ) : activeTab === "7" ? (
+          <ApproveLeaveTA />
+        ) : activeTab === "8" ? (
+          <ApproveLeaveThesis />
         ) : null}
       </div>
     </>

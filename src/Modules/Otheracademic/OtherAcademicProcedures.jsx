@@ -1,6 +1,7 @@
 import { CaretCircleLeft, CaretCircleRight } from "@phosphor-icons/react";
 import { Tabs, Button, Flex, Text } from "@mantine/core";
 import { useState, useRef } from "react";
+import { useSelector } from "react-redux";
 import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
@@ -16,22 +17,34 @@ import ApproveLeaveThesis from "./Leave/ApproveLeaveThesis";
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
   const [activeTab, setActiveTab] = useState("0");
-  const tabItems = [
-    { title: "Bonafide" },
-    { title: "Leave" },
-    { title: "No dues" },
-    { title: "Graduate Status" },
-    { title: "TA Supervisor" },
-    { title: "Leave Requests HOD" },
-    { title: "Bonafide Request" },
-    { title: "Leave TA" },
-    { title: "Leave Thesis" },
+  const role = useSelector((state) => state.user.role);
+  const username = useSelector((state) => state.user.username);
+  console.log(username, role);
+
+  const allTabItems = [
+    { title: "Bonafide", component: <BonafideCombined /> },
+    { title: "Leave", component: <LeaveCombined /> },
+    { title: "No dues", component: <NoDuesCombined /> },
+    { title: "Graduate Status", component: <GraduateStatus /> },
+    { title: "TA Supervisor", component: <TAform /> },
+    { title: "Leave Requests HOD", component: <ApproveLeave /> },
+    { title: "Bonafide Request", component: <AdminBonafideRequests /> },
+    { title: "Leave TA", component: <ApproveLeaveTA /> },
+    { title: "Leave Thesis", component: <ApproveLeaveThesis /> },
   ];
+  let filteredTabItems = [];
+  if (role === "student") {
+    filteredTabItems = allTabItems.filter((_, index) =>
+      [0, 1, 2].includes(index),
+    );
+  } else if (role === "acadadmin") {
+    filteredTabItems = allTabItems.filter((_, index) => [3, 6].includes(index));
+  } else filteredTabItems = allTabItems;
 
   const handleTabChange = (direction) => {
     const newIndex =
       direction === "next"
-        ? Math.min(+activeTab + 1, tabItems.length - 1)
+        ? Math.min(+activeTab + 1, filteredTabItems.length - 1)
         : Math.max(+activeTab - 1, 0);
     setActiveTab(String(newIndex));
     tabsListRef.current.scrollBy({
@@ -65,7 +78,7 @@ function OtherAcadProcedures() {
           <div className={classes.fusionTabsContainer} ref={tabsListRef}>
             <Tabs value={activeTab} onChange={setActiveTab}>
               <Tabs.List style={{ display: "flex", flexWrap: "nowrap" }}>
-                {tabItems.map((item, index) => (
+                {filteredTabItems.map((item, index) => (
                   <Tabs.Tab
                     value={`${index}`}
                     key={index}
@@ -107,31 +120,7 @@ function OtherAcadProcedures() {
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
         }}
       >
-        {activeTab === "0" ? (
-          <div>
-            <BonafideCombined />
-          </div>
-        ) : activeTab === "1" ? (
-          <div>
-            <LeaveCombined />
-          </div>
-        ) : activeTab === "2" ? (
-          <div>
-            <NoDuesCombined />
-          </div>
-        ) : activeTab === "3" ? (
-          <GraduateStatus />
-        ) : activeTab === "4" ? (
-          <TAform />
-        ) : activeTab === "5" ? (
-          <ApproveLeave />
-        ) : activeTab === "6" ? (
-          <AdminBonafideRequests />
-        ) : activeTab === "7" ? (
-          <ApproveLeaveTA />
-        ) : activeTab === "8" ? (
-          <ApproveLeaveThesis />
-        ) : null}
+        {filteredTabItems[+activeTab]?.component}
       </div>
     </>
   );

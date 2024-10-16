@@ -30,6 +30,7 @@ function NoDuesStatus() {
           radius="md"
           p="sm"
           style={{
+            // boxShadow: "0px 0px 5px 0px",
             width: "300px",
             height: "35px",
             display: "flex",
@@ -71,38 +72,42 @@ function NoDuesStatus() {
   ));
 
   return (
-    <Paper
-      shadow="md"
-      padding="lg"
-      radius="md"
-      style={{ backgroundColor: "#f9f9f9" }}
+    // <Paper
+    //   shadow="md"
+    //   padding="sm"
+    //   radius="md"
+    //   style={{ backgroundColor: "#f9f9f9" }}
+    // >
+    <Grid
+      style={{
+        marginTop: "20px",
+      }}
     >
-      <Grid>
-        <Grid.Col span={12}>
+      {/* <Grid.Col span={12}>
           <Text size="25px" weight={1000} align="center" mb="md">
             No-Dues Status
           </Text>
-        </Grid.Col>
+        </Grid.Col> */}
 
-        <Grid.Col span={12}>
-          <ScrollArea>
-            <Table highlightOnHover withBorder withColumnBorders>
-              <thead>
-                <tr>
-                  <th style={{ padding: "10px 20px", textAlign: "left" }}>
-                    <div style={{ marginLeft: "280px" }}>Department</div>
-                  </th>
-                  <th style={{ padding: "10px 20px", textAlign: "center" }}>
-                    <div style={{ marginRight: "230px" }}>Status</div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>{rows}</tbody>
-            </Table>
-          </ScrollArea>
-        </Grid.Col>
-      </Grid>
-    </Paper>
+      <Grid.Col span={12}>
+        <ScrollArea>
+          <Table highlightOnHover withBorder withColumnBorders>
+            <thead>
+              <tr>
+                <th style={{ padding: "10px 20px", textAlign: "left" }}>
+                  <div style={{ marginLeft: "280px" }}>Department</div>
+                </th>
+                <th style={{ padding: "10px 20px", textAlign: "center" }}>
+                  <div style={{ marginRight: "230px" }}>Status</div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>{rows}</tbody>
+          </Table>
+        </ScrollArea>
+      </Grid.Col>
+    </Grid>
+    //  </Paper>
   );
 }
 

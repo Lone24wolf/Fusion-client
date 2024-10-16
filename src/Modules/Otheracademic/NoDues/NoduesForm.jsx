@@ -38,13 +38,22 @@ function NoduesForm() {
   return (
     <Container
       size="sm"
+      // span={1200}
       style={{
         backgroundColor: "#f7f7f7",
         borderRadius: "8px",
         padding: "20px",
+        width: "1000px", // Increase width
+        maxWidth: "100%",
+        marginTop: "20px",
       }}
     >
-      <Grid>
+      <Grid
+        // span={1200}
+        style={{
+          padding: "0px",
+        }}
+      >
         {/* Left Column */}
         <Grid.Col span={6}>
           <TextInput
@@ -55,6 +64,9 @@ function NoduesForm() {
             name="rollNumber"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
           <TextInput
             label="Student Name"
@@ -64,6 +76,9 @@ function NoduesForm() {
             name="studentName"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
           <TextInput
             label="PBI/BTP/Thesis Supervisor (Credential)"
@@ -73,6 +88,9 @@ function NoduesForm() {
             name="supervisor"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
           <TextInput
             label="Hostel (Credential)"
@@ -82,6 +100,9 @@ function NoduesForm() {
             name="hostel"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
           <TextInput
             label="Bank (Credential)"
@@ -91,6 +112,9 @@ function NoduesForm() {
             name="bank"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
           <TextInput
             label="CSE Office (Credential)"
@@ -100,6 +124,9 @@ function NoduesForm() {
             name="cseOffice"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
           <TextInput
             label="Design Office (Credential)"
@@ -109,6 +136,9 @@ function NoduesForm() {
             name="designOffice"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
         </Grid.Col>
 
@@ -122,6 +152,9 @@ function NoduesForm() {
             name="acad"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
           <TextInput
             label="ECE Office (Credential)"
@@ -131,6 +164,9 @@ function NoduesForm() {
             name="eceOffice"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
           <TextInput
             label="Library (Credential)"
@@ -140,6 +176,9 @@ function NoduesForm() {
             name="library"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
           <TextInput
             label="ME Office (Credential)"
@@ -149,6 +188,9 @@ function NoduesForm() {
             name="meOffice"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
           <TextInput
             label="Mess (Credential)"
@@ -158,6 +200,9 @@ function NoduesForm() {
             name="mess"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
           <TextInput
             label="Physics Office - NS (Credential)"
@@ -167,6 +212,9 @@ function NoduesForm() {
             name="physicsOffice"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
           <TextInput
             label="Discipline Office (Credential)"
@@ -176,6 +224,9 @@ function NoduesForm() {
             name="disciplineOffice"
             radius="md"
             mb="md"
+            style={{
+              margin: "10px",
+            }}
           />
         </Grid.Col>
       </Grid>

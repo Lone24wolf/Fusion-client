@@ -10,7 +10,7 @@ import {
   Center,
 } from "@mantine/core";
 
-function LeaveForm() {
+function LeaveFormPG() {
   const [formValues, setFormValues] = useState({
     dateFrom: "",
     dateTo: "",
@@ -150,8 +150,8 @@ function LeaveForm() {
 
         <Grid.Col span={5}>
           <TextInput
-            label="HOD (Credential)"
-            placeholder="Enter HOD credential"
+            label="TA Supervisor (Credential)"
+            placeholder="Enter TA Supervisor credential"
             value={formValues.hodCredential}
             onChange={(e) => handleChange("hodCredential", e.target.value)}
           />
@@ -159,8 +159,8 @@ function LeaveForm() {
 
         <Grid.Col span={5}>
           <TextInput
-            label="Mobile Number"
-            placeholder="Enter your mobile number"
+            label="Thesis Supervisor (Credential)"
+            placeholder="Enter Thesis Supervisor credential"
             value={formValues.mobileNumber}
             onChange={(e) => handleChange("mobileNumber", e.target.value)}
           />
@@ -168,8 +168,8 @@ function LeaveForm() {
 
         <Grid.Col span={5}>
           <TextInput
-            label="Parents Mobile Number"
-            placeholder="Enter your parents' mobile number"
+            label="HOD (Credential)"
+            placeholder="Enter HOD credential"
             value={formValues.parentsMobile}
             onChange={(e) => handleChange("parentsMobile", e.target.value)}
           />
@@ -177,8 +177,8 @@ function LeaveForm() {
 
         <Grid.Col span={5}>
           <TextInput
-            label="Mobile Number during leave"
-            placeholder="Enter your mobile number during leave"
+            label="Mobile Number"
+            placeholder="Enter your mobile number"
             value={formValues.mobileDuringLeave}
             onChange={(e) => handleChange("mobileDuringLeave", e.target.value)}
           />
@@ -186,8 +186,8 @@ function LeaveForm() {
 
         <Grid.Col span={5}>
           <TextInput
-            label="Semester"
-            placeholder="Enter your current semester"
+            label="Parents Mobile Number"
+            placeholder="Enter your parents mobile number"
             value={formValues.semester}
             onChange={(e) => handleChange("semester", e.target.value)}
           />
@@ -195,8 +195,8 @@ function LeaveForm() {
 
         <Grid.Col span={5}>
           <TextInput
-            label="Academic Year"
-            placeholder="Enter your current academic year"
+            label="Mobile Number during leave"
+            placeholder="Enter your mobile number during leave"
             value={formValues.academicYear}
             onChange={(e) => handleChange("academicYear", e.target.value)}
           />
@@ -247,4 +247,4 @@ function LeaveForm() {
   );
 }
 
-export default LeaveForm;
+export default LeaveFormPG;

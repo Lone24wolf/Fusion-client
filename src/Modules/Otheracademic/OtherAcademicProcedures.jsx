@@ -4,18 +4,22 @@ import { useState, useRef } from "react";
 import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
-import GraduateStatus from "./Graduate_Seminar/graduate_status";
-import LabInchargeNoDuesStatus from "./Incharge/InchargeLab";
+// import GraduateStatus from "./Graduate_Seminar/graduate_status";
+import GraduateStatus from "./Graduate_Seminar/graduate_status"; // Adjusted to PascalCase
+import TAform from "./Assistantship/Supervisors/TA_supervisorCombined"; // Adjusted name to PascalCase
+import BonafideCombined from "./Bonafide/BonafideCombined";
+import NoDuesCombined from "./NoDues/NoDuesCombined";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
   const [activeTab, setActiveTab] = useState("0");
   const tabItems = [
-    { title: "Bonafied" },
+    { title: "Bonafide" },
     { title: "Leave" },
     { title: "No dues" },
     { title: "Graduate Status" },
-    { title: "No dues Lab incharge" },
+
+    { title: "TA Supervisor" },
   ];
 
   const handleTabChange = (direction) => {
@@ -52,7 +56,6 @@ function OtherAcadProcedures() {
               weight="light"
             />
           </Button>
-
           <div className={classes.fusionTabsContainer} ref={tabsListRef}>
             <Tabs value={activeTab} onChange={setActiveTab}>
               <Tabs.List style={{ display: "flex", flexWrap: "nowrap" }}>
@@ -98,9 +101,35 @@ function OtherAcadProcedures() {
         <div>Put the no dues component here</div>
       ) : activeTab === "3" ? (
         <GraduateStatus />
-      ) : activeTab === "4" ? (
-        <LabInchargeNoDuesStatus />
       ) : null}
+
+      <div
+        style={{
+          backgroundColor: "#ffffff",
+          padding: "20px",
+          borderRadius: "8px",
+          marginTop: "20px",
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {activeTab === "0" ? (
+          <div>
+            <BonafideCombined />
+          </div>
+        ) : activeTab === "1" ? (
+          <div>
+            <LeaveCombined />
+          </div>
+        ) : activeTab === "2" ? (
+          <div>
+            <NoDuesCombined />
+          </div>
+        ) : activeTab === "3" ? (
+          <GraduateStatus />
+        ) : activeTab === "4" ? (
+          <TAform />
+        ) : null}
+      </div>
     </>
   );
 }

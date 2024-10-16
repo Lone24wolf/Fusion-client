@@ -1,36 +1,40 @@
 import { useState } from "react";
 import { Button } from "@mantine/core";
-import LeaveForm from "../../../pages/Otheracademic/Leave/LeaveForm";
-import LeaveStatus from "./LeaveStatus";
+import AssistantshipForm from "./TA_supervisor";
+import AssistantshipStatus from "./TA_supervisorStatus";
 
-function LeaveCombined() {
+function AssistantshipCombined() {
   const [tab, setTab] = useState(0);
+
   return (
     <>
       <div
         style={{
           margin: "20px 0 0 40px",
-          width: "300px",
+          width: "350px",
           display: "flex",
-          justifyContent: "space-evenly",
+          justifyContent: "space-between",
         }}
       >
         <Button
           variant={tab === 0 ? "filled" : "outline"}
           onClick={() => setTab(0)}
+          style={{ marginRight: "10px", flexGrow: 1 }}
         >
-          Leave Form
+          Assistantship Form
         </Button>
         <Button
           variant={tab === 1 ? "filled" : "outline"}
           onClick={() => setTab(1)}
+          style={{ flexGrow: 1 }}
         >
-          Leave Status
+          Assistantship Status
         </Button>
       </div>
-      {tab === 0 ? <LeaveForm /> : <LeaveStatus />}
+
+      {tab === 0 ? <AssistantshipForm /> : <AssistantshipStatus />}
     </>
   );
 }
 
-export default LeaveCombined;
+export default AssistantshipCombined;

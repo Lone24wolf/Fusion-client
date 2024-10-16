@@ -1,4 +1,7 @@
 /* Wrapper around each table */
+*{
+  
+}
 .table-box {
     border: 2px solid #ccc; /* Box border for the table */
     padding: 1rem; /* Padding inside the box */
@@ -24,6 +27,7 @@
   .table-container th {
     background-color: #f0f0f0; /* Header background */
     font-weight: bold;
+    color: black;
   }
   
   .table-container tbody tr:hover {

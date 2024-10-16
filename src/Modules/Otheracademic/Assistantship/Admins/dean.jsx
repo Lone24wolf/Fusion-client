@@ -1,25 +1,25 @@
 import React, { useState } from "react";
 import { Table } from "@mantine/core";
 
-function DeptAdminPage() {
+function DeanPage() {
   const [requests] = useState([
     {
       id: 1,
       studentName: "Alice",
-      rollNumber: "2021007",
+      rollNumber: "2021005",
       status: "Approved by HoD",
     },
     {
       id: 2,
       studentName: "Bob",
-      rollNumber: "2021008",
-      status: "Approved by Academic Admin",
+      rollNumber: "2021006",
+      status: "Pending with Academic Admin",
     },
   ]);
 
   return (
     <div>
-      <h2>Department Admin - Assistantship Requests</h2>
+      <h2>Dean - Assistantship Requests</h2>
       <Table>
         <thead>
           <tr>
@@ -42,4 +42,4 @@ function DeptAdminPage() {
   );
 }
 
-export default DeptAdminPage;
+export default DeanPage;

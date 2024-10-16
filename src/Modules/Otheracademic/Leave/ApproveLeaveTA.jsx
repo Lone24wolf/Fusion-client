@@ -1,6 +1,6 @@
 import "./leaveStatus.css"; // Import the CSS file
 import React, { useState } from "react";
-import { Table, Paper, Switch } from "@mantine/core";
+import { Table, Paper, Switch, Button } from "@mantine/core";
 
 function ApproveLeaveTA() {
   const data = [
@@ -22,7 +22,11 @@ function ApproveLeaveTA() {
   ];
 
   const [status, setStatus] = useState(
-    data.map(() => ({ approveCheck: false, rejectCheck: false })),
+    data.map(() => ({
+      approveCheck: false,
+      rejectCheck: false,
+      saved: false,
+    })),
   );
 
   const handleToggle = (index, stat) => {
@@ -34,26 +38,39 @@ function ApproveLeaveTA() {
               return {
                 approveCheck: true,
                 rejectCheck: false,
+                saved: item.saved,
               };
             }
             return {
               approveCheck: stat.value,
               rejectCheck: item.rejectCheck,
+              saved: item.saved,
             };
           }
           if (stat.value === true && item.approveCheck === true) {
             return {
               approveCheck: false,
               rejectCheck: true,
+              saved: item.saved,
             };
           }
           return {
             approveCheck: item.approveCheck,
             rejectCheck: stat.value,
+            saved: item.saved,
           };
         }
         return item;
       }),
+    );
+  };
+
+  const handleSave = () => {
+    setStatus((prevStatus) =>
+      prevStatus.map((item) => ({
+        ...item,
+        saved: !!(item.approveCheck || item.rejectCheck),
+      })),
     );
   };
 
@@ -113,28 +130,42 @@ function ApproveLeaveTA() {
                   <div
                     style={{ display: "flex", justifyContent: "space-evenly" }}
                   >
-                    <Switch
-                      style={{ display: "flex", justifyContent: "center" }}
-                      label="Approve"
-                      checked={status[index].approveCheck}
-                      onChange={(event) =>
-                        handleToggle(index, {
-                          type: "approve",
-                          value: event.currentTarget.checked,
-                        })
-                      }
-                    />
-                    <Switch
-                      style={{ display: "flex", justifyContent: "center" }}
-                      label="Reject"
-                      checked={status[index].rejectCheck}
-                      onChange={(event) =>
-                        handleToggle(index, {
-                          type: "reject",
-                          value: event.currentTarget.checked,
-                        })
-                      }
-                    />
+                    {!status[index].saved ? (
+                      <>
+                        <Switch
+                          style={{ display: "flex", justifyContent: "center" }}
+                          label="Approve"
+                          checked={status[index].approveCheck}
+                          onChange={(event) =>
+                            handleToggle(index, {
+                              type: "approve",
+                              value: event.currentTarget.checked,
+                            })
+                          }
+                        />
+                        <Switch
+                          style={{ display: "flex", justifyContent: "center" }}
+                          label="Reject"
+                          checked={status[index].rejectCheck}
+                          onChange={(event) =>
+                            handleToggle(index, {
+                              type: "reject",
+                              value: event.currentTarget.checked,
+                            })
+                          }
+                        />
+                      </>
+                    ) : (
+                      <span
+                        style={{
+                          color: `${
+                            status[index].approveCheck ? "green" : "red"
+                          }`,
+                        }}
+                      >
+                        {status[index].approveCheck ? "Approved" : "Rejected"}
+                      </span>
+                    )}
                   </div>
                 </td>
                 <td style={{ border: "1px solid black", textAlign: "center" }}>
@@ -163,6 +194,9 @@ function ApproveLeaveTA() {
             ))}
           </tbody>
         </Table>
+        <div style={{ marginTop: "20px", textAlign: "center" }}>
+          <Button onClick={handleSave}>Save</Button>
+        </div>
       </div>
     </Paper>
   );

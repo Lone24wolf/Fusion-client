@@ -5,14 +5,15 @@ import { useSelector } from "react-redux";
 import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
-import GraduateStatus from "./Graduate_Seminar/graduate_status"; // Adjusted to PascalCase
-import TAform from "./Assistantship/Supervisors/TA_supervisorCombined"; // Adjusted name to PascalCase
+import GraduateStatus from "./Graduate_Seminar/graduate_status";
+import TAform from "./Assistantship/Supervisors/TA_supervisorCombined";
 import BonafideCombined from "./Bonafide/BonafideCombined";
 import NoDuesCombined from "./NoDues/NoDuesCombined";
 import ApproveLeave from "./Leave/ApproveLeave";
 import AdminBonafideRequests from "./Bonafide/AdminBonafideRequests";
 import ApproveLeaveTA from "./Leave/ApproveLeaveTA";
 import ApproveLeaveThesis from "./Leave/ApproveLeaveThesis";
+import GraduateStatusAdmin from "./Graduate_Seminar/Dept_admin";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
@@ -31,7 +32,9 @@ function OtherAcadProcedures() {
     { title: "Bonafide Request", component: <AdminBonafideRequests /> },
     { title: "Leave TA", component: <ApproveLeaveTA /> },
     { title: "Leave Thesis", component: <ApproveLeaveThesis /> },
+    { title: "Graduate Status Dept Admin", component: <GraduateStatusAdmin /> },
   ];
+
   let filteredTabItems = [];
   if (role === "student") {
     filteredTabItems = allTabItems.filter((_, index) =>
@@ -39,7 +42,9 @@ function OtherAcadProcedures() {
     );
   } else if (role === "acadadmin") {
     filteredTabItems = allTabItems.filter((_, index) => [3, 6].includes(index));
-  } else filteredTabItems = allTabItems;
+  } else {
+    filteredTabItems = allTabItems;
+  }
 
   const handleTabChange = (direction) => {
     const newIndex =
@@ -76,14 +81,14 @@ function OtherAcadProcedures() {
             />
           </Button>
           <div className={classes.fusionTabsContainer} ref={tabsListRef}>
-            <Tabs value={activeTab} onChange={setActiveTab}>
+            <Tabs value={activeTab} onTabChange={setActiveTab}>
               <Tabs.List style={{ display: "flex", flexWrap: "nowrap" }}>
                 {filteredTabItems.map((item, index) => (
                   <Tabs.Tab
-                    value={`${index}`}
+                    value={String(index)}
                     key={index}
                     className={
-                      activeTab === `${index}`
+                      activeTab === String(index)
                         ? classes.fusionActiveRecentTab
                         : ""
                     }

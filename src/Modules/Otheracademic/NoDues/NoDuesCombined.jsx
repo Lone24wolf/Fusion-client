@@ -3,8 +3,7 @@ import { Button } from "@mantine/core";
 
 import NoDuesStatus from "./NoDuesStatus";
 import NoduesForm from "./NoduesForm";
-
-// import NoDuesStatus from "./NoDuesStatus";
+import Incharge from "./Incharge";
 
 function NoDuesCombined() {
   const [tab, setTab] = useState(0);
@@ -30,8 +29,14 @@ function NoDuesCombined() {
         >
           NoDues Status
         </Button>
+        <Button
+          variant={tab === 2 ? "filled" : "outline"}
+          onClick={() => setTab(2)}
+        >
+          Incharge
+        </Button>
       </div>
-      {tab === 0 ? <NoduesForm /> : <NoDuesStatus />}
+      {tab === 0 ? <NoduesForm /> : tab === 1 ? <NoDuesStatus /> : <Incharge />}
     </>
   );
 }

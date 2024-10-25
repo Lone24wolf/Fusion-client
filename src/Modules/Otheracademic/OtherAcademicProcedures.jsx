@@ -13,6 +13,11 @@ import ApproveLeave from "./Leave/ApproveLeave";
 import AdminBonafideRequests from "./Bonafide/AdminBonafideRequests";
 import ApproveLeaveTA from "./Leave/ApproveLeaveTA";
 import ApproveLeaveThesis from "./Leave/ApproveLeaveThesis";
+import DeptAdminPage from "./Assistantship/Admins/Dept_admin";
+import DeanPage from "./Assistantship/Admins/dean";
+import AcadAdminPage from "./Assistantship/Admins/Acad_admin";
+import HoDPage from "./Assistantship/Admins/Hod";
+import LeaveFormPG from "./Leave/LeaveFormPG";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
@@ -31,6 +36,11 @@ function OtherAcadProcedures() {
     { title: "Bonafide Request", component: <AdminBonafideRequests /> },
     { title: "Leave TA", component: <ApproveLeaveTA /> },
     { title: "Leave Thesis", component: <ApproveLeaveThesis /> },
+    { title: "Assistant Request Dept", component: <DeptAdminPage /> },
+    { title: "Assistant Request Dean ", component: <DeanPage /> },
+    { title: "Assistant Request HOD ", component: <HoDPage /> },
+    { title: "Assistant Request Acadadmin ", component: <AcadAdminPage /> },
+    { title: "Leave PG", component: <LeaveFormPG /> },
   ];
   let filteredTabItems = [];
   if (role === "student") {
@@ -38,7 +48,9 @@ function OtherAcadProcedures() {
       [0, 1, 2].includes(index),
     );
   } else if (role === "acadadmin") {
-    filteredTabItems = allTabItems.filter((_, index) => [3, 6].includes(index));
+    filteredTabItems = allTabItems.filter((_, index) =>
+      [3, 6, 12].includes(index),
+    );
   } else filteredTabItems = allTabItems;
 
   const handleTabChange = (direction) => {

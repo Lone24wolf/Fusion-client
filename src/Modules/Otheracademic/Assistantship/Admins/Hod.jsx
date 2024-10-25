@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Table } from "@mantine/core";
+import { Button, Table, Flex } from "@mantine/core";
 
 function HoDPage() {
   const [requests, setRequests] = useState([
@@ -32,10 +32,14 @@ function HoDPage() {
               <td>{request.studentName}</td>
               <td>{request.rollNumber}</td>
               <td>
-                <Button onClick={() => handleApprove(request.id)}>
-                  Approve
-                </Button>
-                <Button onClick={() => handleReject(request.id)}>Reject</Button>
+                <Flex gap="md">
+                  <Button onClick={() => handleApprove(request.id)}>
+                    Approve
+                  </Button>
+                  <Button onClick={() => handleReject(request.id)}>
+                    Reject
+                  </Button>
+                </Flex>
               </td>
             </tr>
           ))}

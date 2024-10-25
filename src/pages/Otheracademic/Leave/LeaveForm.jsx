@@ -9,9 +9,15 @@ import {
   Grid,
   Center,
 } from "@mantine/core";
+import axios from "axios";
+import { Leave_Form_Submit } from "../../../routes/otheracademicRoutes";
 
 function LeaveForm() {
+  const roll = "22BCS009";
+  const name = "Abhyuday Singh";
   const [formValues, setFormValues] = useState({
+    student_name: name,
+    roll_no: roll,
     dateFrom: "",
     dateTo: "",
     leaveType: "",
@@ -31,9 +37,45 @@ function LeaveForm() {
     setFormValues((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(formValues); // Submit your form here
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      console.error("No auth token found");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("student_name", name);
+    formData.append("roll_no", roll);
+    formData.append("date_from", formValues.dateFrom);
+    formData.append("date_to", formValues.dateTo);
+    formData.append("leave_type", formValues.leaveType);
+    formData.append("related_document", formValues.documents);
+    formData.append("address", formValues.address);
+    formData.append("purpose", formValues.purpose);
+    formData.append("hod_credential", formValues.hodCredential);
+    formData.append("date_of_application", formValues.dateOfApplication);
+    formData.append("mobile_number", formValues.mobileNumber);
+    formData.append("parents_mobile", formValues.parentsMobile);
+    formData.append("mobile_during_leave", formValues.mobileDuringLeave);
+    formData.append("semester", formValues.semester);
+    formData.append("academic_year", formValues.academicYear);
+
+    try {
+      const response = await axios.post(Leave_Form_Submit, formData, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Form submitted successfully:", response.data);
+    } catch (error) {
+      console.error(
+        "Error submitting the form:",
+        error.response?.data || error,
+      );
+    }
   };
 
   return (

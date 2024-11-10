@@ -57,15 +57,6 @@ function BonafideForm() {
         <Grid>
           <Grid.Col span={6}>
             <TextInput
-              label="Name"
-              placeholder="Enter your name"
-              required
-              className="form-input"
-              // onChange={(e) => handleChange("student_name", e.target.value)}
-            />
-          </Grid.Col>
-          <Grid.Col span={6}>
-            <TextInput
               label="Roll No"
               placeholder="Enter your roll number"
               required

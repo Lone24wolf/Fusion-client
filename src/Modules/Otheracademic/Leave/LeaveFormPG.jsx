@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   Select,
-  FileInput,
   Textarea,
   Grid,
   Center,
@@ -67,6 +66,7 @@ function LeaveFormPG() {
               onBlur={(e) => {
                 e.target.style.borderColor = "#ced4da";
               }}
+              required
             />
           </div>
         </Grid.Col>
@@ -99,6 +99,7 @@ function LeaveFormPG() {
               onBlur={(e) => {
                 e.target.style.borderColor = "#ced4da";
               }}
+              required
             />
           </div>
         </Grid.Col>
@@ -107,6 +108,7 @@ function LeaveFormPG() {
           <Select
             label="Leave Type"
             withAsterisk
+            required
             placeholder="Select Leave Type"
             data={["Casual", "Medical"]}
             value={formValues.leaveType}
@@ -115,10 +117,10 @@ function LeaveFormPG() {
         </Grid.Col>
 
         <Grid.Col span={5}>
-          <FileInput
+          <TextInput
+            type="file"
             label="Documents"
-            withAsterisk
-            placeholder="Choose file"
+            placeholder="Choose File"
             value={formValues.documents}
             onChange={(file) => handleChange("documents", file)}
           />
@@ -141,6 +143,8 @@ function LeaveFormPG() {
             label="Purpose"
             placeholder="Enter the purpose of leave"
             autosize
+            withAsterisk
+            required
             minRows={2}
             maxRows={4}
             value={formValues.purpose}
@@ -187,6 +191,8 @@ function LeaveFormPG() {
         <Grid.Col span={5}>
           <TextInput
             label="Parents Mobile Number"
+            withAsterisk
+            required
             placeholder="Enter your parents mobile number"
             value={formValues.semester}
             onChange={(e) => handleChange("semester", e.target.value)}
@@ -200,40 +206,6 @@ function LeaveFormPG() {
             value={formValues.academicYear}
             onChange={(e) => handleChange("academicYear", e.target.value)}
           />
-        </Grid.Col>
-
-        <Grid.Col span={5}>
-          {/* Date of Application */}
-          <div style={{ marginBottom: "1rem" }}>
-            <Text mt="md" size="sm" htmlFor="dateOfApplication">
-              <span style={{ fontWeight: "600", marginLeft: "1px" }}>
-                Date of Application:
-              </span>
-            </Text>
-            <input
-              type="date"
-              id="dateOfApplication"
-              value={formValues.dateOfApplication}
-              onChange={(e) =>
-                handleChange("dateOfApplication", e.target.value)
-              }
-              style={{
-                width: "100%",
-                padding: "10px",
-                borderRadius: "4px",
-                border: "1px solid #ced4da",
-                fontSize: "16px",
-                outline: "none",
-                transition: "border-color 0.2s ease",
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = "#80bdff";
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = "#ced4da";
-              }}
-            />
-          </div>
         </Grid.Col>
       </Grid>
 

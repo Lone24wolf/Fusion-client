@@ -57,18 +57,6 @@ function NoduesForm() {
         {/* Left Column */}
         <Grid.Col span={6}>
           <TextInput
-            label="Roll no. (In Capital Letter)"
-            placeholder="Enter your roll number"
-            value={formData.rollNumber}
-            onChange={handleChange}
-            name="rollNumber"
-            radius="md"
-            mb="md"
-            style={{
-              margin: "10px",
-            }}
-          />
-          <TextInput
             label="Student Name"
             placeholder="Enter your name"
             value={formData.studentName}

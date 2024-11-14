@@ -4,7 +4,6 @@ import {
   Text,
   TextInput,
   Select,
-  FileInput,
   Textarea,
   Grid,
   Center,
@@ -103,6 +102,7 @@ function LeaveForm() {
                 outline: "none",
                 transition: "border-color 0.2s ease",
               }}
+              required
               onFocus={(e) => {
                 e.target.style.borderColor = "#80bdff";
               }}
@@ -135,6 +135,7 @@ function LeaveForm() {
                 outline: "none",
                 transition: "border-color 0.2s ease",
               }}
+              required
               onFocus={(e) => {
                 e.target.style.borderColor = "#80bdff";
               }}
@@ -149,6 +150,7 @@ function LeaveForm() {
           <Select
             label="Leave Type"
             withAsterisk
+            required
             placeholder="Select Leave Type"
             data={["Casual", "Medical"]}
             value={formValues.leaveType}
@@ -157,10 +159,10 @@ function LeaveForm() {
         </Grid.Col>
 
         <Grid.Col span={5}>
-          <FileInput
+          <TextInput
+            type="file"
             label="Documents"
-            withAsterisk
-            placeholder="Choose file"
+            placeholder="Choose File"
             value={formValues.documents}
             onChange={(file) => handleChange("documents", file)}
           />
@@ -202,6 +204,7 @@ function LeaveForm() {
         <Grid.Col span={5}>
           <TextInput
             label="Mobile Number"
+            required
             placeholder="Enter your mobile number"
             value={formValues.mobileNumber}
             onChange={(e) => handleChange("mobileNumber", e.target.value)}
@@ -211,6 +214,8 @@ function LeaveForm() {
         <Grid.Col span={5}>
           <TextInput
             label="Parents Mobile Number"
+            withAsterisk
+            required
             placeholder="Enter your parents' mobile number"
             value={formValues.parentsMobile}
             onChange={(e) => handleChange("parentsMobile", e.target.value)}
@@ -227,55 +232,23 @@ function LeaveForm() {
         </Grid.Col>
 
         <Grid.Col span={5}>
-          <TextInput
+          <Select
             label="Semester"
+            required
             placeholder="Enter your current semester"
-            value={formValues.semester}
+            data={[
+              { value: "1", label: "Semester 1" },
+              { value: "2", label: "Semester 2" },
+              { value: "3", label: "Semester 3" },
+              { value: "4", label: "Semester 4" },
+              { value: "5", label: "Semester 5" },
+              { value: "6", label: "Semester 6" },
+              { value: "7", label: "Semester 7" },
+              { value: "8", label: "Semester 8" },
+            ]}
+            className="form-input"
             onChange={(e) => handleChange("semester", e.target.value)}
           />
-        </Grid.Col>
-
-        <Grid.Col span={5}>
-          <TextInput
-            label="Academic Year"
-            placeholder="Enter your current academic year"
-            value={formValues.academicYear}
-            onChange={(e) => handleChange("academicYear", e.target.value)}
-          />
-        </Grid.Col>
-
-        <Grid.Col span={5}>
-          {/* Date of Application */}
-          <div style={{ marginBottom: "1rem" }}>
-            <Text mt="md" size="sm" htmlFor="dateOfApplication">
-              <span style={{ fontWeight: "600", marginLeft: "1px" }}>
-                Date of Application:
-              </span>
-            </Text>
-            <input
-              type="date"
-              id="dateOfApplication"
-              value={formValues.dateOfApplication}
-              onChange={(e) =>
-                handleChange("dateOfApplication", e.target.value)
-              }
-              style={{
-                width: "100%",
-                padding: "10px",
-                borderRadius: "4px",
-                border: "1px solid #ced4da",
-                fontSize: "16px",
-                outline: "none",
-                transition: "border-color 0.2s ease",
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = "#80bdff";
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = "#ced4da";
-              }}
-            />
-          </div>
         </Grid.Col>
       </Grid>
 

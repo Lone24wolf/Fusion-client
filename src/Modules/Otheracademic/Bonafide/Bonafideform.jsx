@@ -75,6 +75,7 @@ function BonafideForm() {
                 },
                 { value: "ME", label: "Mechanical Engineering" },
                 { value: "SM", label: "Smart Manufacturing" },
+                { value: "DS", label: "Design" },
               ]}
               required
               className="form-input"

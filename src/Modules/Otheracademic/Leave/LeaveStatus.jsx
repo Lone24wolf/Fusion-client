@@ -1,6 +1,6 @@
 import "./leaveStatus.css"; // Import the CSS file
 import React from "react";
-import { Table, Paper } from "@mantine/core";
+import { Table, Paper, Title, Button } from "@mantine/core";
 
 function LeaveStatus() {
   const data = [
@@ -13,91 +13,71 @@ function LeaveStatus() {
       leaveType: "Medical",
       attachment: "Medical_attachment.pdf",
       purpose:
-        "Purpose of leave here Lorem, ipsum dolor sit amet consectetur adipisicing elit. Beatae enim non officia unde repellat, vel atque neque cupiditate dolore reiciendis adipisci, nisi voluptatibus aut earum nobis amet dignissimos, nemo qui!",
+        "Purpose of leave here Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
       address:
-        "Address here Lorem, ipsum dolor sit amet consectetur adipisicing elit. Beatae enim non officia unde repellat, vel atque neque cupiditate dolore reiciendis adipisci, nisi voluptatibus aut earum nobis amet dignissimos, nemo qui!",
+        "Address here Lorem, ipsum dolor sit amet consectetur adipisicing elit.",
       action: "Pending",
     },
   ];
 
   return (
-    <Paper className="responsive-table-container">
-      <div className="table-wrapper" style={{ marginTop: "50px" }}>
-        <Table striped highlightOnHover className="status-table">
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        marginTop: "30px",
+      }}
+    >
+      <Paper
+        className="status-paper"
+        style={{
+          width: "100%",
+          padding: "30px",
+          backgroundColor: "white",
+          borderRadius: "10px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Title order={2} align="center" style={{ marginBottom: "20px" }}>
+          Leave Status
+        </Title>
+        <Table striped highlightOnHover withBorder withColumnBorders>
           <thead>
             <tr>
-              <th
-                style={{
-                  borderRight: "1px solid white",
-                  borderLeft: "1px solid black",
-                  textAlign: "center",
-                }}
-              >
-                Roll No
-              </th>
-              <th
-                style={{ borderRight: " 1px solid white", textAlign: "center" }}
-              >
-                Name
-              </th>
-              <th
-                style={{ borderRight: " 1px solid white", textAlign: "center" }}
-              >
-                Branch
-              </th>
-              <th
-                style={{ borderRight: " 1px solid white", textAlign: "center" }}
-              >
-                Date From
-              </th>
-              <th
-                style={{ borderRight: " 1px solid white", textAlign: "center" }}
-              >
-                Date To
-              </th>
-              <th
-                style={{ borderRight: " 1px solid white", textAlign: "center" }}
-              >
-                Leave Type
-              </th>
-              <th
-                style={{ borderRight: " 1px solid white", textAlign: "center" }}
-              >
-                Attachment
-              </th>
-              <th
-                style={{ borderRight: " 1px solid white", textAlign: "center" }}
-              >
-                Purpose
-              </th>
-              <th
-                style={{ borderRight: " 1px solid white", textAlign: "center" }}
-              >
-                Address
-              </th>
-              <th
-                style={{ borderRight: "1px solid black", textAlign: "center" }}
-              >
-                Action
-              </th>
+              <th style={{ textAlign: "center" }}>Roll No</th>
+              <th style={{ textAlign: "center" }}>Name</th>
+              <th style={{ textAlign: "center" }}>Branch</th>
+              <th style={{ textAlign: "center" }}>Date From</th>
+              <th style={{ textAlign: "center" }}>Date To</th>
+              <th style={{ textAlign: "center" }}>Leave Type</th>
+              <th style={{ textAlign: "center" }}>Attachment</th>
+              <th style={{ textAlign: "center" }}>Purpose</th>
+              <th style={{ textAlign: "center" }}>Address</th>
+              <th style={{ textAlign: "center" }}>Action</th>
             </tr>
           </thead>
           <tbody>
             {data.map((item, index) => (
               <tr key={index}>
-                <td style={{ border: "1px solid black" }}>{item.rollNo}</td>
-                <td style={{ border: "1px solid black" }}>{item.name}</td>
-                <td style={{ border: "1px solid black" }}>{item.branch}</td>
-                <td style={{ border: "1px solid black" }}>{item.dateFrom}</td>
-                <td style={{ border: "1px solid black" }}>{item.dateTo}</td>
-                <td style={{ border: "1px solid black" }}>{item.leaveType}</td>
-                <td style={{ border: "1px solid black" }}>{item.attachment}</td>
-                <td style={{ border: "1px solid black" }}>{item.purpose}</td>
-                <td style={{ border: "1px solid black" }}>{item.address}</td>
+                <td style={{ textAlign: "center" }}>{item.rollNo}</td>
+                <td style={{ textAlign: "center" }}>{item.name}</td>
+                <td style={{ textAlign: "center" }}>{item.branch}</td>
+                <td style={{ textAlign: "center" }}>{item.dateFrom}</td>
+                <td style={{ textAlign: "center" }}>{item.dateTo}</td>
+                <td style={{ textAlign: "center" }}>{item.leaveType}</td>
+                <td style={{ textAlign: "center" }}>{item.attachment}</td>
+                <td style={{ textAlign: "center" }}>{item.purpose}</td>
+                <td style={{ textAlign: "center" }}>{item.address}</td>
                 <td
                   style={{
-                    color: `${item.action === "Pending" ? "orange" : item.action === "Approved" ? "green" : "red"}`,
-                    border: "1px solid black",
+                    textAlign: "center",
+                    color:
+                      item.action === "Pending"
+                        ? "orange"
+                        : item.action === "Approved"
+                          ? "green"
+                          : "red",
                   }}
                 >
                   {item.action}
@@ -106,8 +86,18 @@ function LeaveStatus() {
             ))}
           </tbody>
         </Table>
-      </div>
-    </Paper>
+        <center>
+          <Button
+            variant="filled"
+            color="blue"
+            mt="md"
+            style={{ marginTop: "20px" }}
+          >
+            Submit
+          </Button>
+        </center>
+      </Paper>
+    </div>
   );
 }
 

@@ -1,65 +1,130 @@
 import React from "react";
-import { Table, Paper, Title } from "@mantine/core";
+import { Table, Paper, Title, Button } from "@mantine/core";
 import "./BonafideFormStatus.css"; // Import the CSS file
 
 function BonafideFormStatus() {
   const data = [
     {
+      rollNo: "67890",
+      name: "Jane Smith",
+      branch: "ECE",
+      validTill: "2024-12-31",
+      status: "Pending",
+    },
+    {
+      rollNo: "67890",
+      name: "Jane Smith",
+      branch: "ECE",
+      validTill: "2024-12-31",
+      status: "Pending",
+    },
+    {
+      rollNo: "67890",
+      name: "Jane Smith",
+      branch: "ECE",
+      validTill: "2024-12-31",
+      status: "Pending",
+    },
+    {
       rollNo: "12345",
       name: "John Doe",
       branch: "CSE",
-      semester: "5",
-      purpose: "Job Application",
-      dateApplied: "2024-10-01",
-      bonafidePdf: "link_to_pdf.pdf",
+      validTill: "2024-11-30",
       status: "Approved",
     },
-    // Add more entries as needed
+    {
+      rollNo: "11223",
+      name: "Alice Brown",
+      branch: "ME",
+      validTill: "2025-01-15",
+      status: "Pending",
+    },
   ];
 
   return (
-    <Paper className="status-paper">
-      <Title order={2} align="center" className="status-title">
-        Bonafide Form Status
-      </Title>
-      <Table striped highlightOnHover className="status-table">
-        <thead>
-          <tr>
-            <th>Roll No</th>
-            <th>Name</th>
-            <th>Branch</th>
-            <th>Semester</th>
-            <th>Purpose</th>
-            <th>Date Applied</th>
-            <th>Bonafide PDF</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr key={index}>
-              <td>{item.rollNo}</td>
-              <td>{item.name}</td>
-              <td>{item.branch}</td>
-              <td>{item.semester}</td>
-              <td>{item.purpose}</td>
-              <td>{item.dateApplied}</td>
-              <td>
-                <a
-                  href={item.bonafidePdf}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View PDF
-                </a>
-              </td>
-              <td>{item.status}</td>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        marginTop: "30px",
+      }}
+    >
+      <Paper
+        className="status-paper"
+        style={{
+          width: "120%", // Increase the width of the paper
+          padding: "30px",
+          backgroundColor: "white",
+          borderRadius: "10px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          transform: "translateY(-20px)",
+        }}
+      >
+        <Title order={2} align="center" style={{ marginBottom: "20px" }}>
+          Bonafide Form Status
+        </Title>
+        <Table
+          striped
+          highlightOnHover
+          withBorder
+          withColumnBorders
+          style={{
+            width: "100%", // Keep table width full
+            borderSpacing: "20px 0", // Increase spacing between columns
+          }}
+        >
+          <thead>
+            <tr>
+              <th style={{ textAlign: "center", padding: "10px" }}>Roll No</th>
+              <th style={{ textAlign: "center", padding: "10px" }}>Name</th>
+              <th style={{ textAlign: "center", padding: "10px" }}>Branch</th>
+              <th style={{ textAlign: "center", padding: "10px" }}>
+                Valid Till
+              </th>
+              <th style={{ textAlign: "center", padding: "10px" }}>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
-    </Paper>
+          </thead>
+          <tbody>
+            {data.map((item, index) => (
+              <tr key={index}>
+                <td style={{ textAlign: "center", padding: "10px" }}>
+                  {item.rollNo}
+                </td>
+                <td style={{ textAlign: "center", padding: "10px" }}>
+                  {item.name}
+                </td>
+                <td style={{ textAlign: "center", padding: "10px" }}>
+                  {item.branch}
+                </td>
+                <td style={{ textAlign: "center", padding: "10px" }}>
+                  {item.validTill}
+                </td>
+                <td
+                  style={{
+                    textAlign: "center",
+                    padding: "10px",
+                    color: item.status === "Pending" ? "orange" : "green",
+                  }}
+                >
+                  {item.status}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+        <center>
+          <Button
+            variant="filled"
+            color="blue"
+            mt="md"
+            style={{ marginTop: "20px" }}
+          >
+            Submit
+          </Button>
+        </center>
+      </Paper>
+    </div>
   );
 }
-
 export default BonafideFormStatus;

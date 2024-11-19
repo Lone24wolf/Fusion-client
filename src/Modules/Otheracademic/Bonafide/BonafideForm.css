@@ -3,7 +3,7 @@
   max-width: 800px; 
   margin: 20px auto; 
   border-radius: 10px;
-  background-color: #F5F7F8; /* Keeping the background color same */
+  background-color: hwb(200 96% 3% / 0.897); /* Keeping the background color same */
 }
 
 .bonafide-form {

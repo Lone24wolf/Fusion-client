@@ -13,32 +13,56 @@ import ApproveLeave from "./Leave/ApproveLeave";
 import AdminBonafideRequests from "./Bonafide/AdminBonafideRequests";
 import ApproveLeaveTA from "./Leave/ApproveLeaveTA";
 import ApproveLeaveThesis from "./Leave/ApproveLeaveThesis";
+import DeptAdminPage from "./Assistantship/Admins/Dept_admin";
+import DeanPage from "./Assistantship/Admins/dean";
+import AcadAdminPage from "./Assistantship/Admins/Acad_admin";
+import HoDPage from "./Assistantship/Admins/Hod";
+import LeaveFormPG from "./Leave/LeaveFormPG";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
   const [activeTab, setActiveTab] = useState("0");
   const role = useSelector((state) => state.user.role);
+  const roll_no = useSelector((state) => state.user.roll_no);
   const username = useSelector((state) => state.user.username);
-  console.log(username, role);
+  console.log(username, role, roll_no);
 
   const allTabItems = [
-    { title: "Bonafide", component: <BonafideCombined /> },
-    { title: "Leave", component: <LeaveCombined /> },
-    { title: "No dues", component: <NoDuesCombined /> },
-    { title: "Graduate Status", component: <GraduateStatus /> },
-    { title: "TA Supervisor", component: <TAform /> },
-    { title: "Leave Requests HOD", component: <ApproveLeave /> },
-    { title: "Bonafide Request", component: <AdminBonafideRequests /> },
-    { title: "Leave TA", component: <ApproveLeaveTA /> },
-    { title: "Leave Thesis", component: <ApproveLeaveThesis /> },
+    { title: "Bonafide", component: <BonafideCombined /> }, // 0
+    { title: "Leave", component: <LeaveCombined /> }, // 1
+    { title: "No dues", component: <NoDuesCombined /> }, // 2
+    { title: "Graduate Status", component: <GraduateStatus /> }, // 3
+    { title: "TA Supervisor", component: <TAform /> }, // 4
+    { title: "Leave Requests HOD", component: <ApproveLeave /> }, // 5
+    { title: "Bonafide Request", component: <AdminBonafideRequests /> }, // 6
+    { title: "Leave TA", component: <ApproveLeaveTA /> }, // 7
+    { title: "Leave Thesis", component: <ApproveLeaveThesis /> }, // 8
+    { title: "Assistant Request Dept", component: <DeptAdminPage /> }, // 9
+    { title: "Assistant Request Dean ", component: <DeanPage /> }, // 10
+    { title: "Assistant Request HOD ", component: <HoDPage /> }, // 11
+    { title: "Assistant Request Acadadmin ", component: <AcadAdminPage /> }, // 12
+    { title: "Leave PG", component: <LeaveFormPG /> }, // 13
   ];
   let filteredTabItems = [];
   if (role === "student") {
-    filteredTabItems = allTabItems.filter((_, index) =>
-      [0, 1, 2].includes(index),
-    );
+    if (
+      roll_no[2] === "m" ||
+      roll_no[2] === "p" ||
+      roll_no[2] === "M" ||
+      roll_no[2] === "P"
+    ) {
+      filteredTabItems = allTabItems.filter((_, index) =>
+        [0, 2, 13].includes(index),
+      );
+    } else {
+      filteredTabItems = allTabItems.filter((_, index) =>
+        [0, 1, 2].includes(index),
+      );
+    }
   } else if (role === "acadadmin") {
-    filteredTabItems = allTabItems.filter((_, index) => [3, 6].includes(index));
+    filteredTabItems = allTabItems.filter((_, index) =>
+      [3, 6, 12].includes(index),
+    );
   } else filteredTabItems = allTabItems;
 
   const handleTabChange = (direction) => {

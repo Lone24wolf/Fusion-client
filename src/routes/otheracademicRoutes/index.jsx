@@ -1,1 +1,4 @@
-export const host = "http://127.0.0.1:8000";
+import { host } from "../globalRoutes";
+
+export const Leave_Form_Submit = `${host}/otheracademic/api/leave-form-submit/`;
+export const Bonafide_Form_Submit = `${host}/otheracademic/api/bonafide-form-submit/`;

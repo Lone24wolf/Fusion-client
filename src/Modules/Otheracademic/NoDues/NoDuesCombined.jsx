@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button } from "@mantine/core";
+import { Button, Flex } from "@mantine/core";
 
 import NoDuesStatus from "./NoDuesStatus";
 import NoduesForm from "./NoduesForm";
@@ -17,24 +17,26 @@ function NoDuesCombined() {
           justifyContent: "space-evenly",
         }}
       >
-        <Button
-          variant={tab === 0 ? "filled" : "outline"}
-          onClick={() => setTab(0)}
-        >
-          NoDues Form
-        </Button>
-        <Button
-          variant={tab === 1 ? "filled" : "outline"}
-          onClick={() => setTab(1)}
-        >
-          NoDues Status
-        </Button>
-        <Button
-          variant={tab === 2 ? "filled" : "outline"}
-          onClick={() => setTab(2)}
-        >
-          Incharge
-        </Button>
+        <Flex gap={4}>
+          <Button
+            variant={tab === 0 ? "filled" : "outline"}
+            onClick={() => setTab(0)}
+          >
+            NoDues Form
+          </Button>
+          <Button
+            variant={tab === 1 ? "filled" : "outline"}
+            onClick={() => setTab(1)}
+          >
+            NoDues Status
+          </Button>
+          <Button
+            variant={tab === 2 ? "filled" : "outline"}
+            onClick={() => setTab(2)}
+          >
+            Incharge
+          </Button>
+        </Flex>
       </div>
       {tab === 0 ? <NoduesForm /> : tab === 1 ? <NoDuesStatus /> : <Incharge />}
     </>

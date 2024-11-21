@@ -1,78 +1,41 @@
 import "../../Bonafide/AdminBonafideRequests.css"; // Import the CSS file
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Paper, Switch, Button, Modal, Text } from "@mantine/core";
 
 function HoDPage() {
-  const data = [
-    {
-      rollNo: "22bcsxxx",
-      name: "Sample 1",
-      form: "22bcsxxx.pdf",
-      details: {
-        dateFrom: "2024-10-10",
-        dateTo: "2024-10-12",
-        leaveType: "Casual",
-        address: "123 Street, City",
-        purpose: "Personal Work",
-        hodCredential: "HOD123",
-        mobileNumber: "1234567890",
-        parentsMobile: "0987654321",
-        mobileDuringLeave: "1234567890",
-        semester: "5",
-        academicYear: "2024-2025",
-        dateOfApplication: "2024-10-01",
-      },
-    },
-    {
-      rollNo: "22bcsxxx",
-      name: "Sample 2",
-      form: "22bcsxxx.pdf",
-      details: {
-        dateFrom: "2024-10-15",
-        dateTo: "2024-10-20",
-        leaveType: "Medical",
-        address: "456 Avenue, City",
-        purpose: "Medical treatment",
-        hodCredential: "HOD456",
-        mobileNumber: "2234567890",
-        parentsMobile: "2987654321",
-        mobileDuringLeave: "2234567890",
-        semester: "5",
-        academicYear: "2024-2025",
-        dateOfApplication: "2024-10-05",
-      },
-    },
-    {
-      rollNo: "22bcsxxx",
-      name: "Sample 3",
-      form: "22bcsxxx.pdf",
-      details: {
-        dateFrom: "2024-10-25",
-        dateTo: "2024-10-30",
-        leaveType: "Medical",
-        address: "46 Dmart, City",
-        purpose: "Medical treatment",
-        hodCredential: "HOD456",
-        mobileNumber: "2233457890",
-        parentsMobile: "2987698721",
-        mobileDuringLeave: "2234097890",
-        semester: "3",
-        academicYear: "2024-2025",
-        dateOfApplication: "2024-10-15",
-      },
-    },
-  ];
-
-  const [status, setStatus] = useState(
-    data.map(() => ({
-      approveCheck: false,
-      rejectCheck: false,
-      submitted: false, // Track if the form has been submitted for this entry
-    })),
-  );
-
+  const [data, setData] = useState([]);
+  const [status, setStatus] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [opened, setOpened] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
+
+  // Fetch data from API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("YOUR_API_ENDPOINT");
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        const result = await response.json();
+        setData(result);
+        setStatus(
+          result.map(() => ({
+            approveCheck: false,
+            rejectCheck: false,
+            submitted: false, // Initialize status for each entry
+          })),
+        );
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleToggle = (index, stat) => {
     setStatus((prevStatus) =>
@@ -100,25 +63,19 @@ function HoDPage() {
   };
 
   const handleSubmit = () => {
-    const updatedStatus = status.map((entry) => {
-      if (entry.approveCheck || entry.rejectCheck) {
-        // Mark as submitted if approved or rejected
-        return { ...entry, submitted: true };
-      }
-      return entry;
-    });
-
-    setStatus(updatedStatus);
-
     const approvedLeaves = data.filter(
       (_, index) => status[index].approveCheck,
     );
     const rejectedLeaves = data.filter((_, index) => status[index].rejectCheck);
+
     console.log("Approved Leaves:", approvedLeaves);
     console.log("Rejected Leaves:", rejectedLeaves);
 
-    // Here we can handle the form submission (e.g., send data to the server)
+    // Here we can handle submission to the server
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <>
@@ -127,70 +84,19 @@ function HoDPage() {
           <Table striped highlightOnHover className="status-table">
             <thead>
               <tr>
-                <th
-                  style={{
-                    borderRight: "1px solid white",
-                    borderLeft: "1px solid black",
-                    textAlign: "center",
-                  }}
-                >
-                  Roll No
-                </th>
-                <th
-                  style={{
-                    borderRight: " 1px solid white",
-                    textAlign: "center",
-                  }}
-                >
-                  Student Name
-                </th>
-                <th
-                  style={{
-                    borderRight: " 1px solid white",
-                    textAlign: "center",
-                  }}
-                >
-                  Approve/Reject
-                </th>
-                <th
-                  style={{
-                    borderRight: " 1px solid white",
-                    textAlign: "center",
-                  }}
-                >
-                  View Form
-                </th>
-                <th
-                  style={{
-                    borderRight: "1px solid black",
-                    textAlign: "center",
-                  }}
-                >
-                  Current Status
-                </th>
+                <th style={{ textAlign: "center" }}>Roll No</th>
+                <th style={{ textAlign: "center" }}>Student Name</th>
+                <th style={{ textAlign: "center" }}>Approve/Reject</th>
+                <th style={{ textAlign: "center" }}>View Form</th>
+                <th style={{ textAlign: "center" }}>Current Status</th>
               </tr>
             </thead>
             <tbody>
               {data.map((item, index) => (
                 <tr key={index}>
-                  <td
-                    style={{ border: "1px solid black", textAlign: "center" }}
-                  >
-                    {item.rollNo}
-                  </td>
-                  <td
-                    style={{ border: "1px solid black", textAlign: "center" }}
-                  >
-                    {item.name}
-                  </td>
-                  <td
-                    style={{
-                      border: "1px solid black",
-                      textAlign: "center",
-                      maxWidth: "130px",
-                    }}
-                  >
-                    {/* Show switches if not submitted, otherwise show the status */}
+                  <td style={{ textAlign: "center" }}>{item.rollNo}</td>
+                  <td style={{ textAlign: "center" }}>{item.name}</td>
+                  <td style={{ textAlign: "center" }}>
                     {!status[index].submitted ? (
                       <div
                         style={{
@@ -199,7 +105,6 @@ function HoDPage() {
                         }}
                       >
                         <Switch
-                          style={{ display: "flex", justifyContent: "center" }}
                           label="Approve"
                           checked={status[index].approveCheck}
                           onChange={(event) =>
@@ -210,7 +115,6 @@ function HoDPage() {
                           }
                         />
                         <Switch
-                          style={{ display: "flex", justifyContent: "center" }}
                           label="Reject"
                           checked={status[index].rejectCheck}
                           onChange={(event) =>
@@ -231,9 +135,7 @@ function HoDPage() {
                       </Text>
                     )}
                   </td>
-                  <td
-                    style={{ border: "1px solid black", textAlign: "center" }}
-                  >
+                  <td style={{ textAlign: "center" }}>
                     <button
                       style={{
                         background: "none",
@@ -241,7 +143,6 @@ function HoDPage() {
                         cursor: "pointer",
                         textDecoration: "underline",
                         color: "blue",
-                        padding: 0,
                       }}
                       onClick={() => handleViewForm(index)}
                     >
@@ -250,15 +151,12 @@ function HoDPage() {
                   </td>
                   <td
                     style={{
-                      color: `${
-                        status[index].approveCheck
-                          ? "green"
-                          : status[index].rejectCheck
-                            ? "red"
-                            : "orange"
-                      }`,
-                      border: "1px solid black",
                       textAlign: "center",
+                      color: status[index].approveCheck
+                        ? "green"
+                        : status[index].rejectCheck
+                          ? "red"
+                          : "orange",
                     }}
                   >
                     {status[index].approveCheck
@@ -283,14 +181,10 @@ function HoDPage() {
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
-        title={
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <Text style={{ fontSize: "25px" }}>Student Form Details</Text>
-          </div>
-        }
+        title={<Text style={{ fontSize: "25px" }}>Student Form Details</Text>}
         centered
-        overlaycolor="rgba(0, 0, 0, 0.6)"
-        overlayblur={3}
+        overlayColor="rgba(0, 0, 0, 0.6)"
+        overlayBlur={3}
         size="lg"
       >
         {selectedStudent && (

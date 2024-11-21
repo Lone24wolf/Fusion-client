@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import PropTypes from "prop-types";
 import {
   Button,
   Text,
@@ -7,13 +9,15 @@ import {
   Textarea,
   Grid,
   Center,
+  FileInput,
 } from "@mantine/core";
 import axios from "axios";
 import { Leave_Form_Submit } from "../../../routes/otheracademicRoutes";
 
-function LeaveForm() {
-  const roll = "22BCS009";
-  const name = "Abhyuday Singh";
+function LeaveForm(props) {
+  const roll = useSelector((state) => state.user.roll_no);
+  const name = useSelector((state) => state.user.username);
+
   const [formValues, setFormValues] = useState({
     student_name: name,
     roll_no: roll,
@@ -59,6 +63,9 @@ function LeaveForm() {
     formData.append("mobile_during_leave", formValues.mobileDuringLeave);
     formData.append("semester", formValues.semester);
     formData.append("academic_year", formValues.academicYear);
+    if (props.setTab) {
+      props.setTab(1);
+    }
 
     try {
       const response = await axios.post(Leave_Form_Submit, formData, {
@@ -159,7 +166,7 @@ function LeaveForm() {
         </Grid.Col>
 
         <Grid.Col span={5}>
-          <TextInput
+          <FileInput
             type="file"
             label="Documents"
             placeholder="Choose File"
@@ -247,7 +254,7 @@ function LeaveForm() {
               { value: "8", label: "Semester 8" },
             ]}
             className="form-input"
-            onChange={(e) => handleChange("semester", e.target.value)}
+            onChange={(value) => handleChange("semester", value)} // Directly use the value
           />
         </Grid.Col>
       </Grid>
@@ -261,5 +268,9 @@ function LeaveForm() {
     </form>
   );
 }
+
+LeaveForm.propTypes = {
+  setTab: PropTypes.func.isRequired, // Validate setTab as a required function
+};
 
 export default LeaveForm;

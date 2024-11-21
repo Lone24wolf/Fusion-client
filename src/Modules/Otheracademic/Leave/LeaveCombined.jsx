@@ -43,7 +43,7 @@ function LeaveCombined() {
             borderRadius: "20px",
           }}
         >
-          <LeaveForm />
+          <LeaveForm setTab={setTab} />
         </div>
       ) : (
         <LeaveStatus />

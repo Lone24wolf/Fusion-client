@@ -12,7 +12,7 @@ import {
   FileInput,
 } from "@mantine/core";
 import axios from "axios";
-import { Leave_Form_Submit } from "../../../routes/otheracademicRoutes";
+import { Leave_Form_Submit } from "../../../../../routes/otheracademicRoutes";
 
 function LeaveForm(props) {
   const roll = useSelector((state) => state.user.roll_no);

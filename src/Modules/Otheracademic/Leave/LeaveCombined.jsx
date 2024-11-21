@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@mantine/core";
-import LeaveForm from "../../../pages/Otheracademic/Leave/LeaveForm";
+import LeaveForm from "../pages/Otheracademic/Leave/LeaveForm";
 import LeaveStatus from "./LeaveStatus";
 // import ApproveLeave from "./ApproveLeave";
 function LeaveCombined() {

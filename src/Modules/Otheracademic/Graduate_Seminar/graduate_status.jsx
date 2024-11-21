@@ -20,6 +20,46 @@ function GraduateStatus() {
       venue: "Room L202",
       title: "AI in Healthcare",
     },
+    {
+      rollNo: "20MCS010",
+      semester: "3rd",
+      seminarDate: "2024-10-14",
+      mentor: "Dr. Shivdayal Patel",
+      venue: "Room L101",
+      title: "Blockchain and Security",
+    },
+    {
+      rollNo: "20MCS010",
+      semester: "3rd",
+      seminarDate: "2024-10-14",
+      mentor: "Dr. Shivdayal Patel",
+      venue: "Room L101",
+      title: "Blockchain and Security",
+    },
+    {
+      rollNo: "20MCS010",
+      semester: "3rd",
+      seminarDate: "2024-10-14",
+      mentor: "Dr. Shivdayal Patel",
+      venue: "Room L101",
+      title: "Blockchain and Security",
+    },
+    {
+      rollNo: "20MCS010",
+      semester: "3rd",
+      seminarDate: "2024-10-14",
+      mentor: "Dr. Shivdayal Patel",
+      venue: "Room L101",
+      title: "Blockchain and Security",
+    },
+    {
+      rollNo: "20MCS010",
+      semester: "3rd",
+      seminarDate: "2024-10-14",
+      mentor: "Dr. Shivdayal Patel",
+      venue: "Room L101",
+      title: "Blockchain and Security",
+    },
   ];
 
   return (

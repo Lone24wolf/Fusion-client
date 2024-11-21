@@ -57,7 +57,7 @@ function AssistantshipFormStatus() {
         striped
         highlightOnHover
         style={{
-          width: "90%", // Increase the width of the table
+          width: "250%", // Increase the width of the table
           backgroundColor: "transparent", // Remove the white card background
         }}
       >

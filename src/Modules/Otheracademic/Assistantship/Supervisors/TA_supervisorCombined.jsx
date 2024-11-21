@@ -8,31 +8,46 @@ function AssistantshipCombined() {
 
   return (
     <>
+      {/* Buttons Container */}
       <div
         style={{
-          margin: "20px 0 0 40px",
-          width: "350px",
+          width: "100%",
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "center", // Center buttons horizontally
+          position: "relative",
+          top: "20px", // Push buttons closer to the top
+          marginBottom: "10px", // Reduce space between buttons and content below
         }}
       >
-        <Button
-          variant={tab === 0 ? "filled" : "outline"}
-          onClick={() => setTab(0)}
-          style={{ marginRight: "10px", flexGrow: 1 }}
-        >
-          Assistantship Form
-        </Button>
-        <Button
-          variant={tab === 1 ? "filled" : "outline"}
-          onClick={() => setTab(1)}
-          style={{ flexGrow: 1 }}
-        >
-          Assistantship Status
-        </Button>
+        <div style={{ display: "flex", gap: "5px" }}>
+          {" "}
+          {/* Reduced button gap */}
+          <Button
+            variant={tab === 0 ? "filled" : "outline"}
+            onClick={() => setTab(0)}
+          >
+            Assistantship Form
+          </Button>
+          <Button
+            variant={tab === 1 ? "filled" : "outline"}
+            onClick={() => setTab(1)}
+          >
+            Assistantship Status
+          </Button>
+        </div>
       </div>
 
-      {tab === 0 ? <AssistantshipForm /> : <AssistantshipStatus />}
+      {/* Render Content Based on Tab */}
+      <div
+        style={{
+          marginTop: "40px", // Adjust spacing below buttons
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {tab === 0 ? <AssistantshipForm /> : <AssistantshipStatus />}
+      </div>
     </>
   );
 }

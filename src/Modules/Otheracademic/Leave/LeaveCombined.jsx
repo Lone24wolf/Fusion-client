@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@mantine/core";
-import LeaveForm from "../../../pages/Otheracademic/Leave/LeaveForm";
+import LeaveForm from "../pages/Otheracademic/Leave/LeaveForm";
 import LeaveStatus from "./LeaveStatus";
 // import ApproveLeave from "./ApproveLeave";
 function LeaveCombined() {
@@ -39,7 +39,7 @@ function LeaveCombined() {
         <div
           style={{
             margin: "45px 60px 0 60px",
-            backgroundColor: "#f0f2f5",
+            backgroundColor: "#ffffff",
             borderRadius: "20px",
           }}
         >

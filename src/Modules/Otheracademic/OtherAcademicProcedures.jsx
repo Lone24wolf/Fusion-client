@@ -63,6 +63,10 @@ function OtherAcadProcedures() {
     filteredTabItems = allTabItems.filter((_, index) =>
       [3, 6, 12].includes(index),
     );
+  } else if (role.startsWith("HOD")) {
+    filteredTabItems = allTabItems.filter((_, index) =>
+      [5, 11].includes(index),
+    );
   } else filteredTabItems = allTabItems;
 
   const handleTabChange = (direction) => {
@@ -141,6 +145,7 @@ function OtherAcadProcedures() {
           padding: "20px",
           borderRadius: "8px",
           marginTop: "20px",
+          marginLeft: "25px",
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
         }}
       >

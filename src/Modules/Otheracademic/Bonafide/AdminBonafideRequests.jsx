@@ -1,90 +1,61 @@
-import "./AdminBonafideRequests.css"; // Import the CSS file
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Paper, Switch, Button, Modal, Text } from "@mantine/core";
+import axios from "axios";
+import {
+  Fetch_Pending_Bonafide_Request,
+  Update_Bonafide_Status,
+} from "../../../routes/otheracademicRoutes/index"; // Adjust API paths if needed
 
-function AdminBonafideRequests() {
-  const data = [
-    {
-      rollNo: "22bcsxxx",
-      name: "Sample 1",
-      form: "22bcsxxx.pdf",
-      details: {
-        dateFrom: "2024-10-10",
-        dateTo: "2024-10-12",
-        leaveType: "Casual",
-        address: "123 Street, City",
-        purpose: "Personal Work",
-        hodCredential: "HOD123",
-        mobileNumber: "1234567890",
-        parentsMobile: "0987654321",
-        mobileDuringLeave: "1234567890",
-        semester: "5",
-        academicYear: "2024-2025",
-        dateOfApplication: "2024-10-01",
-      },
-    },
-    {
-      rollNo: "22bcsxxx",
-      name: "Sample 2",
-      form: "22bcsxxx.pdf",
-      details: {
-        dateFrom: "2024-10-15",
-        dateTo: "2024-10-20",
-        leaveType: "Medical",
-        address: "456 Avenue, City",
-        purpose: "Medical treatment",
-        hodCredential: "HOD456",
-        mobileNumber: "2234567890",
-        parentsMobile: "2987654321",
-        mobileDuringLeave: "2234567890",
-        semester: "5",
-        academicYear: "2024-2025",
-        dateOfApplication: "2024-10-05",
-      },
-    },
-    {
-      rollNo: "22bcsxxx",
-      name: "Sample 3",
-      form: "22bcsxxx.pdf",
-      details: {
-        dateFrom: "2024-10-25",
-        dateTo: "2024-10-30",
-        leaveType: "Medical",
-        address: "46 Dmart, City",
-        purpose: "Medical treatment",
-        hodCredential: "HOD456",
-        mobileNumber: "2233457890",
-        parentsMobile: "2987698721",
-        mobileDuringLeave: "2234097890",
-        semester: "3",
-        academicYear: "2024-2025",
-        dateOfApplication: "2024-10-15",
-      },
-    },
-  ];
-
-  const [status, setStatus] = useState(
-    data.map(() => ({
-      approveCheck: false,
-      rejectCheck: false,
-      submitted: false, // Track if the form has been submitted for this entry
-    })),
-  );
-
+function ApproveBonafide() {
+  const [bonafideRequests, setBonafideRequests] = useState([]);
+  const [status, setStatus] = useState([]);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
   const [opened, setOpened] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
+
+  const authToken = localStorage.getItem("authToken");
+
+  const fetchPendingBonafides = async () => {
+    try {
+      const response = await axios.get(Fetch_Pending_Bonafide_Request, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
+
+      setBonafideRequests(response.data);
+
+      // Initialize status for each Bonafide request
+      const initialStatus = response.data.map(() => ({
+        approveCheck: false,
+        rejectCheck: false,
+        submitted: false,
+      }));
+      setStatus(initialStatus);
+
+      // setLoading(false);
+    } catch (err) {
+      // setError("Error fetching Bonafide requests");
+      // setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPendingBonafides();
+  }, []);
 
   const handleToggle = (index, stat) => {
     setStatus((prevStatus) =>
       prevStatus.map((item, i) => {
         if (i === index) {
           if (stat.type === "approve") {
-            if (stat.value === true && item.rejectCheck === true) {
+            if (stat.value && item.rejectCheck) {
               return { ...item, approveCheck: true, rejectCheck: false };
             }
             return { ...item, approveCheck: stat.value };
           }
-          if (stat.value === true && item.approveCheck === true) {
+          if (stat.value && item.approveCheck) {
             return { ...item, approveCheck: false, rejectCheck: true };
           }
           return { ...item, rejectCheck: stat.value };
@@ -95,14 +66,13 @@ function AdminBonafideRequests() {
   };
 
   const handleViewForm = (index) => {
-    setSelectedStudent(data[index]);
+    setSelectedStudent(bonafideRequests[index]);
     setOpened(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const updatedStatus = status.map((entry) => {
       if (entry.approveCheck || entry.rejectCheck) {
-        // Mark as submitted if approved or rejected
         return { ...entry, submitted: true };
       }
       return entry;
@@ -110,14 +80,33 @@ function AdminBonafideRequests() {
 
     setStatus(updatedStatus);
 
-    const approvedLeaves = data.filter(
-      (_, index) => status[index].approveCheck,
+    const approvedBonafides = bonafideRequests.filter(
+      (_, index) => status[index]?.approveCheck,
     );
-    const rejectedLeaves = data.filter((_, index) => status[index].rejectCheck);
-    console.log("Approved Leaves:", approvedLeaves);
-    console.log("Rejected Leaves:", rejectedLeaves);
+    const rejectedBonafides = bonafideRequests.filter(
+      (_, index) => status[index]?.rejectCheck,
+    );
 
-    // Here we can handle the form submission (e.g., send data to the server)
+    // Submit data to the server if required
+    try {
+      const response = await axios.post(
+        Update_Bonafide_Status,
+        {
+          approvedBonafides: approvedBonafides.map((bonafide) => bonafide.id), // Sending only the ids
+          rejectedBonafides: rejectedBonafides.map((bonafide) => bonafide.id), // Sending only the ids
+        },
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        },
+      );
+      console.log("Status updated successfully:", response.data);
+    } catch (error) {
+      console.error("Error updating Bonafide status:", error);
+    }
+
+    fetchPendingBonafides();
   };
 
   return (
@@ -130,7 +119,6 @@ function AdminBonafideRequests() {
                 <th
                   style={{
                     borderRight: "1px solid white",
-                    borderLeft: "1px solid black",
                     textAlign: "center",
                   }}
                 >
@@ -138,7 +126,7 @@ function AdminBonafideRequests() {
                 </th>
                 <th
                   style={{
-                    borderRight: " 1px solid white",
+                    borderRight: "1px solid white",
                     textAlign: "center",
                   }}
                 >
@@ -146,7 +134,7 @@ function AdminBonafideRequests() {
                 </th>
                 <th
                   style={{
-                    borderRight: " 1px solid white",
+                    borderRight: "1px solid white",
                     textAlign: "center",
                   }}
                 >
@@ -154,24 +142,17 @@ function AdminBonafideRequests() {
                 </th>
                 <th
                   style={{
-                    borderRight: " 1px solid white",
+                    borderRight: "1px solid white",
                     textAlign: "center",
                   }}
                 >
                   View Form
                 </th>
-                <th
-                  style={{
-                    borderRight: "1px solid black",
-                    textAlign: "center",
-                  }}
-                >
-                  Current Status
-                </th>
+                <th style={{ textAlign: "center" }}>Current Status</th>
               </tr>
             </thead>
             <tbody>
-              {data.map((item, index) => (
+              {bonafideRequests.map((item, index) => (
                 <tr key={index}>
                   <td
                     style={{ border: "1px solid black", textAlign: "center" }}
@@ -190,8 +171,7 @@ function AdminBonafideRequests() {
                       maxWidth: "130px",
                     }}
                   >
-                    {/* Show switches if not submitted, otherwise show the status */}
-                    {!status[index].submitted ? (
+                    {!status[index]?.submitted ? (
                       <div
                         style={{
                           display: "flex",
@@ -199,9 +179,8 @@ function AdminBonafideRequests() {
                         }}
                       >
                         <Switch
-                          style={{ display: "flex", justifyContent: "center" }}
                           label="Approve"
-                          checked={status[index].approveCheck}
+                          checked={status[index]?.approveCheck}
                           onChange={(event) =>
                             handleToggle(index, {
                               type: "approve",
@@ -210,9 +189,8 @@ function AdminBonafideRequests() {
                           }
                         />
                         <Switch
-                          style={{ display: "flex", justifyContent: "center" }}
                           label="Reject"
-                          checked={status[index].rejectCheck}
+                          checked={status[index]?.rejectCheck}
                           onChange={(event) =>
                             handleToggle(index, {
                               type: "reject",
@@ -223,9 +201,9 @@ function AdminBonafideRequests() {
                       </div>
                     ) : (
                       <Text>
-                        {status[index].approveCheck
+                        {status[index]?.approveCheck
                           ? "Approved"
-                          : status[index].rejectCheck
+                          : status[index]?.rejectCheck
                             ? "Rejected"
                             : ""}
                       </Text>
@@ -241,19 +219,18 @@ function AdminBonafideRequests() {
                         cursor: "pointer",
                         textDecoration: "underline",
                         color: "blue",
-                        padding: 0,
                       }}
                       onClick={() => handleViewForm(index)}
                     >
-                      {item.form}
+                      View Form
                     </button>
                   </td>
                   <td
                     style={{
                       color: `${
-                        status[index].approveCheck
+                        status[index]?.approveCheck
                           ? "green"
-                          : status[index].rejectCheck
+                          : status[index]?.rejectCheck
                             ? "red"
                             : "orange"
                       }`,
@@ -261,9 +238,9 @@ function AdminBonafideRequests() {
                       textAlign: "center",
                     }}
                   >
-                    {status[index].approveCheck
+                    {status[index]?.approveCheck
                       ? "Approved"
-                      : status[index].rejectCheck
+                      : status[index]?.rejectCheck
                         ? "Rejected"
                         : "Pending"}
                   </td>
@@ -279,15 +256,10 @@ function AdminBonafideRequests() {
         </center>
       </Paper>
 
-      {/* Modal for viewing form details */}
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
-        title={
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <Text style={{ fontSize: "25px" }}>Student Form Details</Text>
-          </div>
-        }
+        title={<Text style={{ fontSize: "25px" }}>Student Form Details</Text>}
         centered
         overlaycolor="rgba(0, 0, 0, 0.6)"
         overlayblur={3}
@@ -296,38 +268,7 @@ function AdminBonafideRequests() {
         {selectedStudent && (
           <div>
             <Text>
-              <strong>Date From:</strong> {selectedStudent.details.dateFrom}
-            </Text>
-            <Text>
-              <strong>Date To:</strong> {selectedStudent.details.dateTo}
-            </Text>
-            <Text>
-              <strong>Leave Type:</strong> {selectedStudent.details.leaveType}
-            </Text>
-            <Text>
-              <strong>Address:</strong> {selectedStudent.details.address}
-            </Text>
-            <Text>
               <strong>Purpose:</strong> {selectedStudent.details.purpose}
-            </Text>
-            <Text>
-              <strong>HOD Credential:</strong>{" "}
-              {selectedStudent.details.hodCredential}
-            </Text>
-            <Text>
-              <strong>Mobile Number:</strong>{" "}
-              {selectedStudent.details.mobileNumber}
-            </Text>
-            <Text>
-              <strong>Parents' Mobile Number:</strong>{" "}
-              {selectedStudent.details.parentsMobile}
-            </Text>
-            <Text>
-              <strong>Mobile During Leave:</strong>{" "}
-              {selectedStudent.details.mobileDuringLeave}
-            </Text>
-            <Text>
-              <strong>Semester:</strong> {selectedStudent.details.semester}
             </Text>
             <Text>
               <strong>Academic Year:</strong>{" "}
@@ -337,6 +278,7 @@ function AdminBonafideRequests() {
               <strong>Date of Application:</strong>{" "}
               {selectedStudent.details.dateOfApplication}
             </Text>
+            {/* Add other details as necessary */}
           </div>
         )}
       </Modal>
@@ -344,4 +286,4 @@ function AdminBonafideRequests() {
   );
 }
 
-export default AdminBonafideRequests;
+export default ApproveBonafide;

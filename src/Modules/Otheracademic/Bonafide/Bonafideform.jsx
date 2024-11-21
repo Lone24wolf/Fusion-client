@@ -5,8 +5,8 @@ import axios from "axios";
 import { Bonafide_Form_Submit } from "../../../routes/otheracademicRoutes";
 
 function BonafideForm() {
-  const roll = "22BCS009";
-  const name = "Abhyuday Singh";
+  const roll = "22BCS046";
+  const name = "Nishanth kumar";
   const [formValues, setFormValues] = useState({
     student_name: name,
     roll_no: roll,

@@ -234,11 +234,11 @@ function LeaveStatus() {
                 <td
                   style={{
                     color: `${
-                      item.action === "Pending"
-                        ? "orange"
+                      item.action === "Rejected"
+                        ? "red"
                         : item.action === "Approved"
                           ? "green"
-                          : "red"
+                          : "orange"
                     }`,
                     border: "1px solid black",
                   }}

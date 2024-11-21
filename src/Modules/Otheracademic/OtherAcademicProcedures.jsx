@@ -17,7 +17,7 @@ import DeptAdminPage from "./Assistantship/Admins/Dept_admin";
 import DeanPage from "./Assistantship/Admins/dean";
 import AcadAdminPage from "./Assistantship/Admins/Acad_admin";
 import HoDPage from "./Assistantship/Admins/Hod";
-import LeaveFormPG from "./Leave/LeaveFormPG";
+import LeavePGCombined from "./Leave/LeavePGcombined";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
@@ -41,7 +41,7 @@ function OtherAcadProcedures() {
     { title: "Assistant Request Dean ", component: <DeanPage /> }, // 10
     { title: "Assistant Request HOD ", component: <HoDPage /> }, // 11
     { title: "Assistant Request Acadadmin ", component: <AcadAdminPage /> }, // 12
-    { title: "Leave PG", component: <LeaveFormPG /> }, // 13
+    { title: "Leave PG", component: <LeavePGCombined /> }, // 13
   ];
   let filteredTabItems = [];
   if (role === "student") {

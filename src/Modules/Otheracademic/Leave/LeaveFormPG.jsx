@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import PropTypes from "prop-types";
 import {
   Button,
   Text,
@@ -7,9 +9,15 @@ import {
   Textarea,
   Grid,
   Center,
+  FileInput,
 } from "@mantine/core";
+import axios from "axios";
+import { Leave_PG_Submit } from "../../../routes/otheracademicRoutes";
 
-function LeaveFormPG() {
+function LeaveFormPG(props) {
+  const roll = useSelector((state) => state.user.roll_no);
+  const name = useSelector((state) => state.user.username);
+
   const [formValues, setFormValues] = useState({
     dateFrom: "",
     dateTo: "",
@@ -18,6 +26,8 @@ function LeaveFormPG() {
     address: "",
     purpose: "",
     hodCredential: "",
+    ta_superCredential: "",
+    thesis_superCredential: "",
     mobileNumber: "",
     parentsMobile: "",
     mobileDuringLeave: "",
@@ -30,9 +40,54 @@ function LeaveFormPG() {
     setFormValues((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(formValues); // Submit your form here
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      console.error("No auth token found");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("student_name", name);
+    formData.append("roll_no", roll);
+    formData.append("date_from", formValues.dateFrom);
+    formData.append("date_to", formValues.dateTo);
+    formData.append("leave_type", formValues.leaveType);
+    formData.append("related_document", formValues.documents);
+    formData.append("address", formValues.address);
+    formData.append("purpose", formValues.purpose);
+    formData.append("hod_credential", formValues.hodCredential);
+    formData.append("ta_superCredential", formValues.ta_superCredential);
+    formData.append(
+      "thesis_superCredential",
+      formValues.thesis_superCredential,
+    );
+    formData.append("date_of_application", formValues.dateOfApplication);
+    formData.append("mobile_number", formValues.mobileNumber);
+    formData.append("parents_mobile", formValues.parentsMobile);
+    formData.append("mobile_during_leave", formValues.mobileDuringLeave);
+    formData.append("semester", formValues.semester);
+    formData.append("academic_year", formValues.academicYear);
+    if (props.setTab) {
+      props.setTab(1);
+    }
+
+    try {
+      const response = await axios.post(Leave_PG_Submit, formData, {
+        // change
+        headers: {
+          Authorization: `Token ${authToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Form submitted successfully:", response.data);
+    } catch (error) {
+      console.error(
+        "Error submitting the form:",
+        error.response?.data || error,
+      );
+    }
   };
 
   return (
@@ -60,13 +115,13 @@ function LeaveFormPG() {
                 outline: "none",
                 transition: "border-color 0.2s ease",
               }}
+              required
               onFocus={(e) => {
                 e.target.style.borderColor = "#80bdff";
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = "#ced4da";
               }}
-              required
             />
           </div>
         </Grid.Col>
@@ -93,13 +148,13 @@ function LeaveFormPG() {
                 outline: "none",
                 transition: "border-color 0.2s ease",
               }}
+              required
               onFocus={(e) => {
                 e.target.style.borderColor = "#80bdff";
               }}
               onBlur={(e) => {
                 e.target.style.borderColor = "#ced4da";
               }}
-              required
             />
           </div>
         </Grid.Col>
@@ -110,14 +165,14 @@ function LeaveFormPG() {
             withAsterisk
             required
             placeholder="Select Leave Type"
-            data={["Casual", "Medical"]}
+            data={["Casual", "Medical", "Vacation", "Duty"]}
             value={formValues.leaveType}
             onChange={(value) => handleChange("leaveType", value)}
           />
         </Grid.Col>
 
         <Grid.Col span={5}>
-          <TextInput
+          <FileInput
             type="file"
             label="Documents"
             placeholder="Choose File"
@@ -143,8 +198,6 @@ function LeaveFormPG() {
             label="Purpose"
             placeholder="Enter the purpose of leave"
             autosize
-            withAsterisk
-            required
             minRows={2}
             maxRows={4}
             value={formValues.purpose}
@@ -156,8 +209,8 @@ function LeaveFormPG() {
           <TextInput
             label="TA Supervisor (Credential)"
             placeholder="Enter TA Supervisor credential"
-            value={formValues.hodCredential}
-            onChange={(e) => handleChange("hodCredential", e.target.value)}
+            value={formValues.ta_superCredential}
+            onChange={(e) => handleChange("ta_superCredential", e.target.value)}
           />
         </Grid.Col>
 
@@ -165,8 +218,10 @@ function LeaveFormPG() {
           <TextInput
             label="Thesis Supervisor (Credential)"
             placeholder="Enter Thesis Supervisor credential"
-            value={formValues.mobileNumber}
-            onChange={(e) => handleChange("mobileNumber", e.target.value)}
+            value={formValues.thesis_superCredential}
+            onChange={(e) =>
+              handleChange("thesis_superCredential", e.target.value)
+            }
           />
         </Grid.Col>
 
@@ -174,17 +229,18 @@ function LeaveFormPG() {
           <TextInput
             label="HOD (Credential)"
             placeholder="Enter HOD credential"
-            value={formValues.parentsMobile}
-            onChange={(e) => handleChange("parentsMobile", e.target.value)}
+            value={formValues.hodCredential}
+            onChange={(e) => handleChange("hodCredential", e.target.value)}
           />
         </Grid.Col>
 
         <Grid.Col span={5}>
           <TextInput
             label="Mobile Number"
+            required
             placeholder="Enter your mobile number"
-            value={formValues.mobileDuringLeave}
-            onChange={(e) => handleChange("mobileDuringLeave", e.target.value)}
+            value={formValues.mobileNumber}
+            onChange={(e) => handleChange("mobileNumber", e.target.value)}
           />
         </Grid.Col>
 
@@ -193,9 +249,9 @@ function LeaveFormPG() {
             label="Parents Mobile Number"
             withAsterisk
             required
-            placeholder="Enter your parents mobile number"
-            value={formValues.semester}
-            onChange={(e) => handleChange("semester", e.target.value)}
+            placeholder="Enter your parents' mobile number"
+            value={formValues.parentsMobile}
+            onChange={(e) => handleChange("parentsMobile", e.target.value)}
           />
         </Grid.Col>
 
@@ -203,20 +259,46 @@ function LeaveFormPG() {
           <TextInput
             label="Mobile Number during leave"
             placeholder="Enter your mobile number during leave"
-            value={formValues.academicYear}
-            onChange={(e) => handleChange("academicYear", e.target.value)}
+            value={formValues.mobileDuringLeave}
+            onChange={(e) => handleChange("mobileDuringLeave", e.target.value)}
+          />
+        </Grid.Col>
+
+        <Grid.Col span={5}>
+          <Select
+            label="Semester"
+            required
+            placeholder="Enter your current semester"
+            data={[
+              { value: "1", label: "Semester 1" },
+              { value: "2", label: "Semester 2" },
+              { value: "3", label: "Semester 3" },
+              { value: "4", label: "Semester 4" },
+              { value: "5", label: "Semester 5" },
+              { value: "6", label: "Semester 6" },
+              { value: "7", label: "Semester 7" },
+              { value: "8", label: "Semester 8" },
+            ]}
+            onChange={(value) => handleChange("semester", value)} // Directly use the value
           />
         </Grid.Col>
       </Grid>
 
-      {/* Submit Button */}
       <Center>
-        <Button type="submit" mt="md" style={{ marginBottom: "20px" }}>
+        <Button
+          type="submit"
+          mt="md"
+          style={{ marginBottom: "20px", paddingTop: 2 }}
+        >
           Submit
         </Button>
       </Center>
     </form>
   );
 }
+
+LeaveFormPG.propTypes = {
+  setTab: PropTypes.func.isRequired, // Validate setTab as a required function
+};
 
 export default LeaveFormPG;

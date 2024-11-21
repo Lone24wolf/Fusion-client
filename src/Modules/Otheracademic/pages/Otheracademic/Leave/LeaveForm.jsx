@@ -253,7 +253,6 @@ function LeaveForm(props) {
               { value: "7", label: "Semester 7" },
               { value: "8", label: "Semester 8" },
             ]}
-            className="form-input"
             onChange={(value) => handleChange("semester", value)} // Directly use the value
           />
         </Grid.Col>

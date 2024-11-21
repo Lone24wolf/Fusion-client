@@ -40,7 +40,7 @@ function NoduesForm() {
       size="sm"
       // span={1200}
       style={{
-        backgroundColor: "#f7f7f7",
+        backgroundColor: "#ffffff",
         borderRadius: "8px",
         padding: "20px",
         width: "1000px", // Increase width

@@ -31,6 +31,8 @@
   "rules": {
     "import/prefer-default-export": "off",
     "no-param-reassign": "off",
+    "guard-for-in": "off",
+    "no-restricted-syntax": "off",
     "react/react-in-jsx-scope": 0,
     "react-hooks/exhaustive-deps": 0,
     "react/no-unescaped-entities": "off",

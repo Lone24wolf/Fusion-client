@@ -52,11 +52,11 @@ function OtherAcadProcedures() {
       roll_no[2] === "P"
     ) {
       filteredTabItems = allTabItems.filter((_, index) =>
-        [0, 2, 13].includes(index),
+        [0, 2, 4, 9, 13].includes(index),
       );
     } else {
       filteredTabItems = allTabItems.filter((_, index) =>
-        [0, 1, 2].includes(index),
+        [0, 1, 2, 4, 9, 11, 12].includes(index),
       );
     }
   } else if (role === "acadadmin") {

@@ -259,7 +259,7 @@ function LeaveForm(props) {
       </Grid>
 
       {/* Submit Button */}
-      <Center>
+      <Center style={{ marginTop: "10px" }}>
         <Button type="submit" mt="md" style={{ marginBottom: "20px" }}>
           Submit
         </Button>

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button } from "@mantine/core";
-import LeaveForm from "../pages/Otheracademic/Leave/LeaveForm";
-import LeaveStatus from "./LeaveStatus";
-// import ApproveLeave from "./ApproveLeave";
-function LeaveCombined() {
+import LeaveFormPG from "./LeaveFormPG";
+import LeavePGstatus from "./LeavePGstatus";
+
+function LeavePGCombined() {
   const [tab, setTab] = useState(0);
   return (
     <>
@@ -39,17 +39,17 @@ function LeaveCombined() {
         <div
           style={{
             margin: "45px 60px 0 60px",
-            backgroundColor: "#ffffff",
+            backgroundColor: "#f0f2f5",
             borderRadius: "20px",
           }}
         >
-          <LeaveForm setTab={setTab} />
+          <LeaveFormPG setTab={setTab} />
         </div>
       ) : (
-        <LeaveStatus />
+        <LeavePGstatus />
       )}
     </>
   );
 }
 
-export default LeaveCombined;
+export default LeavePGCombined;

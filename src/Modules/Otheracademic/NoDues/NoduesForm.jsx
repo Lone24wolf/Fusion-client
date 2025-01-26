@@ -40,7 +40,7 @@ function NoduesForm() {
       size="sm"
       // span={1200}
       style={{
-        backgroundColor: "#f7f7f7",
+        backgroundColor: "#ffffff",
         borderRadius: "8px",
         padding: "20px",
         width: "1000px", // Increase width
@@ -56,18 +56,6 @@ function NoduesForm() {
       >
         {/* Left Column */}
         <Grid.Col span={6}>
-          <TextInput
-            label="Roll no. (In Capital Letter)"
-            placeholder="Enter your roll number"
-            value={formData.rollNumber}
-            onChange={handleChange}
-            name="rollNumber"
-            radius="md"
-            mb="md"
-            style={{
-              margin: "10px",
-            }}
-          />
           <TextInput
             label="Student Name"
             placeholder="Enter your name"

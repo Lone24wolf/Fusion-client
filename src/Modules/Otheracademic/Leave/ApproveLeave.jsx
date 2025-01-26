@@ -1,90 +1,63 @@
-import "./leaveStatus.css"; // Import the CSS file
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Paper, Switch, Button, Modal, Text } from "@mantine/core";
+import axios from "axios";
+import {
+  Fetch_Pending_Request,
+  Update_Leave_Status,
+} from "../../../routes/otheracademicRoutes/index";
 
 function ApproveLeave() {
-  const data = [
-    {
-      rollNo: "22bcsxxx",
-      name: "Sample 1",
-      form: "22bcsxxx.pdf",
-      details: {
-        dateFrom: "2024-10-10",
-        dateTo: "2024-10-12",
-        leaveType: "Casual",
-        address: "123 Street, City",
-        purpose: "Personal Work",
-        hodCredential: "HOD123",
-        mobileNumber: "1234567890",
-        parentsMobile: "0987654321",
-        mobileDuringLeave: "1234567890",
-        semester: "5",
-        academicYear: "2024-2025",
-        dateOfApplication: "2024-10-01",
-      },
-    },
-    {
-      rollNo: "22bcsxxx",
-      name: "Sample 2",
-      form: "22bcsxxx.pdf",
-      details: {
-        dateFrom: "2024-10-15",
-        dateTo: "2024-10-20",
-        leaveType: "Medical",
-        address: "456 Avenue, City",
-        purpose: "Medical treatment",
-        hodCredential: "HOD456",
-        mobileNumber: "2234567890",
-        parentsMobile: "2987654321",
-        mobileDuringLeave: "2234567890",
-        semester: "5",
-        academicYear: "2024-2025",
-        dateOfApplication: "2024-10-05",
-      },
-    },
-    {
-      rollNo: "22bcsxxx",
-      name: "Sample 3",
-      form: "22bcsxxx.pdf",
-      details: {
-        dateFrom: "2024-10-25",
-        dateTo: "2024-10-30",
-        leaveType: "Medical",
-        address: "46 Dmart, City",
-        purpose: "Medical treatment",
-        hodCredential: "HOD456",
-        mobileNumber: "2233457890",
-        parentsMobile: "2987698721",
-        mobileDuringLeave: "2234097890",
-        semester: "3",
-        academicYear: "2024-2025",
-        dateOfApplication: "2024-10-15",
-      },
-    },
-  ];
-
-  const [status, setStatus] = useState(
-    data.map(() => ({
-      approveCheck: false,
-      rejectCheck: false,
-      submitted: false, // Track if the form has been submitted for this entry
-    })),
-  );
-
+  const [leaveRequests, setLeaveRequests] = useState([]);
+  const [status, setStatus] = useState([]);
   const [opened, setOpened] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  // const [loading,setLoading]=useState()
+  // const [error,setError]=useState()
+
+  const authToken = localStorage.getItem("authToken");
+
+  const fetchPendingLeaves = async () => {
+    try {
+      const response = await axios.get(Fetch_Pending_Request, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
+
+      // console.log(response);
+
+      setLeaveRequests(response.data);
+      // Initialize status for each leave request
+      const initialStatus = response.data.map(() => ({
+        approveCheck: false,
+        rejectCheck: false,
+        submitted: false,
+      }));
+      setStatus(initialStatus);
+
+      // setLoading(false);
+    } catch (err) {
+      // setError("Error fetching leave requests");
+      // setLoading(false);
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchPendingLeaves();
+  }, []);
 
   const handleToggle = (index, stat) => {
     setStatus((prevStatus) =>
       prevStatus.map((item, i) => {
         if (i === index) {
           if (stat.type === "approve") {
-            if (stat.value === true && item.rejectCheck === true) {
+            if (stat.value && item.rejectCheck) {
               return { ...item, approveCheck: true, rejectCheck: false };
             }
             return { ...item, approveCheck: stat.value };
           }
-          if (stat.value === true && item.approveCheck === true) {
+          if (stat.value && item.approveCheck) {
             return { ...item, approveCheck: false, rejectCheck: true };
           }
           return { ...item, rejectCheck: stat.value };
@@ -95,14 +68,13 @@ function ApproveLeave() {
   };
 
   const handleViewForm = (index) => {
-    setSelectedStudent(data[index]);
+    setSelectedStudent(leaveRequests[index]);
     setOpened(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const updatedStatus = status.map((entry) => {
       if (entry.approveCheck || entry.rejectCheck) {
-        // Mark as submitted if approved or rejected
         return { ...entry, submitted: true };
       }
       return entry;
@@ -110,14 +82,36 @@ function ApproveLeave() {
 
     setStatus(updatedStatus);
 
-    const approvedLeaves = data.filter(
-      (_, index) => status[index].approveCheck,
+    const approvedLeaves = leaveRequests.filter(
+      (_, index) => status[index]?.approveCheck,
     );
-    const rejectedLeaves = data.filter((_, index) => status[index].rejectCheck);
+    const rejectedLeaves = leaveRequests.filter(
+      (_, index) => status[index]?.rejectCheck,
+    );
+
     console.log("Approved Leaves:", approvedLeaves);
     console.log("Rejected Leaves:", rejectedLeaves);
 
-    // Here we can handle the form submission (e.g., send data to the server)
+    // Submit data to the server if required
+    try {
+      const response = await axios.post(
+        Update_Leave_Status,
+        {
+          approvedLeaves: approvedLeaves.map((leave) => leave.id), // Sending only the ids
+          rejectedLeaves: rejectedLeaves.map((leave) => leave.id), // Sending only the ids
+        },
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        },
+      );
+      console.log("Status updated successfully:", response.data);
+    } catch (error) {
+      console.error("Error updating leave status:", error);
+    }
+
+    fetchPendingLeaves();
   };
 
   return (
@@ -130,7 +124,6 @@ function ApproveLeave() {
                 <th
                   style={{
                     borderRight: "1px solid white",
-                    borderLeft: "1px solid black",
                     textAlign: "center",
                   }}
                 >
@@ -138,7 +131,7 @@ function ApproveLeave() {
                 </th>
                 <th
                   style={{
-                    borderRight: " 1px solid white",
+                    borderRight: "1px solid white",
                     textAlign: "center",
                   }}
                 >
@@ -146,7 +139,7 @@ function ApproveLeave() {
                 </th>
                 <th
                   style={{
-                    borderRight: " 1px solid white",
+                    borderRight: "1px solid white",
                     textAlign: "center",
                   }}
                 >
@@ -154,24 +147,17 @@ function ApproveLeave() {
                 </th>
                 <th
                   style={{
-                    borderRight: " 1px solid white",
+                    borderRight: "1px solid white",
                     textAlign: "center",
                   }}
                 >
                   View Form
                 </th>
-                <th
-                  style={{
-                    borderRight: "1px solid black",
-                    textAlign: "center",
-                  }}
-                >
-                  Current Status
-                </th>
+                <th style={{ textAlign: "center" }}>Current Status</th>
               </tr>
             </thead>
             <tbody>
-              {data.map((item, index) => (
+              {leaveRequests.map((item, index) => (
                 <tr key={index}>
                   <td
                     style={{ border: "1px solid black", textAlign: "center" }}
@@ -190,8 +176,7 @@ function ApproveLeave() {
                       maxWidth: "130px",
                     }}
                   >
-                    {/* Show switches if not submitted, otherwise show the status */}
-                    {!status[index].submitted ? (
+                    {!status[index]?.submitted ? (
                       <div
                         style={{
                           display: "flex",
@@ -199,9 +184,8 @@ function ApproveLeave() {
                         }}
                       >
                         <Switch
-                          style={{ display: "flex", justifyContent: "center" }}
                           label="Approve"
-                          checked={status[index].approveCheck}
+                          checked={status[index]?.approveCheck}
                           onChange={(event) =>
                             handleToggle(index, {
                               type: "approve",
@@ -210,9 +194,8 @@ function ApproveLeave() {
                           }
                         />
                         <Switch
-                          style={{ display: "flex", justifyContent: "center" }}
                           label="Reject"
-                          checked={status[index].rejectCheck}
+                          checked={status[index]?.rejectCheck}
                           onChange={(event) =>
                             handleToggle(index, {
                               type: "reject",
@@ -223,9 +206,9 @@ function ApproveLeave() {
                       </div>
                     ) : (
                       <Text>
-                        {status[index].approveCheck
+                        {status[index]?.approveCheck
                           ? "Approved"
-                          : status[index].rejectCheck
+                          : status[index]?.rejectCheck
                             ? "Rejected"
                             : ""}
                       </Text>
@@ -241,19 +224,18 @@ function ApproveLeave() {
                         cursor: "pointer",
                         textDecoration: "underline",
                         color: "blue",
-                        padding: 0,
                       }}
                       onClick={() => handleViewForm(index)}
                     >
-                      {item.form}
+                      View Form
                     </button>
                   </td>
                   <td
                     style={{
                       color: `${
-                        status[index].approveCheck
+                        status[index]?.approveCheck
                           ? "green"
-                          : status[index].rejectCheck
+                          : status[index]?.rejectCheck
                             ? "red"
                             : "orange"
                       }`,
@@ -261,9 +243,9 @@ function ApproveLeave() {
                       textAlign: "center",
                     }}
                   >
-                    {status[index].approveCheck
+                    {status[index]?.approveCheck
                       ? "Approved"
-                      : status[index].rejectCheck
+                      : status[index]?.rejectCheck
                         ? "Rejected"
                         : "Pending"}
                   </td>
@@ -279,15 +261,10 @@ function ApproveLeave() {
         </center>
       </Paper>
 
-      {/* Modal for viewing form details */}
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
-        title={
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <Text style={{ fontSize: "25px" }}>Student Form Details</Text>
-          </div>
-        }
+        title={<Text style={{ fontSize: "25px" }}>Student Form Details</Text>}
         centered
         overlaycolor="rgba(0, 0, 0, 0.6)"
         overlayblur={3}

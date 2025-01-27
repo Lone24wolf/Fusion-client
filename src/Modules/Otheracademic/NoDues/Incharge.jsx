@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Select, Button, Flex, Table } from "@mantine/core";
+import { Select, Button, Table } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import styles from "./Incharge.module.css";
 
 function Incharge() {
@@ -80,16 +81,24 @@ function Incharge() {
       ]);
     }
   };
+  const isAboveXs = useMediaQuery("(min-width: 640px)");
 
   return (
     <div>
-      <Flex justify="space-between" align="center" mt="lg">
+      <div
+        style={{
+          display: isAboveXs ? "flex" : "block",
+          alignItems: isAboveXs ? "flex-end" : "",
+        }}
+      >
         <Select
           data={["2021", "2022", "2023", "2024"]}
           label="Select Batch"
           value={batch}
           onChange={setBatch}
           placeholder="Choose a batch"
+          mr={10}
+          mb={10}
         />
         <Select
           data={["CSE", "ECE", "SM", "ME", "Design"]}
@@ -97,9 +106,14 @@ function Incharge() {
           value={discipline}
           onChange={setDiscipline}
           placeholder="Choose a discipline"
+          mr={10}
+          mb={10}
         />
-        <Button onClick={handleFetchStudents}>Fetch Students</Button>
-      </Flex>
+        <Button mb={10} onClick={handleFetchStudents}>
+          Fetch <br />
+          Students
+        </Button>
+      </div>
 
       <div className={styles["table-box"]}>
         <h3>Cleared No Dues</h3>

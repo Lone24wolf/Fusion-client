@@ -39,7 +39,7 @@ function BonafideCombined() {
           Bonafide Form Status
         </Button>
       </div>
-      {tab === 0 ? <BonafideForm /> : <BonafideFormStatus />}
+      {tab === 0 ? <BonafideForm setTab={setTab} /> : <BonafideFormStatus />}
     </>
   );
 }

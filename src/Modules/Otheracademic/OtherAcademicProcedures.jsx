@@ -89,6 +89,7 @@ function OtherAcadProcedures() {
       <CustomBreadcrumbs />
       <Flex justify="space-between" align="center" mt="lg">
         <Flex
+          style={{ width: isAboveXs ? "" : "330px" }}
           justify="flex-start"
           align="center"
           gap={{ base: "0.5rem", md: "1rem" }}

@@ -155,12 +155,20 @@ function ApproveBonafide() {
               {bonafideRequests.map((item, index) => (
                 <tr key={index}>
                   <td
-                    style={{ border: "1px solid black", textAlign: "center" }}
+                    style={{
+                      border: "1px solid black",
+                      textAlign: "center",
+                      minWidth: "100px",
+                    }}
                   >
                     {item.rollNo}
                   </td>
                   <td
-                    style={{ border: "1px solid black", textAlign: "center" }}
+                    style={{
+                      border: "1px solid black",
+                      textAlign: "center",
+                      minWidth: "140px",
+                    }}
                   >
                     {item.name}
                   </td>
@@ -168,7 +176,7 @@ function ApproveBonafide() {
                     style={{
                       border: "1px solid black",
                       textAlign: "center",
-                      maxWidth: "130px",
+                      minWidth: "245px",
                     }}
                   >
                     {!status[index]?.submitted ? (
@@ -210,7 +218,11 @@ function ApproveBonafide() {
                     )}
                   </td>
                   <td
-                    style={{ border: "1px solid black", textAlign: "center" }}
+                    style={{
+                      border: "1px solid black",
+                      textAlign: "center",
+                      minWidth: "100px",
+                    }}
                   >
                     <button
                       style={{
@@ -236,6 +248,7 @@ function ApproveBonafide() {
                       }`,
                       border: "1px solid black",
                       textAlign: "center",
+                      minWidth: "100px",
                     }}
                   >
                     {status[index]?.approveCheck

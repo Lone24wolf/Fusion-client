@@ -47,7 +47,7 @@
     "no-nested-ternary": 0,
     "import/no-extraneous-dependencies": "off",
     "jsx-a11y/label-has-associated-control": "off",
-        "jsx-a11y/label-has-for": "off",
+    "jsx-a11y/label-has-for": "off",
     "consistent-return": "off",
     "import/extensions": "off",
     "prettier/prettier": [

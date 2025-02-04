@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Assistantship_Form_Submit } from "../../../../routes/otheracademicRoutes";
+
 export default function AssistantshipForm() {
   const [formData, setFormData] = useState({
     student_name: "John Doe",
@@ -29,7 +30,7 @@ export default function AssistantshipForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitting form...");
-    
+
     // Check for missing required fields
     const requiredFields = [
       "discipline",
@@ -62,16 +63,11 @@ export default function AssistantshipForm() {
     }
 
     try {
-      const response = await axios.post(
-         Assistantship_Form_Submit,
-        form,
-        {
-          headers: {
-            Authorization: `Token ${authToken}`,
-             
-          },
-        }
-      );
+      const response = await axios.post(Assistantship_Form_Submit, form, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
       alert(response.data.message || "Form submitted successfully!");
     } catch (error) {
       console.error(error);

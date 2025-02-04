@@ -17,16 +17,19 @@ function ApproveAssistantship() {
   const fetchPendingAssistantships = async () => {
     try {
       console.log("Fetching pending assistantship requests...");
-      const response = await axios.get(Hod_Fetch_Pending_Assistantship_Requests, {
-        headers: {
-          Authorization: `Token ${authToken}`,
+      const response = await axios.get(
+        Hod_Fetch_Pending_Assistantship_Requests,
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
         },
-      });
+      );
       console.log("Response from server:", response.data);
-  
+
       if (response.status === 200 && Array.isArray(response.data)) {
         setAssistantshipRequests(response.data);
-  
+
         // Initialize status for each assistantship request
         const initialStatus = response.data.map(() => ({
           approveCheck: false,
@@ -62,7 +65,7 @@ function ApproveAssistantship() {
           return { ...item, rejectCheck: stat.value };
         }
         return item;
-      })
+      }),
     );
   };
 
@@ -82,10 +85,10 @@ function ApproveAssistantship() {
     setStatus(updatedStatus);
 
     const approvedRequests = assistantshipRequests.filter(
-      (_, index) => status[index]?.approveCheck
+      (_, index) => status[index]?.approveCheck,
     );
     const rejectedRequests = assistantshipRequests.filter(
-      (_, index) => status[index]?.rejectCheck
+      (_, index) => status[index]?.rejectCheck,
     );
 
     try {
@@ -99,7 +102,7 @@ function ApproveAssistantship() {
           headers: {
             Authorization: `Token ${authToken}`,
           },
-        }
+        },
       );
       console.log("Status updated successfully:", response.data);
     } catch (error) {
@@ -116,10 +119,20 @@ function ApproveAssistantship() {
           <Table striped highlightOnHover className="status-table">
             <thead>
               <tr>
-                <th style={{ borderRight: "1px solid white", textAlign: "center" }}>
+                <th
+                  style={{
+                    borderRight: "1px solid white",
+                    textAlign: "center",
+                  }}
+                >
                   Roll No
                 </th>
-                <th style={{ borderRight: "1px solid white", textAlign: "center" }}>
+                <th
+                  style={{
+                    borderRight: "1px solid white",
+                    textAlign: "center",
+                  }}
+                >
                   Approve/Reject
                 </th>
                 <th style={{ textAlign: "center" }}>View Form</th>
@@ -129,12 +142,21 @@ function ApproveAssistantship() {
             <tbody>
               {assistantshipRequests.map((item, index) => (
                 <tr key={index}>
-                  <td style={{ border: "1px solid black", textAlign: "center" }}>
+                  <td
+                    style={{ border: "1px solid black", textAlign: "center" }}
+                  >
                     {item.roll_no}
                   </td>
-                  <td style={{ border: "1px solid black", textAlign: "center" }}>
+                  <td
+                    style={{ border: "1px solid black", textAlign: "center" }}
+                  >
                     {!status[index]?.submitted ? (
-                      <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-evenly",
+                        }}
+                      >
                         <Switch
                           label="Approve"
                           checked={status[index]?.approveCheck}
@@ -161,12 +183,14 @@ function ApproveAssistantship() {
                         {status[index]?.approveCheck
                           ? "Approved"
                           : status[index]?.rejectCheck
-                          ? "Rejected"
-                          : ""}
+                            ? "Rejected"
+                            : ""}
                       </Text>
                     )}
                   </td>
-                  <td style={{ border: "1px solid black", textAlign: "center" }}>
+                  <td
+                    style={{ border: "1px solid black", textAlign: "center" }}
+                  >
                     <button
                       style={{
                         background: "none",
@@ -186,8 +210,8 @@ function ApproveAssistantship() {
                         status[index]?.approveCheck
                           ? "green"
                           : status[index]?.rejectCheck
-                          ? "red"
-                          : "orange"
+                            ? "red"
+                            : "orange"
                       }`,
                       border: "1px solid black",
                       textAlign: "center",
@@ -196,8 +220,8 @@ function ApproveAssistantship() {
                     {status[index]?.approveCheck
                       ? "Approved"
                       : status[index]?.rejectCheck
-                      ? "Rejected"
-                      : "Pending"}
+                        ? "Rejected"
+                        : "Pending"}
                   </td>
                 </tr>
               ))}
@@ -238,7 +262,8 @@ function ApproveAssistantship() {
               <strong>TA Supervisor:</strong> {selectedStudent.ta_supervisor}
             </Text>
             <Text>
-              <strong>Thesis Supervisor:</strong> {selectedStudent.thesis_supervisor}
+              <strong>Thesis Supervisor:</strong>{" "}
+              {selectedStudent.thesis_supervisor}
             </Text>
             <Text>
               <strong>Applicability:</strong> {selectedStudent.applicability}

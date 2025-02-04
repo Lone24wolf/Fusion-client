@@ -3,7 +3,6 @@
 - [Standard commit message](#standard-commit-message-📦)
 - [Before making a PR](#before-making-a-pr)
 
-
 ## Standard commit message 📦
 
 This project is using the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) standard. Please follow these steps to ensure your commit messages are standardized:

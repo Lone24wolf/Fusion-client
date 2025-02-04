@@ -56,11 +56,7 @@ function OtherAcadProcedures() {
       );
     } else {
       filteredTabItems = allTabItems.filter((_, index) =>
-<<<<<<< HEAD
-        [0, 1, 2, 4, 9, 11, 12].includes(index),
-=======
         [0, 1, 2, 9].includes(index),
->>>>>>> upstream/ac-4
       );
     }
   } else if (role === "acadadmin") {

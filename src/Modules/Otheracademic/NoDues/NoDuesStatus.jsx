@@ -74,24 +74,6 @@ function NoDuesStatus() {
   ));
 
   return (
-    // <Paper
-    //   shadow="md"
-    //   padding="sm"
-    //   radius="md"
-    //   style={{ backgroundColor: "#f9f9f9" }}
-    // >
-    // <Grid
-    //   style={{
-    //     marginTop: "20px",
-    //   }}
-    // >
-    //   {/* <Grid.Col span={12}>
-    //       <Text size="25px" weight={1000} align="center" mb="md">
-    //         No-Dues Status
-    //       </Text>
-    //     </Grid.Col> */}
-
-    //   <Grid.Col style={{width:"800px"}} span={12}>
     <center>
       <ScrollArea style={{ width: isAboveMd ? "800px" : "" }}>
         <Table

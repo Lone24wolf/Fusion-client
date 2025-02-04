@@ -19,7 +19,7 @@ function AssistantshipStatus() {
         const response = await axios.post(
           Get_Assistantship_Status,
           { roll_no: roll, username: name },
-          { headers: { Authorization: `Token ${authToken}` } },
+          { headers: { Authorization: `Token ${authToken}` } }
         );
         console.log("API Response:", response.data); // Log response data
 
@@ -35,7 +35,7 @@ function AssistantshipStatus() {
               ...item,
               status,
             };
-          }),
+          })
         );
       } catch (err) {
         setError("Failed to fetch Assistantship requests. Please try again.");
@@ -82,9 +82,7 @@ function AssistantshipStatus() {
                 <td>{item.applicability}</td>
                 <td>{item.ta_supervisor}</td>
                 <td>{item.thesis_supervisor}</td>
-                <td
-                  className={`status-${item.status.toLowerCase().replace(/\s/g, "-")}`}
-                >
+                <td className={`status-${item.status.toLowerCase().replace(/\s/g, "-")}`}>
                   {item.status}
                 </td>
               </tr>
@@ -97,3 +95,5 @@ function AssistantshipStatus() {
 }
 
 export default AssistantshipStatus;
+
+

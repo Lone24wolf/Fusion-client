@@ -2,6 +2,7 @@ import { CaretCircleLeft, CaretCircleRight } from "@phosphor-icons/react";
 import { Tabs, Button, Flex, Text } from "@mantine/core";
 import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
+import { useMediaQuery } from "@mantine/hooks";
 import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
@@ -81,11 +82,14 @@ function OtherAcadProcedures() {
     });
   };
 
+  const isAboveXs = useMediaQuery("(min-width: 530px)");
+
   return (
     <>
       <CustomBreadcrumbs />
       <Flex justify="space-between" align="center" mt="lg">
         <Flex
+          style={{ width: isAboveXs ? "" : "330px" }}
           justify="flex-start"
           align="center"
           gap={{ base: "0.5rem", md: "1rem" }}
@@ -144,8 +148,8 @@ function OtherAcadProcedures() {
           backgroundColor: "#ffffff",
           padding: "20px",
           borderRadius: "8px",
-          marginTop: "20px",
-          marginLeft: "25px",
+          marginTop: isAboveXs ? "20px" : "0px",
+          marginLeft: isAboveXs ? "25px" : "0px",
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
         }}
       >

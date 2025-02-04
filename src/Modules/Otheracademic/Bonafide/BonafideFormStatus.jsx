@@ -22,7 +22,9 @@ function BonafideFormStatus() {
           { roll_no: roll, username: name },
           { headers: { Authorization: `Token ${authToken}` } },
         );
-        setData(response.data);
+
+        // Reverse the order of data to show the most recent first
+        setData(response.data.reverse());
       } catch (err) {
         setError("Failed to fetch Bonafide requests. Please try again.");
         console.error("Error fetching bonafide status:", err);

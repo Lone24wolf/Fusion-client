@@ -1,12 +1,13 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { TextInput, Button, Select, Grid, Title, Paper } from "@mantine/core";
 import "./BonafideForm.css";
 import axios from "axios";
 import { Bonafide_Form_Submit } from "../../../routes/otheracademicRoutes";
 
-function BonafideForm() {
-  const roll = "22BCS046";
-  const name = "Nishanth kumar";
+function BonafideForm({ setTab }) {
+  const roll = "";
+  const name = "";
   const [formValues, setFormValues] = useState({
     student_name: name,
     roll_no: roll,
@@ -14,6 +15,7 @@ function BonafideForm() {
     branch: "",
     semester: "",
   });
+
   const handleChange = (field, value) => {
     setFormValues((prev) => ({ ...prev, [field]: value }));
   };
@@ -29,8 +31,8 @@ function BonafideForm() {
     formData.append("student_name", name);
     formData.append("roll_no", roll);
     formData.append("purpose", formValues.purpose);
-    formData.append("branch", "CSE");
-    formData.append("semester", "6");
+    formData.append("branch", formValues.branch);
+    formData.append("semester", formValues.semester);
 
     try {
       const response = await axios.post(Bonafide_Form_Submit, formData, {
@@ -40,6 +42,9 @@ function BonafideForm() {
       });
 
       console.log("Form submitted successfully:", response.data);
+
+      // After successful form submission, change the tab to "Bonafide Form Status"
+      setTab(1);
     } catch (error) {
       console.error(
         "Error submitting the form:",
@@ -65,7 +70,7 @@ function BonafideForm() {
           </Grid.Col>
           <Grid.Col span={6}>
             <Select
-              label="branch"
+              label="Branch"
               placeholder="Select your branch"
               data={[
                 { value: "CSE", label: "Computer Science and Engineering" },
@@ -79,12 +84,12 @@ function BonafideForm() {
               ]}
               required
               className="form-input"
-              // onChange={(e) => handleChange("branch", e.target.value)}
+              onChange={(value) => handleChange("branch", value)}
             />
           </Grid.Col>
           <Grid.Col span={6}>
             <Select
-              label="semester"
+              label="Semester"
               placeholder="Select your semester"
               data={[
                 { value: "1", label: "Semester 1" },
@@ -98,12 +103,12 @@ function BonafideForm() {
               ]}
               required
               className="form-input"
-              // onChange={(e) => handleChange("semester", e.target.value)}
+              onChange={(value) => handleChange("semester", value)}
             />
           </Grid.Col>
           <Grid.Col span={12}>
             <TextInput
-              label="purpose"
+              label="Purpose"
               placeholder="Enter the purpose of the bonafide certificate"
               required
               className="form-input"
@@ -118,5 +123,9 @@ function BonafideForm() {
     </Paper>
   );
 }
+
+BonafideForm.propTypes = {
+  setTab: PropTypes.func.isRequired,
+};
 
 export default BonafideForm;

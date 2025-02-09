@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Assistantship_Form_Submit } from "../../../../routes/otheracademicRoutes";
-import "./TA_supervisor.css"; // Import the CSS file for styling
 
 export default function AssistantshipForm() {
   const [formData, setFormData] = useState({
@@ -15,17 +14,15 @@ export default function AssistantshipForm() {
     applicability: "",
     ta_supervisor: "",
     thesis_supervisor: "",
-    date_applied: new Date().toISOString().split("T")[0],
+    date_applied: new Date().toISOString().split("T")[0], // Default to today's date
     hod: "",
   });
 
-  // Handle text and select field changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  // Handle file input change
   const handleFileChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -33,11 +30,11 @@ export default function AssistantshipForm() {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitting form...");
 
-    // Validate required fields
+    // Check for missing required fields using .some()
     const requiredFields = [
       "discipline",
       "date_from",
@@ -50,23 +47,20 @@ export default function AssistantshipForm() {
       "hod",
     ];
 
-    const missingFields = requiredFields.filter((field) => !formData[field]);
-
-    if (missingFields.length > 0) {
-      alert(
-        `Please fill out the following fields: ${missingFields.join(", ")}`,
-      );
+    const missingField = requiredFields.find((field) => !formData[field]);
+    if (missingField) {
+      alert(`Please fill out the "${missingField}" field.`);
       return;
     }
 
-    // Prepare the form data for submission
     const form = new FormData();
-    Object.keys(formData).forEach((key) => {
-      form.append(key, formData[key]);
+    Object.entries(formData).forEach(([key, value]) => {
+      form.append(key, value);
     });
 
     const authToken = localStorage.getItem("authToken");
     if (!authToken) {
+      console.error("No auth token found");
       alert("Authentication failed. Please log in again.");
       return;
     }
@@ -79,167 +73,85 @@ export default function AssistantshipForm() {
       });
       alert(response.data.message || "Form submitted successfully!");
     } catch (error) {
-      console.error("Form submission error:", error);
-      alert(
-        error.response?.data?.message ||
-          "Error submitting the form. Please try again.",
-      );
+      console.error(error);
+      alert("Error submitting the form. Please try again.");
     }
   };
 
   return (
-    <div className="assistantship-paper">
-      <h2 className="form-title">Assistantship Form</h2>
-      <form onSubmit={handleSubmit} className="assistantship-form">
-        <div className="assistantship-grid">
-          {/* Left Column */}
-          <div className="input-container">
-            <label htmlFor="discipline" className="input-label">
-              Discipline
-            </label>
-            <input
-              type="text"
-              id="discipline"
-              name="discipline"
-              placeholder="Enter your discipline"
-              className="assistantship-input"
-              value={formData.discipline}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-container">
-            <label htmlFor="date_from" className="input-label">
-              From Date
-            </label>
-            <input
-              type="date"
-              id="date_from"
-              name="date_from"
-              className="assistantship-input"
-              value={formData.date_from}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-container">
-            <label htmlFor="date_to" className="input-label">
-              To Date
-            </label>
-            <input
-              type="date"
-              id="date_to"
-              name="date_to"
-              className="assistantship-input"
-              value={formData.date_to}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-container">
-            <label htmlFor="bank_account_no" className="input-label">
-              Bank Account Number
-            </label>
-            <input
-              type="text"
-              id="bank_account_no"
-              name="bank_account_no"
-              placeholder="Enter your bank account number"
-              className="assistantship-input"
-              value={formData.bank_account_no}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-container">
-            <label htmlFor="signature" className="input-label">
-              Upload Signature
-            </label>
-            <input
-              type="file"
-              id="signature"
-              name="signature"
-              className="assistantship-input"
-              accept=".png,.jpg,.jpeg"
-              onChange={handleFileChange}
-              required
-            />
-          </div>
-
-          {/* Right Column */}
-          <div className="input-container">
-            <label htmlFor="applicability" className="input-label">
-              Applicability
-            </label>
-            <input
-              type="text"
-              id="applicability"
-              name="applicability"
-              placeholder="Enter applicability"
-              className="assistantship-input"
-              value={formData.applicability}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-container">
-            <label htmlFor="ta_supervisor" className="input-label">
-              TA Supervisor
-            </label>
-            <input
-              type="text"
-              id="ta_supervisor"
-              name="ta_supervisor"
-              placeholder="Enter TA supervisor's name"
-              className="assistantship-input"
-              value={formData.ta_supervisor}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-container">
-            <label htmlFor="thesis_supervisor" className="input-label">
-              Thesis Supervisor
-            </label>
-            <input
-              type="text"
-              id="thesis_supervisor"
-              name="thesis_supervisor"
-              placeholder="Enter thesis supervisor's name"
-              className="assistantship-input"
-              value={formData.thesis_supervisor}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="input-container">
-            <label htmlFor="hod" className="input-label">
-              HOD
-            </label>
-            <input
-              type="text"
-              id="hod"
-              name="hod"
-              placeholder="Enter HOD's name"
-              className="assistantship-input"
-              value={formData.hod}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        </div>
-
-        <button type="submit" className="submit-btn">
-          Submit
-        </button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} style={{ maxWidth: "500px", margin: "auto" }}>
+      <input
+        type="text"
+        name="discipline"
+        placeholder="Discipline"
+        value={formData.discipline}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="date"
+        name="date_from"
+        value={formData.date_from}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="date"
+        name="date_to"
+        value={formData.date_to}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="bank_account_no"
+        placeholder="Bank Account Number"
+        value={formData.bank_account_no}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="file"
+        name="signature"
+        accept=".png,.jpg,.jpeg"
+        onChange={handleFileChange}
+        required
+      />
+      <input
+        type="text"
+        name="applicability"
+        placeholder="Applicability"
+        value={formData.applicability}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="ta_supervisor"
+        placeholder="TA Supervisor"
+        value={formData.ta_supervisor}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="thesis_supervisor"
+        placeholder="Thesis Supervisor"
+        value={formData.thesis_supervisor}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="hod"
+        placeholder="HOD"
+        value={formData.hod}
+        onChange={handleChange}
+        required
+      />
+      <button type="submit" style={{ marginTop: "20px", padding: "10px 20px" }}>
+        Submit
+      </button>
+    </form>
   );
 }

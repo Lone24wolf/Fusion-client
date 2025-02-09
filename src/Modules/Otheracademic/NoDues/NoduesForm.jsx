@@ -55,7 +55,7 @@ function NoduesForm() {
         }}
       >
         {/* Left Column */}
-        <Grid.Col span={6}>
+        <Grid.Col span={{ base: 12, sm: 6 }}>
           <TextInput
             label="Student Name"
             placeholder="Enter your name"
@@ -131,7 +131,7 @@ function NoduesForm() {
         </Grid.Col>
 
         {/* Right Column */}
-        <Grid.Col span={6}>
+        <Grid.Col span={{ base: 12, sm: 6 }}>
           <TextInput
             label="Acad (Credential)"
             placeholder="Credential"

@@ -2,6 +2,7 @@ import { CaretCircleLeft, CaretCircleRight } from "@phosphor-icons/react";
 import { Tabs, Button, Flex, Text } from "@mantine/core";
 import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
+import { useMediaQuery } from "@mantine/hooks";
 import classes from "../Dashboard/Dashboard.module.css";
 import CustomBreadcrumbs from "../../components/Breadcrumbs";
 import LeaveCombined from "./Leave/LeaveCombined";
@@ -18,6 +19,8 @@ import DeanPage from "./Assistantship/Admins/dean";
 import AcadAdminPage from "./Assistantship/Admins/Acad_admin";
 import HoDPage from "./Assistantship/Admins/Hod";
 import LeavePGCombined from "./Leave/LeavePGcombined";
+import ThesisSupervisor from "./Assistantship/Admins/ThesisSupervisor";
+import TAsupervisor from "./Assistantship/Admins/TAsupervisor";
 
 function OtherAcadProcedures() {
   const tabsListRef = useRef(null);
@@ -42,6 +45,11 @@ function OtherAcadProcedures() {
     { title: "Assistant Request HOD ", component: <HoDPage /> }, // 11
     { title: "Assistant Request Acadadmin ", component: <AcadAdminPage /> }, // 12
     { title: "Leave PG", component: <LeavePGCombined /> }, // 13
+    {
+      title: "Assistant Request ThesisSupervisor",
+      component: <ThesisSupervisor />,
+    },
+    { title: "Assistant Request TASupervisor", component: <TAsupervisor /> },
   ];
   let filteredTabItems = [];
   if (role === "student") {
@@ -52,11 +60,11 @@ function OtherAcadProcedures() {
       roll_no[2] === "P"
     ) {
       filteredTabItems = allTabItems.filter((_, index) =>
-        [0, 2, 13].includes(index),
+        [0, 2, 4, 9, 13].includes(index),
       );
     } else {
       filteredTabItems = allTabItems.filter((_, index) =>
-        [0, 1, 2].includes(index),
+        [0, 1, 2, 9].includes(index),
       );
     }
   } else if (role === "acadadmin") {
@@ -81,11 +89,14 @@ function OtherAcadProcedures() {
     });
   };
 
+  const isAboveXs = useMediaQuery("(min-width: 530px)");
+
   return (
     <>
       <CustomBreadcrumbs />
       <Flex justify="space-between" align="center" mt="lg">
         <Flex
+          style={{ width: isAboveXs ? "" : "330px" }}
           justify="flex-start"
           align="center"
           gap={{ base: "0.5rem", md: "1rem" }}
@@ -144,8 +155,8 @@ function OtherAcadProcedures() {
           backgroundColor: "#ffffff",
           padding: "20px",
           borderRadius: "8px",
-          marginTop: "20px",
-          marginLeft: "25px",
+          marginTop: isAboveXs ? "20px" : "0px",
+          marginLeft: isAboveXs ? "25px" : "0px",
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
         }}
       >

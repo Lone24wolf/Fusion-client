@@ -1,3 +1,4 @@
+
 import "../../Bonafide/AdminBonafideRequests.css"; // Import the CSS file
 import React, { useState } from "react";
 import {
@@ -83,17 +84,68 @@ function DeptAdminPage() {
   const [opened, setOpened] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
+import React, { useState, useEffect } from "react";
+import { Table, Paper, Switch, Button, Modal, Text } from "@mantine/core";
+import axios from "axios";
+import {
+  DeptAdmin_Fetch_Pending_Assistantship_Requests,
+  DeptAdmin_Update_Assistantship_Status,
+} from "../../../../routes/otheracademicRoutes/index"; // Adjust API paths if needed
+
+function ApproveAssistantship() {
+  const [assistantshipRequests, setAssistantshipRequests] = useState([]);
+  const [status, setStatus] = useState([]);
+  const [opened, setOpened] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+
+  const authToken = localStorage.getItem("authToken");
+
+  const fetchPendingAssistantships = async () => {
+    try {
+      console.log("Fetching pending assistantship requests...");
+      const response = await axios.get(DeptAdmin_Fetch_Pending_Assistantship_Requests, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
+      console.log("Response from server:", response.data);
+  
+      if (response.status === 200 && Array.isArray(response.data)) {
+        setAssistantshipRequests(response.data);
+  
+        // Initialize status for each assistantship request
+        const initialStatus = response.data.map(() => ({
+          approveCheck: false,
+          rejectCheck: false,
+          submitted: false,
+        }));
+        setStatus(initialStatus);
+      } else {
+        console.error("Unexpected response structure:", response.data);
+      }
+    } catch (err) {
+      console.error("Error fetching assistantship requests", err);
+    }
+  };
+  
+
+  useEffect(() => {
+    fetchPendingAssistantships();
+  }, []);
+
   const handleToggle = (index, stat) => {
     setStatus((prevStatus) =>
       prevStatus.map((item, i) => {
         if (i === index) {
           if (stat.type === "approve") {
             if (stat.value === true && item.rejectCheck === true) {
+            if (stat.value && item.rejectCheck) {
               return { ...item, approveCheck: true, rejectCheck: false };
             }
             return { ...item, approveCheck: stat.value };
           }
           if (stat.value === true && item.approveCheck === true) {
+          if (stat.value && item.approveCheck) {
             return { ...item, approveCheck: false, rejectCheck: true };
           }
           return { ...item, rejectCheck: stat.value };
@@ -108,6 +160,7 @@ function DeptAdminPage() {
       prevStatus.map((item, i) =>
         i === index ? { ...item, authorityTransfer: value } : item,
       ),
+      })
     );
   };
 
@@ -120,6 +173,13 @@ function DeptAdminPage() {
     const updatedStatus = status.map((entry) => {
       if (entry.approveCheck || entry.rejectCheck) {
         // Mark as submitted if approved or rejected
+    setSelectedStudent(assistantshipRequests[index]);
+    setOpened(true);
+  };
+
+  const handleSubmit = async () => {
+    const updatedStatus = status.map((entry) => {
+      if (entry.approveCheck || entry.rejectCheck) {
         return { ...entry, submitted: true };
       }
       return entry;
@@ -135,6 +195,32 @@ function DeptAdminPage() {
     console.log("Rejected Leaves:", rejectedLeaves);
 
     // Here we can handle the form submission (e.g., send data to the server)
+    const approvedRequests = assistantshipRequests.filter(
+      (_, index) => status[index]?.approveCheck
+    );
+    const rejectedRequests = assistantshipRequests.filter(
+      (_, index) => status[index]?.rejectCheck
+    );
+
+    try {
+      const response = await axios.post(
+        DeptAdmin_Update_Assistantship_Status,
+        {
+          approvedRequests: approvedRequests.map((request) => request.id), // Send only the ids
+          rejectedRequests: rejectedRequests.map((request) => request.id), // Send only the ids
+        },
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      );
+      console.log("Status updated successfully:", response.data);
+    } catch (error) {
+      console.error("Error updating assistantship status:", error);
+    }
+
+    fetchPendingAssistantships();
   };
 
   return (
@@ -225,6 +311,28 @@ function DeptAdminPage() {
                         <Switch
                           label="Approve"
                           checked={status[index].approveCheck}
+                <th style={{ borderRight: "1px solid white", textAlign: "center" }}>
+                  Roll No
+                </th>
+                <th style={{ borderRight: "1px solid white", textAlign: "center" }}>
+                  Approve/Reject
+                </th>
+                <th style={{ textAlign: "center" }}>View Form</th>
+                <th style={{ textAlign: "center" }}>Current Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {assistantshipRequests.map((item, index) => (
+                <tr key={index}>
+                  <td style={{ border: "1px solid black", textAlign: "center" }}>
+                    {item.roll_no}
+                  </td>
+                  <td style={{ border: "1px solid black", textAlign: "center" }}>
+                    {!status[index]?.submitted ? (
+                      <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                        <Switch
+                          label="Approve"
+                          checked={status[index]?.approveCheck}
                           onChange={(event) =>
                             handleToggle(index, {
                               type: "approve",
@@ -235,6 +343,7 @@ function DeptAdminPage() {
                         <Switch
                           label="Reject"
                           checked={status[index].rejectCheck}
+                          checked={status[index]?.rejectCheck}
                           onChange={(event) =>
                             handleToggle(index, {
                               type: "reject",
@@ -256,6 +365,15 @@ function DeptAdminPage() {
                   <td
                     style={{ border: "1px solid black", textAlign: "center" }}
                   >
+                        {status[index]?.approveCheck
+                          ? "Approved"
+                          : status[index]?.rejectCheck
+                          ? "Rejected"
+                          : ""}
+                      </Text>
+                    )}
+                  </td>
+                  <td style={{ border: "1px solid black", textAlign: "center" }}>
                     <button
                       style={{
                         background: "none",
@@ -293,6 +411,20 @@ function DeptAdminPage() {
                           : status[index].rejectCheck
                             ? "red"
                             : "orange"
+                      }}
+                      onClick={() => handleViewForm(index)}
+                    >
+                      View Form
+                    </button>
+                  </td>
+                  <td
+                    style={{
+                      color: `${
+                        status[index]?.approveCheck
+                          ? "green"
+                          : status[index]?.rejectCheck
+                          ? "red"
+                          : "orange"
                       }`,
                       border: "1px solid black",
                       textAlign: "center",
@@ -303,6 +435,11 @@ function DeptAdminPage() {
                       : status[index].rejectCheck
                         ? "Rejected"
                         : "Pending"}
+                    {status[index]?.approveCheck
+                      ? "Approved"
+                      : status[index]?.rejectCheck
+                      ? "Rejected"
+                      : "Pending"}
                   </td>
                 </tr>
               ))}
@@ -327,6 +464,10 @@ function DeptAdminPage() {
         centered
         overlaycolor="rgba(0, 0, 0, 0.6)"
         overlayblur={3}
+        title={<Text style={{ fontSize: "25px" }}>Student Form Details</Text>}
+        centered
+        overlayColor="rgba(0, 0, 0, 0.6)"
+        overlayBlur={3}
         size="lg"
       >
         {selectedStudent && (
@@ -335,6 +476,26 @@ function DeptAdminPage() {
               <strong>Date From:</strong> {selectedStudent.details.dateFrom}
             </Text>
             {/* Add more details as needed */}
+              <strong>Student Name:</strong> {selectedStudent.student_name}
+            </Text>
+            <Text>
+              <strong>Discipline:</strong> {selectedStudent.discipline}
+            </Text>
+            <Text>
+              <strong>Date From:</strong> {selectedStudent.dateFrom}
+            </Text>
+            <Text>
+              <strong>Date To:</strong> {selectedStudent.dateTo}
+            </Text>
+            <Text>
+              <strong>TA Supervisor:</strong> {selectedStudent.ta_supervisor}
+            </Text>
+            <Text>
+              <strong>Thesis Supervisor:</strong> {selectedStudent.thesis_supervisor}
+            </Text>
+            <Text>
+              <strong>Applicability:</strong> {selectedStudent.applicability}
+            </Text>
           </div>
         )}
       </Modal>
@@ -342,4 +503,4 @@ function DeptAdminPage() {
   );
 }
 
-export default DeptAdminPage;
+export default ApproveAssistantship;

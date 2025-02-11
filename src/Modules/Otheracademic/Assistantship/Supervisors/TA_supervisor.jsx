@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Assistantship_Form_Submit } from "../../../../routes/otheracademicRoutes";
+
 export default function AssistantshipForm() {
   const [formData, setFormData] = useState({
     student_name: "John Doe",
@@ -19,18 +20,21 @@ export default function AssistantshipForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
   const handleFileChange = (e) => {
-    setFormData({ ...formData, signature: e.target.files[0] });
+    setFormData((prevState) => ({
+      ...prevState,
+      signature: e.target.files[0],
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitting form...");
-    
-    // Check for missing required fields
+
+    // Check for missing required fields using .some()
     const requiredFields = [
       "discipline",
       "date_from",
@@ -42,17 +46,17 @@ export default function AssistantshipForm() {
       "thesis_supervisor",
       "hod",
     ];
-    for (const field of requiredFields) {
-      if (!formData[field]) {
-        alert(`Please fill out the "${field}" field.`);
-        return;
-      }
+
+    const missingField = requiredFields.find((field) => !formData[field]);
+    if (missingField) {
+      alert(`Please fill out the "${missingField}" field.`);
+      return;
     }
 
     const form = new FormData();
-    for (const key in formData) {
-      form.append(key, formData[key]);
-    }
+    Object.entries(formData).forEach(([key, value]) => {
+      form.append(key, value);
+    });
 
     const authToken = localStorage.getItem("authToken");
     if (!authToken) {
@@ -62,16 +66,11 @@ export default function AssistantshipForm() {
     }
 
     try {
-      const response = await axios.post(
-         Assistantship_Form_Submit,
-        form,
-        {
-          headers: {
-            Authorization: `Token ${authToken}`,
-             
-          },
-        }
-      );
+      const response = await axios.post(Assistantship_Form_Submit, form, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
       alert(response.data.message || "Form submitted successfully!");
     } catch (error) {
       console.error(error);

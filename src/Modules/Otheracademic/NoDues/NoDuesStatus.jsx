@@ -1,5 +1,6 @@
 import React from "react";
-import { Table, Text, Grid, Paper, ScrollArea } from "@mantine/core";
+import { Table, Text, Paper, ScrollArea } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 
 function NoDuesStatus() {
   // Dummy status data for each department
@@ -13,6 +14,7 @@ function NoDuesStatus() {
     { department: "Discipline Office", status: "Clear" },
     { department: "I-Card DSA", status: "Not Clear" },
   ];
+  const isAboveMd = useMediaQuery("(min-width: 992px)");
 
   // Render the no-dues status table
   const rows = noDuesStatus.map((item) => (
@@ -20,9 +22,9 @@ function NoDuesStatus() {
       {/* Department column inside shadowed boxes */}
       <td
         style={{
-          padding: "10px 20px",
-          textAlign: "left",
-          paddingLeft: "200px",
+          padding: "10px 10px",
+          textAlign: "center",
+          // paddingLeft: isAboveSm?"200px":"0px",
         }}
       >
         <Paper
@@ -31,7 +33,7 @@ function NoDuesStatus() {
           p="sm"
           style={{
             // boxShadow: "0px 0px 5px 0px",
-            width: "300px",
+            // width: isAboveSm?"300px":"",
             height: "35px",
             display: "flex",
             alignItems: "center",
@@ -45,9 +47,9 @@ function NoDuesStatus() {
 
       <td
         style={{
-          padding: "10px 20px",
+          padding: "10px 10px",
           textAlign: "center",
-          paddingRight: "30px",
+          // paddingRight: isAboveSm?"30px":"0px",
         }}
       >
         <Paper
@@ -55,7 +57,7 @@ function NoDuesStatus() {
           radius="md"
           p="sm"
           style={{
-            width: "250px",
+            // width: isAboveSm?"250px":"",
             height: "35px",
             backgroundColor: item.status === "Clear" ? "#d4edda" : "#f8d7da",
             color: item.status === "Clear" ? "#155724" : "#721c24",
@@ -72,41 +74,42 @@ function NoDuesStatus() {
   ));
 
   return (
-    // <Paper
-    //   shadow="md"
-    //   padding="sm"
-    //   radius="md"
-    //   style={{ backgroundColor: "#f9f9f9" }}
-    // >
-    <Grid
-      style={{
-        marginTop: "20px",
-      }}
-    >
-      {/* <Grid.Col span={12}>
-          <Text size="25px" weight={1000} align="center" mb="md">
-            No-Dues Status
-          </Text>
-        </Grid.Col> */}
-
-      <Grid.Col span={12}>
-        <ScrollArea>
-          <Table highlightOnHover withBorder withColumnBorders>
-            <thead>
-              <tr>
-                <th style={{ padding: "10px 20px", textAlign: "left" }}>
-                  <div style={{ marginLeft: "280px" }}>Department</div>
-                </th>
-                <th style={{ padding: "10px 20px", textAlign: "center" }}>
-                  <div style={{ marginRight: "230px" }}>Status</div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>{rows}</tbody>
-          </Table>
-        </ScrollArea>
-      </Grid.Col>
-    </Grid>
+    <center>
+      <ScrollArea style={{ width: isAboveMd ? "800px" : "" }}>
+        <Table
+          style={{ width: isAboveMd ? "800px" : "" }}
+          highlightOnHover
+          withBorder
+          withColumnBorders
+        >
+          <thead>
+            <tr>
+              <th
+                style={{
+                  padding: "10px 10px",
+                  textAlign: "center",
+                  borderTopLeftRadius: "5px",
+                }}
+              >
+                <div>Department</div>
+              </th>
+              <th
+                style={{
+                  padding: "10px 10px",
+                  textAlign: "center",
+                  borderTopRightRadius: "5px",
+                }}
+              >
+                <div>Status</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </Table>
+      </ScrollArea>
+    </center>
+    //   {/* </Grid.Col>
+    // </Grid> */}
     //  </Paper>
   );
 }

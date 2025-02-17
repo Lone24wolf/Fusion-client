@@ -284,7 +284,7 @@ function LeaveFormPG(props) {
         </Grid.Col>
       </Grid>
 
-      <Center>
+      <Center style={{ marginTop: "10px" }}>
         <Button
           type="submit"
           mt="md"

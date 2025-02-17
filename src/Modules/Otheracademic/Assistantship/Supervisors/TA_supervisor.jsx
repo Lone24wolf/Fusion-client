@@ -1,181 +1,157 @@
-import { useState } from "react";
-import { Button, TextInput, Select } from "@mantine/core";
-import "./TA_supervisor.css"; // Importing the CSS file
+import React, { useState } from "react";
+import axios from "axios";
+import { Assistantship_Form_Submit } from "../../../../routes/otheracademicRoutes";
 
-function AssistantshipForm() {
+export default function AssistantshipForm() {
   const [formData, setFormData] = useState({
-    name: "",
-    rollNumber: "",
+    student_name: "John Doe",
+    roll_no: "1234567",
     discipline: "",
-    bankAccount: "",
-    taSupervisor: "",
-    thesisSupervisor: "",
-    program: "", // To store MTech/PhD/other details
-    internshipStatus: "", // For MTech second-year intern status
+    date_from: "",
+    date_to: "",
+    bank_account_no: "",
+    signature: null,
+    applicability: "",
+    ta_supervisor: "",
+    thesis_supervisor: "",
+    date_applied: new Date().toISOString().split("T")[0], // Default to today's date
+    hod: "",
   });
 
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleSelectChange = (value, name) => {
-    setFormData({ ...formData, [name]: value });
+  const handleFileChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      signature: e.target.files[0],
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Submit form data logic here
-    console.log(formData);
+    console.log("Submitting form...");
+
+    // Check for missing required fields using .some()
+    const requiredFields = [
+      "discipline",
+      "date_from",
+      "date_to",
+      "bank_account_no",
+      "signature",
+      "applicability",
+      "ta_supervisor",
+      "thesis_supervisor",
+      "hod",
+    ];
+
+    const missingField = requiredFields.find((field) => !formData[field]);
+    if (missingField) {
+      alert(`Please fill out the "${missingField}" field.`);
+      return;
+    }
+
+    const form = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      form.append(key, value);
+    });
+
+    const authToken = localStorage.getItem("authToken");
+    if (!authToken) {
+      console.error("No auth token found");
+      alert("Authentication failed. Please log in again.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(Assistantship_Form_Submit, form, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
+      alert(response.data.message || "Form submitted successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Error submitting the form. Please try again.");
+    }
   };
 
   return (
-    <div className="bonafide-paper">
-      <h2 className="form-title">Assistantship Form</h2>
-      <form onSubmit={handleSubmit} className="bonafide-form">
-        {/* Program Selection */}
-        <div className="form-row">
-          <Select
-            label="Program"
-            name="program"
-            value={formData.program}
-            onChange={(value) => handleSelectChange(value, "program")}
-            data={[
-              { value: "MTech1", label: "MTech 1st Year" },
-              { value: "MTech2Intern", label: "MTech 2nd Year Intern" },
-              { value: "MTech2NonIntern", label: "MTech 2nd Year Non-Intern" },
-              { value: "PhD", label: "PhD" },
-              { value: "MDes", label: "MDes" },
-            ]}
-            placeholder="Select your program"
-            required
-            className="form-input"
-          />
-        </div>
-
-        <div className="form-row">
-          <TextInput
-            label="Name"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            placeholder="Enter your name"
-            required
-            className="form-input"
-          />
-          <TextInput
-            label="Roll Number"
-            name="rollNumber"
-            value={formData.rollNumber}
-            onChange={handleInputChange}
-            placeholder="Enter your roll number"
-            required
-            className="form-input"
-          />
-        </div>
-
-        <div className="form-row">
-          <TextInput
-            label="Discipline"
-            name="discipline"
-            value={formData.discipline}
-            onChange={handleInputChange}
-            placeholder="Enter your discipline"
-            required
-            className="form-input"
-          />
-          <TextInput
-            label="Student Bank Account Number"
-            name="bankAccount"
-            value={formData.bankAccount}
-            onChange={handleInputChange}
-            placeholder="Enter your bank account number"
-            required
-            className="form-input"
-          />
-        </div>
-
-        {/* Conditional Fields for Supervisors */}
-        {formData.program === "PhD" && (
-          <div className="form-row">
-            <TextInput
-              label="TA Supervisor"
-              name="taSupervisor"
-              value={formData.taSupervisor}
-              onChange={handleInputChange}
-              placeholder="Enter TA Supervisor name"
-              required
-              className="form-input"
-            />
-            <TextInput
-              label="Thesis Supervisor"
-              name="thesisSupervisor"
-              value={formData.thesisSupervisor}
-              onChange={handleInputChange}
-              placeholder="Enter Thesis Supervisor name"
-              required
-              className="form-input"
-            />
-          </div>
-        )}
-
-        {formData.program === "MTech2NonIntern" && (
-          <div className="form-row">
-            <TextInput
-              label="TA Supervisor"
-              name="taSupervisor"
-              value={formData.taSupervisor}
-              onChange={handleInputChange}
-              placeholder="Enter TA Supervisor name"
-              required
-              className="form-input"
-            />
-            <TextInput
-              label="Thesis Supervisor"
-              name="thesisSupervisor"
-              value={formData.thesisSupervisor}
-              onChange={handleInputChange}
-              placeholder="Enter Thesis Supervisor name"
-              required
-              className="form-input"
-            />
-          </div>
-        )}
-
-        {formData.program === "MTech1" && (
-          <div className="form-row">
-            <TextInput
-              label="TA Supervisor"
-              name="taSupervisor"
-              value={formData.taSupervisor}
-              onChange={handleInputChange}
-              placeholder="Enter TA Supervisor name"
-              required
-              className="form-input"
-            />
-          </div>
-        )}
-
-        {formData.program === "MTech2Intern" && (
-          <div className="form-row">
-            <TextInput
-              label="TA Supervisor"
-              name="taSupervisor"
-              value={formData.taSupervisor}
-              onChange={handleInputChange}
-              placeholder="Enter TA Supervisor name"
-              required
-              className="form-input"
-            />
-          </div>
-        )}
-
-        <Button type="submit" className="submit-btn">
-          Submit
-        </Button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} style={{ maxWidth: "500px", margin: "auto" }}>
+      <input
+        type="text"
+        name="discipline"
+        placeholder="Discipline"
+        value={formData.discipline}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="date"
+        name="date_from"
+        value={formData.date_from}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="date"
+        name="date_to"
+        value={formData.date_to}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="bank_account_no"
+        placeholder="Bank Account Number"
+        value={formData.bank_account_no}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="file"
+        name="signature"
+        accept=".png,.jpg,.jpeg"
+        onChange={handleFileChange}
+        required
+      />
+      <input
+        type="text"
+        name="applicability"
+        placeholder="Applicability"
+        value={formData.applicability}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="ta_supervisor"
+        placeholder="TA Supervisor"
+        value={formData.ta_supervisor}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="thesis_supervisor"
+        placeholder="Thesis Supervisor"
+        value={formData.thesis_supervisor}
+        onChange={handleChange}
+        required
+      />
+      <input
+        type="text"
+        name="hod"
+        placeholder="HOD"
+        value={formData.hod}
+        onChange={handleChange}
+        required
+      />
+      <button type="submit" style={{ marginTop: "20px", padding: "10px 20px" }}>
+        Submit
+      </button>
+    </form>
   );
 }
-
-export default AssistantshipForm;

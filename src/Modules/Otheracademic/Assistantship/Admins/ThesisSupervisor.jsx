@@ -2,7 +2,7 @@ import "../../Bonafide/AdminBonafideRequests.css"; // Import the CSS file
 import React, { useState } from "react";
 import { Table, Paper, Switch, Button, Modal, Text } from "@mantine/core";
 
-function AcadAdminPage() {
+function ThesisSupervisor() {
   const data = [
     {
       rollNo: "22bcsxxx",
@@ -73,56 +73,6 @@ function AcadAdminPage() {
 
   const [opened, setOpened] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
-import React, { useState, useEffect } from "react";
-import { Table, Paper, Switch, Button, Modal, Text } from "@mantine/core";
-import axios from "axios";
-import {
-  AcadAdmin_Fetch_Pending_Assistantship_Requests,
-  AcadAdmin_Update_Assistantship_Status,
-} from "../../../../routes/otheracademicRoutes/index"; // Adjust API paths if needed
-
-function ApproveAssistantshipForAcadAdmin() {
-  const [assistantshipRequests, setAssistantshipRequests] = useState([]);
-  const [status, setStatus] = useState([]);
-  const [opened, setOpened] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState(null);
-
-  const authToken = localStorage.getItem("authToken");
-
-  const fetchPendingAssistantships = async () => {
-    try {
-      console.log("Fetching pending assistantship requests for Acad Admin...");
-      const response = await axios.get(
-        AcadAdmin_Fetch_Pending_Assistantship_Requests,
-        {
-          headers: {
-            Authorization: `Token ${authToken}`,
-          },
-        },
-      );
-      console.log("Response from server:", response.data);
-
-      if (response.status === 200 && Array.isArray(response.data)) {
-        setAssistantshipRequests(response.data);
-
-        // Initialize status for each assistantship request
-        const initialStatus = response.data.map(() => ({
-          approveCheck: false,
-          rejectCheck: false,
-          submitted: false,
-        }));
-        setStatus(initialStatus);
-      } else {
-        console.error("Unexpected response structure:", response.data);
-      }
-    } catch (err) {
-      console.error("Error fetching assistantship requests", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchPendingAssistantships();
-  }, []);
 
   const handleToggle = (index, stat) => {
     setStatus((prevStatus) =>
@@ -130,13 +80,11 @@ function ApproveAssistantshipForAcadAdmin() {
         if (i === index) {
           if (stat.type === "approve") {
             if (stat.value === true && item.rejectCheck === true) {
-            if (stat.value && item.rejectCheck) {
               return { ...item, approveCheck: true, rejectCheck: false };
             }
             return { ...item, approveCheck: stat.value };
           }
           if (stat.value === true && item.approveCheck === true) {
-          if (stat.value && item.approveCheck) {
             return { ...item, approveCheck: false, rejectCheck: true };
           }
           return { ...item, rejectCheck: stat.value };
@@ -155,13 +103,6 @@ function ApproveAssistantshipForAcadAdmin() {
     const updatedStatus = status.map((entry) => {
       if (entry.approveCheck || entry.rejectCheck) {
         // Mark as submitted if approved or rejected
-    setSelectedStudent(assistantshipRequests[index]);
-    setOpened(true);
-  };
-
-  const handleSubmit = async () => {
-    const updatedStatus = status.map((entry) => {
-      if (entry.approveCheck || entry.rejectCheck) {
         return { ...entry, submitted: true };
       }
       return entry;
@@ -177,32 +118,6 @@ function ApproveAssistantshipForAcadAdmin() {
     console.log("Rejected Leaves:", rejectedLeaves);
 
     // Here we can handle the form submission (e.g., send data to the server)
-    const approvedRequests = assistantshipRequests.filter(
-      (_, index) => status[index]?.approveCheck,
-    );
-    const rejectedRequests = assistantshipRequests.filter(
-      (_, index) => status[index]?.rejectCheck,
-    );
-
-    try {
-      const response = await axios.post(
-        AcadAdmin_Update_Assistantship_Status,
-        {
-          approvedRequests: approvedRequests.map((request) => request.id), // Send only the ids
-          rejectedRequests: rejectedRequests.map((request) => request.id), // Send only the ids
-        },
-        {
-          headers: {
-            Authorization: `Token ${authToken}`,
-          },
-        },
-      );
-      console.log("Status updated successfully:", response.data);
-    } catch (error) {
-      console.error("Error updating assistantship status:", error);
-    }
-
-    fetchPendingAssistantships();
   };
 
   return (
@@ -216,7 +131,6 @@ function ApproveAssistantshipForAcadAdmin() {
                   style={{
                     borderRight: "1px solid white",
                     borderLeft: "1px solid black",
-
                     textAlign: "center",
                   }}
                 >
@@ -233,7 +147,6 @@ function ApproveAssistantshipForAcadAdmin() {
                 <th
                   style={{
                     borderRight: " 1px solid white",
-                    borderRight: "1px solid white",
                     textAlign: "center",
                   }}
                 >
@@ -259,18 +172,11 @@ function ApproveAssistantshipForAcadAdmin() {
             </thead>
             <tbody>
               {data.map((item, index) => (
-                <th style={{ textAlign: "center" }}>View Form</th>
-                <th style={{ textAlign: "center" }}>Current Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {assistantshipRequests.map((item, index) => (
                 <tr key={index}>
                   <td
                     style={{ border: "1px solid black", textAlign: "center" }}
                   >
                     {item.rollNo}
-                    {item.roll_no}
                   </td>
                   <td
                     style={{ border: "1px solid black", textAlign: "center" }}
@@ -286,7 +192,6 @@ function ApproveAssistantshipForAcadAdmin() {
                   >
                     {/* Show switches if not submitted, otherwise show the status */}
                     {!status[index].submitted ? (
-                    {!status[index]?.submitted ? (
                       <div
                         style={{
                           display: "flex",
@@ -297,8 +202,6 @@ function ApproveAssistantshipForAcadAdmin() {
                           style={{ display: "flex", justifyContent: "center" }}
                           label="Approve"
                           checked={status[index].approveCheck}
-                          label="Approve"
-                          checked={status[index]?.approveCheck}
                           onChange={(event) =>
                             handleToggle(index, {
                               type: "approve",
@@ -310,8 +213,6 @@ function ApproveAssistantshipForAcadAdmin() {
                           style={{ display: "flex", justifyContent: "center" }}
                           label="Reject"
                           checked={status[index].rejectCheck}
-                          label="Reject"
-                          checked={status[index]?.rejectCheck}
                           onChange={(event) =>
                             handleToggle(index, {
                               type: "reject",
@@ -322,13 +223,9 @@ function ApproveAssistantshipForAcadAdmin() {
                       </div>
                     ) : (
                       <Text>
-
                         {status[index].approveCheck
                           ? "Approved"
                           : status[index].rejectCheck
-                        {status[index]?.approveCheck
-                          ? "Approved"
-                          : status[index]?.rejectCheck
                             ? "Rejected"
                             : ""}
                       </Text>
@@ -349,10 +246,6 @@ function ApproveAssistantshipForAcadAdmin() {
                       onClick={() => handleViewForm(index)}
                     >
                       {item.form}
-                      }}
-                      onClick={() => handleViewForm(index)}
-                    >
-                      View Form
                     </button>
                   </td>
                   <td
@@ -361,9 +254,6 @@ function ApproveAssistantshipForAcadAdmin() {
                         status[index].approveCheck
                           ? "green"
                           : status[index].rejectCheck
-                        status[index]?.approveCheck
-                          ? "green"
-                          : status[index]?.rejectCheck
                             ? "red"
                             : "orange"
                       }`,
@@ -374,9 +264,6 @@ function ApproveAssistantshipForAcadAdmin() {
                     {status[index].approveCheck
                       ? "Approved"
                       : status[index].rejectCheck
-                    {status[index]?.approveCheck
-                      ? "Approved"
-                      : status[index]?.rejectCheck
                         ? "Rejected"
                         : "Pending"}
                   </td>
@@ -404,13 +291,6 @@ function ApproveAssistantshipForAcadAdmin() {
         centered
         overlaycolor="rgba(0, 0, 0, 0.6)"
         overlayblur={3}
-      <Modal
-        opened={opened}
-        onClose={() => setOpened(false)}
-        title={<Text style={{ fontSize: "25px" }}>Student Form Details</Text>}
-        centered
-        overlayColor="rgba(0, 0, 0, 0.6)"
-        overlayBlur={3}
         size="lg"
       >
         {selectedStudent && (
@@ -456,26 +336,6 @@ function ApproveAssistantshipForAcadAdmin() {
             <Text>
               <strong>Date of Application:</strong>{" "}
               {selectedStudent.details.dateOfApplication}
-              <strong>Student Name:</strong> {selectedStudent.student_name}
-            </Text>
-            <Text>
-              <strong>Discipline:</strong> {selectedStudent.discipline}
-            </Text>
-            <Text>
-              <strong>Date From:</strong> {selectedStudent.dateFrom}
-            </Text>
-            <Text>
-              <strong>Date To:</strong> {selectedStudent.dateTo}
-            </Text>
-            <Text>
-              <strong>TA Supervisor:</strong> {selectedStudent.ta_supervisor}
-            </Text>
-            <Text>
-              <strong>Thesis Supervisor:</strong>{" "}
-              {selectedStudent.thesis_supervisor}
-            </Text>
-            <Text>
-              <strong>Applicability:</strong> {selectedStudent.applicability}
             </Text>
           </div>
         )}
@@ -484,4 +344,4 @@ function ApproveAssistantshipForAcadAdmin() {
   );
 }
 
-export default ApproveAssistantshipForAcadAdmin;
+export default ThesisSupervisor;

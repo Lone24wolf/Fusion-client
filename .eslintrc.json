@@ -31,6 +31,8 @@
   "rules": {
     "import/prefer-default-export": "off",
     "no-param-reassign": "off",
+    "guard-for-in": "off",
+    "no-restricted-syntax": "off",
     "react/react-in-jsx-scope": 0,
     "react-hooks/exhaustive-deps": 0,
     "react/no-unescaped-entities": "off",
@@ -45,7 +47,7 @@
     "no-nested-ternary": 0,
     "import/no-extraneous-dependencies": "off",
     "jsx-a11y/label-has-associated-control": "off",
-        "jsx-a11y/label-has-for": "off",
+    "jsx-a11y/label-has-for": "off",
     "consistent-return": "off",
     "import/extensions": "off",
     "prettier/prettier": [

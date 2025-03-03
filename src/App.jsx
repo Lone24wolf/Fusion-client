@@ -10,8 +10,10 @@ import LoginPage from "./pages/login";
 import ForgotPassword from "./pages/forgotPassword";
 import AcademicPage from "./Modules/Academic/index";
 import ValidateAuth from "./helper/validateauth";
+import FacultyProfessionalProfile from "./Modules/facultyProfessionalProfile/facultyProfessionalProfile";
 import InactivityHandler from "./helper/inactivityhandler";
 import Examination from "./Modules/Examination/examination";
+import ProgrammeCurriculumRoutes from "./Modules/Program_curriculum/programmCurriculum";
 
 const theme = createTheme({
   breakpoints: {
@@ -56,6 +58,22 @@ export default function App() {
             <Layout>
               <Profile />
             </Layout>
+          }
+        />
+        <Route
+          path="/facultyprofessionalprofile/*"
+          element={
+            <Layout>
+              <FacultyProfessionalProfile />
+            </Layout>
+          }
+        />
+        <Route
+          path="/programme_curriculum/*"
+          element={
+            <div>
+              <ProgrammeCurriculumRoutes />
+            </div>
           }
         />
         <Route path="/accounts/login" element={<LoginPage />} />

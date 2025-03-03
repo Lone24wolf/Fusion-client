@@ -1,4 +1,4 @@
-import { createSlice, current } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 const userSlice = createSlice({
   name: "user",
@@ -28,7 +28,7 @@ const userSlice = createSlice({
     },
     setCurrentAccessibleModules: (state) => {
       state.currentAccessibleModules =
-        current(state.accessibleModules)[state.role] || {};
+        state.accessibleModules[state.role] || {};
     },
     clearUserName: (state) => {
       state.username = "User";

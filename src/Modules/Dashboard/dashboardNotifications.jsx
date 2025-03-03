@@ -15,7 +15,7 @@ import {
   Text,
   CloseButton,
 } from "@mantine/core";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import classes from "./Dashboard.module.css";
 import { Empty } from "../../components/empty";
 import CustomBreadcrumbs from "../../components/Breadcrumbs.jsx";
@@ -263,13 +263,16 @@ function Dashboard() {
       console.error("Error deleting notification:", err);
     }
   };
-  const roll_no = useSelector((state) => state.user.roll_no);
-  console.log(roll_no);
 
   return (
     <>
       <CustomBreadcrumbs />
-      <Flex justify="space-between" align="center" mt="lg">
+      <Flex
+        justify="space-between"
+        align={{ base: "start", sm: "center" }}
+        mt="lg"
+        direction={{ base: "column", sm: "row" }}
+      >
         {/* <Flex
           justify="flex-start"
           align="center"
@@ -340,7 +343,14 @@ function Dashboard() {
           badges={badges}
         />
 
-        <Flex align="center" mt="md" rowGap="1rem" columnGap="4rem" wrap="wrap">
+        <Flex
+          w={{ base: "40%", sm: "auto" }}
+          align="center"
+          mt="md"
+          rowGap="1rem"
+          columnGap="4rem"
+          wrap="wrap"
+        >
           <Select
             classNames={{
               option: classes.selectoptions,
@@ -355,7 +365,6 @@ function Dashboard() {
           />
         </Flex>
       </Flex>
-
       <Grid mt="xl">
         {loading ? (
           <Container py="xl">

@@ -27,9 +27,8 @@ const userSlice = createSlice({
       state.accessibleModules = action.payload;
     },
     setCurrentAccessibleModules: (state) => {
-      state.currentAccessibleModules = current(state.accessibleModules)[
-        state.role
-      ];
+      state.currentAccessibleModules =
+        current(state.accessibleModules)[state.role] || {};
     },
     clearUserName: (state) => {
       state.username = "User";

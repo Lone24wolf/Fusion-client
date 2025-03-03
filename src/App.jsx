@@ -9,7 +9,7 @@ import LoginPage from "./pages/login";
 import ForgotPassword from "./pages/forgotPassword";
 import AcademicPage from "./Modules/Academic/index";
 import ValidateAuth from "./helper/validateauth";
-
+import Examination from "./Modules/Examination/examination";
 export default function App() {
   const location = useLocation();
   return (
@@ -50,6 +50,7 @@ export default function App() {
         />
         <Route path="/accounts/login" element={<LoginPage />} />
         <Route path="/reset-password" element={<ForgotPassword />} />
+        <Route path="/examination" element={<Examination/>}/>
       </Routes>
     </MantineProvider>
   );

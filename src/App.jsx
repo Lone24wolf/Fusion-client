@@ -60,7 +60,7 @@ export default function App() {
         />
         <Route path="/accounts/login" element={<LoginPage />} />
         <Route path="/reset-password" element={<ForgotPassword />} />
-        <Route path="/examination" element={<Examination />} />
+        <Route path="/examination/*" element={<Examination />} />
       </Routes>
     </MantineProvider>
   );

@@ -96,8 +96,8 @@ function Admin_edit_curriculum_form({ existingData }) {
             // Set the programme value using the ID from the response
             programme: response.programme_id.toString(),
             workingCurriculum: response.working_curriculum || false,
-            versionNo: response.version_no || 1.0,
-            numSemesters: response.num_semesters || 1,
+            versionNo: response.version || 1.0,
+            numSemesters: response.semesters ? response.semesters.length : 1,
             numCredits: response.num_credits || 0,
           });
         }

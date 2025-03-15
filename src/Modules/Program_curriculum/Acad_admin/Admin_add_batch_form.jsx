@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   fetchDisciplines,
   fetchBatchName,
@@ -26,12 +26,23 @@ function Admin_add_batch_form() {
   const [loading, setLoading] = useState(true); // State for loading
   const [error, setError] = useState(null); // State for error handling
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  // Check if the curriculum_id query parameter exists in the URL
+  const hasCurriculumId = queryParams.has("curriculum_id");
+
+  // Extract curriculum_id only if it exists in the URL
+  const curriculumId = hasCurriculumId
+    ? queryParams.get("curriculum_id")
+    : null;
+
   const form = useForm({
     initialValues: {
       batchName: "",
       discipline: "",
       batchYear: 2024,
-      disciplineBatch: "",
+      disciplineBatch: curriculumId || "",
       runningBatch: false,
     },
   });

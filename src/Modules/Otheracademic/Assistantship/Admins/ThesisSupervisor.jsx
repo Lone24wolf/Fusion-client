@@ -1,33 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { Table, Paper, Switch, Button, Modal, Text } from "@mantine/core";
 import axios from "axios";
-import {
-  Hod_Fetch_Pending_Assistantship_Requests,
-  Hod_Update_Assistantship_Status,
-} from "../../../../routes/otheracademicRoutes/index"; // Adjust API paths if needed
+import "../../Bonafide/AdminBonafideRequests.css";
 
-function ApproveAssistantship() {
-  const [assistantshipRequests, setAssistantshipRequests] = useState([]);
+// Define API endpoints
+const THESIS_FETCH_PENDING_REQUESTS = "/api/thesis-supervisor/pending-requests";
+const THESIS_UPDATE_REQUEST_STATUS = "/api/thesis-supervisor/update-status";
+
+function ThesisSupervisor() {
+  const [leaveRequests, setLeaveRequests] = useState([]);
   const [status, setStatus] = useState([]);
   const [opened, setOpened] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
   const authToken = localStorage.getItem("authToken");
 
-  const fetchPendingAssistantships = async () => {
+  const fetchPendingRequests = async () => {
     try {
-      console.log("Fetching pending assistantship requests...");
-      const response = await axios.get(Hod_Fetch_Pending_Assistantship_Requests, {
+      console.log("Fetching pending thesis supervisor leave requests...");
+      const response = await axios.get(THESIS_FETCH_PENDING_REQUESTS, {
         headers: {
           Authorization: `Token ${authToken}`,
         },
       });
       console.log("Response from server:", response.data);
-  
+
       if (response.status === 200 && Array.isArray(response.data)) {
-        setAssistantshipRequests(response.data);
-  
-        // Initialize status for each assistantship request
+        setLeaveRequests(response.data);
+
+        // Initialize status for each leave request
         const initialStatus = response.data.map(() => ({
           approveCheck: false,
           rejectCheck: false,
@@ -38,12 +39,12 @@ function ApproveAssistantship() {
         console.error("Unexpected response structure:", response.data);
       }
     } catch (err) {
-      console.error("Error fetching assistantship requests", err);
+      console.error("Error fetching leave requests", err);
     }
   };
 
   useEffect(() => {
-    fetchPendingAssistantships();
+    fetchPendingRequests();
   }, []);
 
   const handleToggle = (index, stat) => {
@@ -62,12 +63,12 @@ function ApproveAssistantship() {
           return { ...item, rejectCheck: stat.value };
         }
         return item;
-      })
+      }),
     );
   };
 
   const handleViewForm = (index) => {
-    setSelectedStudent(assistantshipRequests[index]);
+    setSelectedStudent(leaveRequests[index]);
     setOpened(true);
   };
 
@@ -81,32 +82,32 @@ function ApproveAssistantship() {
 
     setStatus(updatedStatus);
 
-    const approvedRequests = assistantshipRequests.filter(
-      (_, index) => status[index]?.approveCheck
+    const approvedRequests = leaveRequests.filter(
+      (_, index) => status[index].approveCheck,
     );
-    const rejectedRequests = assistantshipRequests.filter(
-      (_, index) => status[index]?.rejectCheck
+    const rejectedRequests = leaveRequests.filter(
+      (_, index) => status[index].rejectCheck,
     );
 
     try {
       const response = await axios.post(
-        Hod_Update_Assistantship_Status,
+        THESIS_UPDATE_REQUEST_STATUS,
         {
-          approvedRequests: approvedRequests.map((request) => request.id), // Send only the ids
-          rejectedRequests: rejectedRequests.map((request) => request.id), // Send only the ids
+          approvedRequests: approvedRequests.map((request) => request.id),
+          rejectedRequests: rejectedRequests.map((request) => request.id),
         },
         {
           headers: {
             Authorization: `Token ${authToken}`,
           },
-        }
+        },
       );
       console.log("Status updated successfully:", response.data);
+      // Refresh the list after submission
+      fetchPendingRequests();
     } catch (error) {
-      console.error("Error updating assistantship status:", error);
+      console.error("Error updating leave request status:", error);
     }
-
-    fetchPendingAssistantships();
   };
 
   return (
@@ -116,26 +117,78 @@ function ApproveAssistantship() {
           <Table striped highlightOnHover className="status-table">
             <thead>
               <tr>
-                <th style={{ borderRight: "1px solid white", textAlign: "center" }}>
+                <th
+                  style={{
+                    borderRight: "1px solid white",
+                    borderLeft: "1px solid black",
+                    textAlign: "center",
+                  }}
+                >
                   Roll No
                 </th>
-                <th style={{ borderRight: "1px solid white", textAlign: "center" }}>
+                <th
+                  style={{
+                    borderRight: "1px solid white",
+                    textAlign: "center",
+                  }}
+                >
+                  Student Name
+                </th>
+                <th
+                  style={{
+                    borderRight: "1px solid white",
+                    textAlign: "center",
+                  }}
+                >
                   Approve/Reject
                 </th>
-                <th style={{ textAlign: "center" }}>View Form</th>
-                <th style={{ textAlign: "center" }}>Current Status</th>
+                <th
+                  style={{
+                    borderRight: "1px solid white",
+                    textAlign: "center",
+                  }}
+                >
+                  View Form
+                </th>
+                <th
+                  style={{
+                    borderRight: "1px solid black",
+                    textAlign: "center",
+                  }}
+                >
+                  Current Status
+                </th>
               </tr>
             </thead>
             <tbody>
-              {assistantshipRequests.map((item, index) => (
+              {leaveRequests.map((item, index) => (
                 <tr key={index}>
-                  <td style={{ border: "1px solid black", textAlign: "center" }}>
+                  <td
+                    style={{ border: "1px solid black", textAlign: "center" }}
+                  >
                     {item.roll_no}
                   </td>
-                  <td style={{ border: "1px solid black", textAlign: "center" }}>
+                  <td
+                    style={{ border: "1px solid black", textAlign: "center" }}
+                  >
+                    {item.student_name}
+                  </td>
+                  <td
+                    style={{
+                      border: "1px solid black",
+                      textAlign: "center",
+                      maxWidth: "130px",
+                    }}
+                  >
                     {!status[index]?.submitted ? (
-                      <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-evenly",
+                        }}
+                      >
                         <Switch
+                          style={{ display: "flex", justifyContent: "center" }}
                           label="Approve"
                           checked={status[index]?.approveCheck}
                           onChange={(event) =>
@@ -146,6 +199,7 @@ function ApproveAssistantship() {
                           }
                         />
                         <Switch
+                          style={{ display: "flex", justifyContent: "center" }}
                           label="Reject"
                           checked={status[index]?.rejectCheck}
                           onChange={(event) =>
@@ -161,12 +215,14 @@ function ApproveAssistantship() {
                         {status[index]?.approveCheck
                           ? "Approved"
                           : status[index]?.rejectCheck
-                          ? "Rejected"
-                          : ""}
+                            ? "Rejected"
+                            : ""}
                       </Text>
                     )}
                   </td>
-                  <td style={{ border: "1px solid black", textAlign: "center" }}>
+                  <td
+                    style={{ border: "1px solid black", textAlign: "center" }}
+                  >
                     <button
                       style={{
                         background: "none",
@@ -174,10 +230,11 @@ function ApproveAssistantship() {
                         cursor: "pointer",
                         textDecoration: "underline",
                         color: "blue",
+                        padding: 0,
                       }}
                       onClick={() => handleViewForm(index)}
                     >
-                      View Form
+                      View Details
                     </button>
                   </td>
                   <td
@@ -186,8 +243,8 @@ function ApproveAssistantship() {
                         status[index]?.approveCheck
                           ? "green"
                           : status[index]?.rejectCheck
-                          ? "red"
-                          : "orange"
+                            ? "red"
+                            : "orange"
                       }`,
                       border: "1px solid black",
                       textAlign: "center",
@@ -196,8 +253,8 @@ function ApproveAssistantship() {
                     {status[index]?.approveCheck
                       ? "Approved"
                       : status[index]?.rejectCheck
-                      ? "Rejected"
-                      : "Pending"}
+                        ? "Rejected"
+                        : "Pending"}
                   </td>
                 </tr>
               ))}
@@ -214,7 +271,11 @@ function ApproveAssistantship() {
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
-        title={<Text style={{ fontSize: "25px" }}>Student Form Details</Text>}
+        title={
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Text style={{ fontSize: "25px" }}>Student Leave Details</Text>
+          </div>
+        }
         centered
         overlayColor="rgba(0, 0, 0, 0.6)"
         overlayBlur={3}
@@ -223,25 +284,39 @@ function ApproveAssistantship() {
         {selectedStudent && (
           <div>
             <Text>
-              <strong>Student Name:</strong> {selectedStudent.student_name}
-            </Text>
-            <Text>
-              <strong>Discipline:</strong> {selectedStudent.discipline}
-            </Text>
-            <Text>
               <strong>Date From:</strong> {selectedStudent.dateFrom}
             </Text>
             <Text>
               <strong>Date To:</strong> {selectedStudent.dateTo}
             </Text>
             <Text>
-              <strong>TA Supervisor:</strong> {selectedStudent.ta_supervisor}
+              <strong>Leave Type:</strong> {selectedStudent.leaveType}
             </Text>
             <Text>
-              <strong>Thesis Supervisor:</strong> {selectedStudent.thesis_supervisor}
+              <strong>Address:</strong> {selectedStudent.address}
             </Text>
             <Text>
-              <strong>Applicability:</strong> {selectedStudent.applicability}
+              <strong>Purpose:</strong> {selectedStudent.purpose}
+            </Text>
+            <Text>
+              <strong>Mobile Number:</strong> {selectedStudent.mobileNumber}
+            </Text>
+            <Text>
+              <strong>Parents Mobile:</strong> {selectedStudent.parentsMobile}
+            </Text>
+            <Text>
+              <strong>Mobile During Leave:</strong>{" "}
+              {selectedStudent.mobileDuringLeave}
+            </Text>
+            <Text>
+              <strong>Semester:</strong> {selectedStudent.semester}
+            </Text>
+            <Text>
+              <strong>Academic Year:</strong> {selectedStudent.academicYear}
+            </Text>
+            <Text>
+              <strong>Date of Application:</strong>{" "}
+              {selectedStudent.dateOfApplication}
             </Text>
           </div>
         )}
@@ -250,4 +325,4 @@ function ApproveAssistantship() {
   );
 }
 
-export default ApproveAssistantship;
+export default ThesisSupervisor;

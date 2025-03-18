@@ -18,6 +18,9 @@ function Admin_view_semesters_of_a_curriculum() {
   const [loading, setLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [isAddCourseSlotHovered, setIsAddCourseSlotHovered] = useState(false);
+  const [isEditBatchHovered, setIsEditBatchHovered] = useState(false);
+  const [isLinkedBatchHovered, setIsLinkedBatchHovered] = useState(false);
+
   const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] =
     useState(false);
 
@@ -49,7 +52,7 @@ function Admin_view_semesters_of_a_curriculum() {
   // console.log(curriculumData)
 
   if (loading) return <div>Loading...</div>;
-  const { curriculum_name, version, batches } = curriculumData;
+  const { curriculum_name, version, batches, unlikedbatches } = curriculumData;
   // console.log(batches)
   const { semesters } = curriculumData;
   const semesterWiseSlots = curriculumData.semesters.reduce((acc, semester) => {
@@ -182,18 +185,74 @@ function Admin_view_semesters_of_a_curriculum() {
             >
               <button className="dropdown-btn blue-btn">NEW BATCH</button>
             </a> */}
-            <a
+            {/* <a
               href="/programme_curriculum/admin_edit_batch_form"
               style={{ textDecoration: "none" }}
             >
               <button className="dropdown-btn blue-btn">EDIT BATCH</button>
-            </a>
-            <a
+            </a> */}
+            <div
+              className="edit-batch"
+              onMouseEnter={() => setIsEditBatchHovered(true)}
+              onMouseLeave={() => setIsEditBatchHovered(false)}
+            >
+              <button className="add-course-slot-button">EDIT BATCH</button>
+              {/* Semester options visible on hover */}
+              {isEditBatchHovered && (
+                <div className="editbatch-dropdown">
+                  {batches.length > 0 ? (
+                    batches.map((batch, index) => (
+                      <a
+                        href={`/programme_curriculum/admin_edit_batch_form?batch=${batch.id}`}
+                        style={{ textDecoration: "none" }}
+                        key={index} // Move the key here to avoid React warning
+                      >
+                        <div className="editbatch-option">
+                          {batch.name} {batch.discipline} {batch.year}
+                        </div>
+                      </a>
+                    ))
+                  ) : (
+                    <div className="editbatch-option">
+                      No batch is linked to this curriculum
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            {/* <a
               href="/programme_curriculum/admin_edit_batch_form"
               style={{ textDecoration: "none" }}
             >
               <button className="dropdown-btn blue-btn">LINK BATCH</button>
-            </a>
+            </a> */}
+            <div
+              className="Link-slot"
+              onMouseEnter={() => setIsLinkedBatchHovered(true)}
+              onMouseLeave={() => setIsLinkedBatchHovered(false)}
+            >
+              <button className="add-course-slot-button">LINK BATCH</button>
+              {/* Semester options visible on hover */}
+              {isLinkedBatchHovered && (
+                <div className="Linkbatch-dropdown">
+                  {batches.length > 0 ? (
+                    <div className="editbatch-option">Batch already linked</div>
+                  ) : (
+                    unlikedbatches.map((batch, index) => (
+                      <a
+                        href={`/programme_curriculum/admin_edit_batch_form?batch=${batch.id}&curriculum_id=${curriculumId}`}
+                        style={{ textDecoration: "none" }}
+                        key={index} // Move the key here to avoid React warning
+                      >
+                        <div className="Linkbatch-option">
+                          {batch.name} {batch.discipline} {batch.year}
+                        </div>
+                      </a>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* <button className="dropdown-btn black-btn">LINK BATCH</button> */}
           </div>

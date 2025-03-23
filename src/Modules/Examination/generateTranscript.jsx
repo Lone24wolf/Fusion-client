@@ -1,5 +1,4 @@
-/* eslint-disable import/no-unresolved */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Paper,
@@ -9,59 +8,177 @@ import {
   Group,
   Box,
   SimpleGrid,
+  LoadingOverlay,
 } from "@mantine/core";
-import { FileText } from "@phosphor-icons/react";
+import { FileText, FileArrowDown } from "@phosphor-icons/react";
+import axios from "axios";
 import Transcript from "./components/transcript.jsx";
+import {
+  generate_transcript_form,
+  generate_result,
+} from "./routes/examinationRoutes.jsx";
 
 function GenerateTranscript() {
   const [formData, setFormData] = useState({
-    program: "",
+    programme: "",
     batch: "",
     semester: "",
     specialization: "",
   });
 
+  const [formOptions, setFormOptions] = useState({
+    programme: [],
+    batches: [],
+    semesters: [],
+    specializations: [],
+  });
+
   const [showTranscript, setShowTranscript] = useState(false);
+  const [transcriptData, setTranscriptData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchFormOptions = async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        setError("No authentication token found!");
+        return;
+      }
+      try {
+        setLoading(true);
+        const { data } = await axios.get(generate_transcript_form, {
+          headers: { Authorization: `Token ${token}`, 'X-User-Role':'acadadmin' },
+        });
+
+        // Remove duplicates
+        const uniqueprogramme = [...new Set(data.programmes || [])];
+        const uniqueBatches = [...new Set(data.batches || [])];
+        const uniqueSpecializations = [
+          ...new Set((data.specializations || []).map((spec) => spec.trim())),
+        ];
+
+        // Transform the backend data format into Mantine Select format
+        setFormOptions({
+          programme: uniqueprogramme.map((prog) => ({
+            value: prog,
+            label: prog,
+          })),
+          batches: uniqueBatches.map((batch) => ({
+            value: batch.toString(),
+            label: batch.toString(),
+          })),
+          // Generate semesters 1-8 since they're not provided by the backend
+          semesters: Array.from({ length: 8 }, (_, i) => ({
+            value: (i + 1).toString(),
+            label: `Semester ${i + 1}`,
+          })),
+          specializations: uniqueSpecializations.map((spec) => ({
+            value: spec,
+            label: spec,
+          })),
+        });
+      } catch (e) {
+        setError("Error fetching form options: " + e.message);
+        console.error("Error fetching form options:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFormOptions();
+  }, []);
 
   const handleChange = (field) => (value) => {
-    setFormData({ ...formData, [field]: value });
+    setFormData({
+      ...formData,
+      [field]:
+        field === "batch" || field === "semester" ? parseInt(value) : value,
+    });
+    setShowTranscript(false);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowTranscript(true);
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError("No authentication token found!");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      console.log("Submitting Data:", formData);
+
+      const { data } = await axios.post(generate_transcript_form, formData, {
+        headers: { Authorization: `Token ${token}` },
+      });
+      console.log(data);
+      setTranscriptData(data);
+      setShowTranscript(true);
+      setError(null);
+    } catch (error) {
+      setError("Error generating transcript: " + error.message);
+      console.error("Error generating transcript:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+  const handleDownloadCSV = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError("No authentication token found!");
+      return;
+    }
 
-  const programs = [
-    { value: "btech", label: "B.Tech" },
-    { value: "bdes", label: "B.Des" },
-    { value: "mtech", label: "M.Tech" },
-    { value: "mdes", label: "M.Des" },
-  ];
+    try {
+      setLoading(true);
 
-  const batches = [
-    { value: "2021", label: "2021" },
-    { value: "2022", label: "2022" },
-    { value: "2023", label: "2023" },
-    { value: "2024", label: "2024" },
-  ];
+      const requestData = {
+        Role: "acadadmin",
+        semester: formData.semester,
+        specialization: formData.specialization,
+        batch: formData.batch,
+      };
 
-  const semesters = Array.from({ length: 8 }, (_, i) => ({
-    value: `${i + 1}`,
-    label: `Semester ${i + 1}`,
-  }));
+      const response = await axios.post(generate_result, requestData, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+        responseType: "blob", // Important: Expecting a file in response
+      });
 
-  const specializations = [
-    { value: "cse", label: "CSE" },
-    { value: "ece", label: "ECE" },
-    { value: "me", label: "ME" },
-    { value: "sm", label: "SM" },
-    { value: "design", label: "Design" },
-  ];
+      // Create a download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `transcript_${formData.batch}_sem${formData.semester}.xlsx`,
+      ); // Set filename
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
+      setError(null);
+    } catch (error) {
+      setError(`Error downloading CSV transcript: ${error.message}`);
+      console.error("Download error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Container size="xl" p={{ base: "md", md: "xl" }}>
-      <Stack spacing="xl">
+      <Stack spacing="xl" pos="relative">
+        <LoadingOverlay visible={loading} overlayBlur={2} />
+
+        {error && (
+          <Paper p="md" color="red" radius="sm" withBorder>
+            {error}
+          </Paper>
+        )}
+
         <Paper
           shadow="sm"
           radius="sm"
@@ -88,14 +205,11 @@ function GenerateTranscript() {
                     <Select
                       label="Program"
                       placeholder="Select Program"
-                      data={programs}
-                      value={formData.program}
-                      onChange={handleChange("program")}
+                      data={formOptions.programme}
+                      value={formData.programme}
+                      onChange={handleChange("programme")}
                       styles={{
-                        label: {
-                          marginBottom: "0.5rem",
-                          fontWeight: 500,
-                        },
+                        label: { marginBottom: "0.5rem", fontWeight: 500 },
                       }}
                       radius="sm"
                     />
@@ -105,14 +219,11 @@ function GenerateTranscript() {
                     <Select
                       label="Batch"
                       placeholder="Select Batch"
-                      data={batches}
-                      value={formData.batch}
+                      data={formOptions.batches}
+                      value={formData.batch?.toString()}
                       onChange={handleChange("batch")}
                       styles={{
-                        label: {
-                          marginBottom: "0.5rem",
-                          fontWeight: 500,
-                        },
+                        label: { marginBottom: "0.5rem", fontWeight: 500 },
                       }}
                       radius="sm"
                     />
@@ -122,14 +233,11 @@ function GenerateTranscript() {
                     <Select
                       label="Semester"
                       placeholder="Select Semester"
-                      data={semesters}
-                      value={formData.semester}
+                      data={formOptions.semesters}
+                      value={formData.semester?.toString()}
                       onChange={handleChange("semester")}
                       styles={{
-                        label: {
-                          marginBottom: "0.5rem",
-                          fontWeight: 500,
-                        },
+                        label: { marginBottom: "0.5rem", fontWeight: 500 },
                       }}
                       radius="sm"
                     />
@@ -139,14 +247,11 @@ function GenerateTranscript() {
                     <Select
                       label="Specialization"
                       placeholder="Select Specialization"
-                      data={specializations}
+                      data={formOptions.specializations}
                       value={formData.specialization}
                       onChange={handleChange("specialization")}
                       styles={{
-                        label: {
-                          marginBottom: "0.5rem",
-                          fontWeight: 500,
-                        },
+                        label: { marginBottom: "0.5rem", fontWeight: 500 },
                       }}
                       radius="sm"
                     />
@@ -159,8 +264,20 @@ function GenerateTranscript() {
                     size="md"
                     radius="sm"
                     leftIcon={<FileText size={20} />}
+                    loading={loading}
                   >
                     Generate Transcript
+                  </Button>
+
+                  <Button
+                    size="md"
+                    radius="sm"
+                    leftIcon={<FileArrowDown size={20} />}
+                    color="green"
+                    onClick={handleDownloadCSV}
+                    loading={loading}
+                  >
+                    Download CSV Transcript
                   </Button>
                 </Group>
               </Stack>
@@ -169,7 +286,6 @@ function GenerateTranscript() {
         </Paper>
 
         {showTranscript && (
-          // <Box mt="xl">
           <Paper
             shadow="sm"
             radius="sm"
@@ -183,10 +299,8 @@ function GenerateTranscript() {
               borderLeft: "10px solid #1E90FF",
             }}
           >
-            <Transcript data={formData} />
+            <Transcript data={transcriptData} semester={formData.semester} />
           </Paper>
-
-          // </Box>
         )}
       </Stack>
     </Container>

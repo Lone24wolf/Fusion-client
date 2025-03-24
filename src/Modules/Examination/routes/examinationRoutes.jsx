@@ -14,3 +14,4 @@ export const submit = `${host}/examination/api/submit/`;
 export const download_excel = `${host}/examination/api/download_excel/`;
 export const submitGradesProf = `${host}/examination/api/submitGradesProf/`; //done
 export const upload_grades_prof = `${host}/examination/api/upload_grades_prof/`;  //done
+export const check_result = `${host}/examination/api/check_result/`;

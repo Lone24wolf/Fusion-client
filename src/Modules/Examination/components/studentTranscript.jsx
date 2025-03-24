@@ -250,6 +250,14 @@ function StudentTranscript(props) {
   if (error) {
     return (
       <Container size="md" py="xl">
+         <Button
+  leftIcon={<IconArrowLeft size={16} />} // Ensure this is correctly formatted
+  onClick={props.onBack}
+  variant="outline"
+  style={{ marginTop: "16px" }} // Add some margin for better spacing
+>
+  Back to List
+</Button>
         <Alert icon={<IconAlertCircle size={16} />} title="Error" color="red">
           {error}
         </Alert>
@@ -282,6 +290,14 @@ function StudentTranscript(props) {
 
   return (
     <Container size="md" py="xl">
+       <Button
+  leftIcon={<IconArrowLeft size={16} />} // Ensure this is correctly formatted
+  onClick={props.onBack}
+  variant="outline"
+  style={{ marginTop: "16px" }} // Add some margin for better spacing
+>
+  Back to List
+</Button>
       <Card shadow="sm" p="lg" radius="md" withBorder>
         <Card.Section withBorder inheritPadding py="xs">
           <Group position="apart">

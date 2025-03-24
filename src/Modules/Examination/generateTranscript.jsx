@@ -17,8 +17,9 @@ import {
   generate_transcript_form,
   generate_result,
 } from "./routes/examinationRoutes.jsx";
-
+import { useSelector } from "react-redux";
 function GenerateTranscript() {
+  const userRole = useSelector((state) => state.user.role);
   const [formData, setFormData] = useState({
     programme: "",
     batch: "",
@@ -109,8 +110,14 @@ function GenerateTranscript() {
     try {
       setLoading(true);
       console.log("Submitting Data:", formData);
-
-      const { data } = await axios.post(generate_transcript_form, formData, {
+      const requestData = {
+        Role: userRole
+      }
+      const combinedData = {
+        ...requestData,
+        ...formData
+      };
+      const { data } = await axios.post(generate_transcript_form, combinedData, {
         headers: { Authorization: `Token ${token}` },
       });
       console.log(data);
@@ -135,7 +142,7 @@ function GenerateTranscript() {
       setLoading(true);
 
       const requestData = {
-        Role: "acadadmin",
+        Role: userRole,
         semester: formData.semester,
         specialization: formData.specialization,
         batch: formData.batch,

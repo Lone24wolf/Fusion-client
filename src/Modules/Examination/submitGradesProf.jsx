@@ -22,7 +22,6 @@ import {
 } from "./routes/examinationRoutes";
 import { FileArrowDown, Upload } from "@phosphor-icons/react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 function SubmitGradesProf() {
   const [year, setYear] = useState("");
   const [course, setCourse] = useState("");
@@ -33,12 +32,6 @@ function SubmitGradesProf() {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const userRole = useSelector((state) => state.user.role);
-const navigate=useNavigate();
-useEffect(() => {
-  if (userRole !== "Associate Professor" && userRole !== "Assistant Professor" && userRole !== "Professor") {
-    navigate('/dashboard');
-  }
-}, [userRole, navigate]);
   // Fetch courses and years from API
   useEffect(() => {
     const fetchCoursesAndYears = async () => {
@@ -53,7 +46,7 @@ useEffect(() => {
       }
 
       try {
-        const requestData = { Role: "Professor" };
+        const requestData = { Role: userRole };
         const { data } = await axios.post(submitGradesProf, requestData, {
           headers: { Authorization: `Token ${token}` },
         });
@@ -103,7 +96,7 @@ useEffect(() => {
       const token = localStorage.getItem("authToken");
 
       const requestData = { 
-        Role: "Professor", 
+        Role: userRole, 
         course, 
         year: parseInt(year) 
       };

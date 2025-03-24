@@ -58,15 +58,9 @@ function VerifyGrades() {
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedCourseName, setSelectedCourseName] = useState("");
-const navigate=useNavigate();
-
   const [registrations, setRegistrations] = useState([]);
   const [gradesStats, setGradesStats] = useState([]);
   const [isAlreadyVerified, setIsAlreadyVerified] = useState(false);
-if(userRole!="acadadmin"){
-  navigate('/dashboard');
-  return;
-}
   // Fetch Courses & Years from API
   useEffect(() => {
     const fetchCoursesAndYears = async () => {

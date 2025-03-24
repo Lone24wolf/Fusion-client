@@ -24,8 +24,9 @@ import {
   IconDownload,
   IconPrinter,
   IconAlertCircle,
+  IconArrowLeft,
 } from "@tabler/icons-react";
-
+import { useSelector } from "react-redux";
 // Grade point mapping - matching the Django template
 const gradePoints = {
   O: 10,
@@ -40,10 +41,11 @@ const gradePoints = {
   F: 2,
 };
 
-function StudentTranscript() {
+function StudentTranscript(props) {
+  const userRole = useSelector((state) => state.user.role);
   const location = useLocation();
-  const student = location.state?.student;
-  const semester = location.state?.semester;
+  const student = props.student;
+  const semester = props.semester;
   const [transcriptData, setTranscriptData] = useState(null);
   const [courseData, setCourseData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,7 +53,6 @@ function StudentTranscript() {
   const [spi, setSpi] = useState("N/A");
   const [cpi, setCpi] = useState("N/A");
   const [dataReady, setDataReady] = useState(false);
-
   // Fetch both transcript and course data simultaneously
   useEffect(() => {
     if (!student || !student.id_id || !semester) {
@@ -75,12 +76,12 @@ function StudentTranscript() {
         const [courseResponse, transcriptResponse] = await Promise.all([
           axios.post(
             get_courses, 
-            { Role: "acadadmin", academic_year: "2024" },
+            { Role:userRole, academic_year: "2024" },
             { headers: { Authorization: `Token ${token}` }}
           ),
           axios.post(
             generate_transcript, 
-            { Role: "acadadmin", student: student.id_id, semester },
+            { Role: userRole, student: student.id_id, semester },
             { headers: { Authorization: `Token ${token}` }}
           )
         ]);
@@ -262,6 +263,14 @@ function StudentTranscript() {
   ) {
     return (
       <Container size="md" py="xl">
+          <Button
+  leftIcon={<IconArrowLeft size={16} />} // Ensure this is correctly formatted
+  onClick={props.onBack}
+  variant="outline"
+  style={{ marginTop: "16px" }} // Add some margin for better spacing
+>
+  Back to List
+</Button>
         <Paper p="md" shadow="sm" radius="md">
           <Text size="lg" align="center">
             Marks not yet submitted.

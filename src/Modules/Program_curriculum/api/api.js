@@ -460,8 +460,54 @@ export const fetchFacultyCourseProposalData = async (username, designation) => {
         },
       },
     );
-    console.log(response);
+    // console.log(response);
     return response.data;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
+    throw error;
+  }
+};
+
+export const fetchFacultySuperiorData = async (username, designation) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(
+      `${BASE_URL}/programme_curriculum/api/get_superior_data/?uploaderId=${username}&uploaderDes=${designation}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch superior data");
+    }
+
+    // console.log(response);
+    return response;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
+    throw error;
+  }
+};
+
+export const fetchFacultyOutwardFilesData = async (username, designation) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(
+      `${BASE_URL}/programme_curriculum/api/outward_files/?username=${username}&des=${designation}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch superior data");
+    }
+
+    // console.log(response);
+    return response;
   } catch (error) {
     console.log("Error fetching faculties data: ", error);
     throw error;

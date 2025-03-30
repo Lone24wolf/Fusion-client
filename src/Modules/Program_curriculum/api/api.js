@@ -513,3 +513,52 @@ export const fetchFacultyOutwardFilesData = async (username, designation) => {
     throw error;
   }
 };
+
+export const fetchFacultyInwardFilesData = async (username, designation) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(
+      `${BASE_URL}/programme_curriculum/api/inward_files/?username=${username}&des=${designation}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch superior data");
+    }
+
+    // console.log(response);
+    return response;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
+    throw error;
+  }
+};
+export const fetchFacultyViewInwardFilesData = async (
+  fileId,
+  username,
+  designation,
+) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(
+      `${BASE_URL}/programme_curriculum/api/view_inward_files/${fileId}/?username=${username}&des=${designation}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch superior data");
+    }
+
+    // console.log(response);
+    return response;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
+    throw error;
+  }
+};

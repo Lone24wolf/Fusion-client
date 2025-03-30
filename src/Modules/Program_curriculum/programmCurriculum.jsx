@@ -65,7 +65,7 @@ import BreadcrumbTabsFaculty from "./Faculty/BreadcrumbTagsFaculty";
 
 export default function ProgrammeCurriculumRoutes() {
   const role = useSelector((state) => state.user.role);
-  console.log(role)
+  console.log(role);
 
   const NavTab =
     role === "student"

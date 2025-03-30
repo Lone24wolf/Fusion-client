@@ -177,7 +177,7 @@ function OutwardFile() {
                               variant="filled"
                               color="blue"
                               onClick={() => {
-                                window.location.href = `/programme_curriculum/view_inward_file`;
+                                window.location.href = `/programme_curriculum/view_inward_file/?id=${outward.id}`;
                               }}
                             >
                               View
@@ -237,7 +237,7 @@ function OutwardFile() {
                               variant="filled"
                               color="blue"
                               onClick={() => {
-                                window.location.href = `/programme_curriculum/view_inward_file`;
+                                window.location.href = `/programme_curriculum/view_inward_file/?id=${outward.id}`;
                               }}
                             >
                               View

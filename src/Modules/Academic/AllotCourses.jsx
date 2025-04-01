@@ -8,39 +8,17 @@ import {
   LoadingOverlay,
   Select,
   Stack,
+  TextInput,
 } from "@mantine/core";
 import { IconUpload, IconFileSpreadsheet } from "@tabler/icons-react";
+import axios from "axios";
+import { allotCoursesRoute, batchesRoute } from "../../routes/academicRoutes";
 
 function AllotCourses() {
   // Default hardcoded options for demonstration
-  const defaultProgrammeOptions = [
-    { value: "B.Tech CSE 2021", label: "B.Tech CSE 2021" },
-    { value: "M.Tech CSE 2022", label: "M.Tech CSE 2022" },
-    { value: "B.Tech CSE 2022", label: "B.Tech CSE 2022" },
-  ];
-
-  const defaultSemesterOptions = [
-    { value: "1", label: "1" },
-    { value: "2", label: "2" },
-    { value: "3", label: "3" },
-    { value: "4", label: "4" },
-  ];
-
-  const defaultYearOptions = [
-    { value: "2022", label: "2022" },
-    { value: "2023", label: "2023" },
-    { value: "2024", label: "2024" },
-    { value: "2025", label: "2025" },
-  ];
 
   // State for API driven options, falling back to hardcoded defaults
-  const [programmeOptions, setProgrammeOptions] = useState(
-    defaultProgrammeOptions,
-  );
-  const [semesterOptions, setSemesterOptions] = useState(
-    defaultSemesterOptions,
-  );
-  const [yearOptions, setYearOptions] = useState(defaultYearOptions);
+  const [programmeOptions, setProgrammeOptions] = useState([]);
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -48,32 +26,26 @@ function AllotCourses() {
   const [programme, setProgramme] = useState("");
   const [semester, setSemester] = useState("");
   const [workingYear, setWorkingYear] = useState("");
+  const [error, setError] = useState("");
 
   // useEffect to fetch options from API. Replace the URLs with your actual endpoints.
   useEffect(() => {
     const fetchOptions = async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        setError(new Error("No token found"));
+        return;
+      }
       try {
-        const programmeRes = await fetch("/api/programme-options");
-        if (programmeRes.ok) {
-          const programmes = await programmeRes.json();
-          setProgrammeOptions(programmes);
-        }
-        const semesterRes = await fetch("/api/semester-options");
-        if (semesterRes.ok) {
-          const semesters = await semesterRes.json();
-          setSemesterOptions(semesters);
-        }
-        const yearRes = await fetch("/api/year-options");
-        if (yearRes.ok) {
-          const years = await yearRes.json();
-          setYearOptions(years);
-        }
-      } catch (error) {
-        console.error(
-          "Error fetching options from API, using defaults:",
-          error,
-        );
-        // If there is an error, the defaults remain in state
+        const response = await axios.get(batchesRoute, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+        console.log("Fetched Batches:", response.data);
+        setProgrammeOptions(response.data.batches);
+      } catch (fetchError) {
+        setError(fetchError.message);
       }
     };
 
@@ -95,12 +67,44 @@ function AllotCourses() {
       return;
     }
     setIsUploading(true);
-    await new Promise((resolve) => {
-      setTimeout(resolve, 1500);
-    });
-    setIsUploading(false);
-    setShowSuccess(true);
-    setSelectedFile(null);
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError(new Error("No token found"));
+      return;
+    }
+    const formData = new FormData();
+    formData.append("allotedCourses", selectedFile);
+    formData.append("batch", programme);
+    formData.append("semester", semester);
+    formData.append("working_year", workingYear);
+    try {
+      const response = await axios.post(allotCoursesRoute, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Token ${token}`,
+        },
+      });
+      console.log(response);
+      setShowSuccess(true);
+      setSelectedFile(null);
+    } catch (fetchError) {
+      console.error(fetchError);
+      if (fetchError.response) {
+        // If a response is available, set the error based on the response from the server
+        setError(
+          fetchError.response.data.error ||
+            fetchError.response.data.message ||
+            "An error occurred",
+        );
+      } else {
+        // If no response is available, it's a network error or client-side error
+        setError(fetchError.message);
+        setSelectedFile(null);
+      }
+    } finally {
+      setIsUploading(false);
+      setSelectedFile(null);
+    }
   };
 
   // Validate that all required fields are selected
@@ -147,26 +151,32 @@ function AllotCourses() {
       <Stack spacing="md" mb="xl">
         <Select
           label="Programme"
-          placeholder="Select Programme"
+          placeholder="Select Batch"
           value={programme}
-          onChange={setProgramme}
-          data={programmeOptions}
+          onChange={(val) => setProgramme(val)}
+          data={
+            programmeOptions
+              ? programmeOptions.map((bat) => ({
+                  value: bat.batch_id.toString(),
+                  label: `${bat.name} ${bat.discipline} ${bat.year}`,
+                }))
+              : []
+          }
+          searchable
           style={{ width: 500 }}
         />
-        <Select
+        <TextInput
           label="Semester"
           placeholder="Select Semester"
           value={semester}
-          onChange={setSemester}
-          data={semesterOptions}
+          onChange={(e) => setSemester(e.target.value)}
           style={{ width: 300 }}
         />
-        <Select
+        <TextInput
           label="Working Year"
           placeholder="Select Working Year"
           value={workingYear}
-          onChange={setWorkingYear}
-          data={yearOptions}
+          onChange={(e) => setWorkingYear(e.target.value)}
           style={{ width: 300 }}
         />
       </Stack>
@@ -250,6 +260,17 @@ function AllotCourses() {
         >
           Student courses have been successfully allotted based on the uploaded
           file.
+        </Alert>
+      )}
+      {error && (
+        <Alert
+          mt="xl"
+          title="Error"
+          color="red"
+          withCloseButton
+          onClose={() => setError("")}
+        >
+          {error}
         </Alert>
       )}
     </Card>

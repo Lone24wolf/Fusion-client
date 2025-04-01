@@ -8,47 +8,12 @@ import {
   Group,
   Modal,
 } from "@mantine/core";
+import axios from "axios";
 import FusionTable from "../../components/FusionTable";
-
-const hardcodedRegistrations = [
-  {
-    studentInfo: {
-      rollNo: "22BCSD01",
-      preRegistrationFlag: true,
-      finalRegistrationFlag: true,
-    },
-    registrations: [
-      {
-        semester: "CSE UG Curriculum v1.1, sem-6",
-        course: "IT3C03 - Web and mobile App development- v1.0",
-        courseSlot: "CSE UG Curriculum v1.1, sem-6, IT4",
-        timestamp: "Nov. 18, 2024, 11:22 p.m.",
-        priority: 1,
-      },
-      {
-        semester: "CSE UG Curriculum v1.1, sem-6",
-        course: "OE4L01 - Japanese Language Course - Level-1- v1.1",
-        courseSlot: "CSE UG Curriculum v1.1, sem-6, OE6",
-        timestamp: "Nov. 18, 2024, 11:22 p.m.",
-        priority: 1,
-      },
-      {
-        semester: "CSE UG Curriculum v1.1, sem-6",
-        course: "OE3D12 - Communication Skills Management- v1.0",
-        courseSlot: "CSE UG Curriculum v1.1, sem-6, OE6",
-        timestamp: "Nov. 18, 2024, 11:22 p.m.",
-        priority: 2,
-      },
-      {
-        semester: "CSE UG Curriculum v1.1, sem-6",
-        course: "OE2C09 - Graph Theory- v1.0",
-        courseSlot: "CSE UG Curriculum v1.1, sem-6, OE6",
-        timestamp: "Nov. 18, 2024, 11:22 p.m.",
-        priority: 3,
-      },
-    ],
-  },
-];
+import {
+  deletePreRegistrationRoute,
+  searchPreRegistrationRoute,
+} from "../../routes/academicRoutes";
 
 function RegistrationSearch() {
   const [rollNo, setRollNo] = useState("");
@@ -57,56 +22,81 @@ function RegistrationSearch() {
   const [error, setError] = useState("");
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
+    setError("");
+    setSearchResults(null);
     if (!rollNo || !semester) {
       setError("Please fill both Roll No and Semester fields");
       return;
     }
 
-    const foundStudent = hardcodedRegistrations.find(
-      (reg) => reg.studentInfo.rollNo === rollNo,
-    );
-
-    if (!foundStudent) {
-      setError("No registrations found for this student");
-      setSearchResults(null);
-      return;
+    const token = localStorage.getItem("authToken"); // Get token from local storage
+    if (!token) {
+      throw new Error("No token found"); // Handle the case where the token is not available
     }
 
-    const semesterCourses = foundStudent.registrations.filter((course) => {
-      // Assume course.semester is something like "CSE UG Curriculum v1.1, sem-6"
-      const match = course.semester.match(/sem-(\d+)/);
-      // If a match is found, match[1] will be the semester number as a string
-      return match && match[1] === semester;
-    });
-
-    if (semesterCourses.length === 0) {
-      setError("No courses found for this semester");
-      setSearchResults(null);
-      return;
+    try {
+      const response = await axios.post(
+        searchPreRegistrationRoute,
+        {
+          roll_no: rollNo,
+          sem_no: semester,
+        },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+      console.log(response.data);
+      if (response.data.student_registration_check) {
+        setSearchResults(response.data);
+      } else {
+        setError("No Registration Found!");
+      }
+    } catch (err) {
+      console.error("Error searching:", err);
+      setError(err);
     }
-
-    setError("");
-    setSearchResults({
-      studentInfo: foundStudent.studentInfo,
-      courses: semesterCourses,
-    });
   };
 
-  const columnNames = [
-    "Course",
-    "Semester",
-    "Course Slot",
-    "Timestamp",
-    "Priority",
-  ];
+  const handleDelete = async () => {
+    const token = localStorage.getItem("authToken"); // Get token from local storage
+    if (!token) {
+      throw new Error("No token found"); // Handle the case where the token is not available
+    }
+
+    try {
+      const response = await axios.post(
+        deletePreRegistrationRoute,
+        {
+          roll_no: searchResults.student_registration_check.student_id,
+          sem_no: searchResults.initial_registration[0].semester_id.semester_no,
+        },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+      console.log(response.data.message);
+      setDeleteModalOpen(false);
+      alert(response.data.message);
+      setSearchResults(null);
+    } catch (er) {
+      console.error("Error searching:", er);
+      setError(er);
+    }
+  };
+
+  const columnNames = ["Course", "Semester", "Course Slot", "Type", "Priority"];
 
   const mappedResults = searchResults
-    ? searchResults.courses.map((result) => ({
-        Course: result.course,
-        Semester: result.semester,
-        "Course Slot": result.courseSlot,
-        Timestamp: result.timestamp,
+    ? searchResults?.initial_registration.map((result) => ({
+        Course: result.course_id.name,
+        Semester: result.semester_id.semester_no,
+        "Course Slot": result.course_slot_id.name,
+        Type: result.registration_type,
         Priority: result.priority,
       }))
     : [];
@@ -190,20 +180,20 @@ function RegistrationSearch() {
             <Group spacing="xs" mb={4}>
               <Text weight={500}>Student Roll No:</Text>
               <Text style={{ fontWeight: 600 }}>
-                {searchResults.studentInfo.rollNo}
+                {searchResults.student_registration_check.student_id}
               </Text>
             </Group>
             <Group spacing="xs" mb={4}>
               <Text weight={500}>Pre-Registration Flag:</Text>
               <Text
                 color={
-                  searchResults.studentInfo.preRegistrationFlag
+                  searchResults.student_registration_check.pre_registration_flag
                     ? "green"
                     : "red"
                 }
                 weight={600}
               >
-                {searchResults.studentInfo.preRegistrationFlag
+                {searchResults.student_registration_check.pre_registration_flag
                   ? "True"
                   : "False"}
               </Text>
@@ -212,13 +202,15 @@ function RegistrationSearch() {
               <Text weight={500}>Final Registration Flag:</Text>
               <Text
                 color={
-                  searchResults.studentInfo.finalRegistrationFlag
+                  searchResults.student_registration_check
+                    .final_registration_flag
                     ? "green"
                     : "red"
                 }
                 weight={600}
               >
-                {searchResults.studentInfo.finalRegistrationFlag
+                {searchResults.student_registration_check
+                  .final_registration_flag
                   ? "True"
                   : "False"}
               </Text>
@@ -255,8 +247,7 @@ function RegistrationSearch() {
           <Button
             color="red"
             onClick={() => {
-              setSearchResults(null);
-              setDeleteModalOpen(false);
+              handleDelete();
             }}
           >
             Confirm Delete

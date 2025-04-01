@@ -22,7 +22,7 @@ function CheckResult() {
 
   const handleSearch = async () => {
     const token = localStorage.getItem("authToken"); // Get the token from localStorage
-
+// console.log(token);
     if (!selectedSemester) {
       alert("Please select a semester");
       return;
@@ -31,20 +31,19 @@ function CheckResult() {
     try {
       const response = await axios.post(
         check_result, 
-        { semester: selectedSemester },
+        { semester: selectedSemester},
         {
-          headers: {
-            Authorization: `Bearer ${token}`, 
-          },
+          headers: {Authorization: `Token ${token}`}
         }
       );
       const { courses, spi, su, tu } = response.data;
-
+    //  console.log(selectedSemester); 
       setResultData(courses);
       setSpi(spi);
       setSu(su);
       setTu(tu);
-
+      // console.log(courses);
+      // console.log(spi, su, tu);
       setShowContent(true);
     } catch (error) {
       console.error("Error fetching result:", error);
@@ -68,7 +67,7 @@ function CheckResult() {
         borderRadius: "15px",
         padding: "0px 20px",
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.15)",
-        borderLeft: "10px solid #1E90FF",
+        // borderLeft: "10px solid #1E90FF",
         backgroundColor: "white",
       }}
     >
@@ -80,14 +79,14 @@ function CheckResult() {
               label="Semester"
               placeholder="Semester"
               data={[
-                { value: 1, label: "Semester 1" },
-                { value: 2, label: "Semester 2" },
-                { value: 3, label: "Semester 3" },
-                { value: 4, label: "Semester 4" },
-                { value: 5, label: "Semester 5" },
-                { value: 6, label: "Semester 6" },
-                { value: 7, label: "Semester 7" },
-                { value: 8, label: "Semester 8" },
+                { value: "1", label: "Semester 1" },
+                { value: "2", label: "Semester 2" },
+                { value: "3", label: "Semester 3" },
+                { value: "4", label: "Semester 4" },
+                { value: "5", label: "Semester 5" },
+                { value: "6", label: "Semester 6" },
+                { value: "7", label: "Semester 7" },
+                { value: "8", label: "Semester 8" },
               ]}
               value={selectedSemester}
               onChange={(value) => setSelectedSemester(value)}

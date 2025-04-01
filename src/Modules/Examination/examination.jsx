@@ -9,6 +9,7 @@ import Announcement from "./announcement.jsx";
 import VerifyDean from "./verifyDean.jsx";
 import ValidateDean from "./validateDean.jsx";
 import CheckResult from "./checkResult.jsx";
+import CheckResultProf from "./checkResultsProf.jsx";
 import CustomBreadExam from "./components/customBreadCrumbs.jsx";
 import SubmitGradesProf from "./submitGradesProf.jsx";
 import ProtectedRoute from "./routes/protectedRoutes.jsx";
@@ -123,6 +124,14 @@ export default function Examination() {
             element={
               <ProtectedRoute roles={["Associate Professor", "Assistant Professor", "Professor"]}>
                 <SubmitGradesProf />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/download-grades-prof"
+            element={
+              <ProtectedRoute roles={["Associate Professor", "Assistant Professor", "Professor"]}>
+                <CheckResultProf />
               </ProtectedRoute>
             }
           />

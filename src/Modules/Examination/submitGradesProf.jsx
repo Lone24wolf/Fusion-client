@@ -142,7 +142,7 @@ function SubmitGradesProf() {
       }
 
       const formData = new FormData();
-      formData.append("Role", "Professor");
+      formData.append("Role", userRole);
       formData.append("csv_file", excelFile);
       formData.append("course_id", course);
       formData.append("academic_year", year);
@@ -181,10 +181,10 @@ function SubmitGradesProf() {
     <Container
       size="xl"
       style={{
-        borderRadius: "15px",
+        borderRadius: "5px",
         padding: "20px",
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.15)",
-        borderLeft: "10px solid #1E90FF",
+        // borderLeft: "10px solid #1E90FF",
         backgroundColor: "white",
       }}
     >

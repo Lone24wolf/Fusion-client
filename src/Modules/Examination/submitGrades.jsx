@@ -13,7 +13,7 @@ import {
 import axios from "axios";
 import { get_courses, download_template, upload_grades } from "./routes/examinationRoutes"; // Import API routes
 import { FileArrowDown } from "@phosphor-icons/react";
-
+import { useSelector } from "react-redux";
 function SubmitGrades() {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 2021 }, (_, i) =>
@@ -27,7 +27,7 @@ function SubmitGrades() {
   const [excelFile, setExcelFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const userRole = useSelector((state) => state.user.role);
   // Fetch courses when year is selected
   useEffect(() => {
     if (!year) return;
@@ -45,7 +45,7 @@ function SubmitGrades() {
 
       try {
         const requestData = {
-          Role: "acadadmin",
+          Role: userRole,
           academic_year: year,
         };
 
@@ -106,7 +106,7 @@ function SubmitGrades() {
       setLoading(true);
 
       const requestData = {
-        Role: "acadadmin",
+        Role:userRole,
         course: courseId, // Ensure course ID is passed
         year: parseInt(year), // Ensure year is an integer
       };
@@ -156,7 +156,7 @@ function SubmitGrades() {
       setLoading(true);
 
       const formData = new FormData();
-      formData.append("Role", "acadadmin");
+      formData.append("Role", userRole);
       formData.append("course_id", courseId);
       formData.append("academic_year", year);
       formData.append("csv_file", excelFile);
@@ -191,7 +191,7 @@ function SubmitGrades() {
         borderRadius: "15px",
         padding: "0 20px",
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.15)",
-        borderLeft: "10px solid #1E90FF",
+        // borderLeft: "10px solid #1E90FF",
         backgroundColor: "white",
       }}
     >

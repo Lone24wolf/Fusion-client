@@ -234,7 +234,7 @@ function VerifyGrades() {
         : "NO";
 
       const requestData = {
-        Role: "acadadmin",
+        Role: userRole,
         student_ids: studentIds,
         semester_ids: semesterIds,
         course_ids: courseIds,
@@ -323,7 +323,7 @@ function VerifyGrades() {
         borderRadius: "15px",
         padding: "20px",
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.15)",
-        borderLeft: "10px solid #1E90FF",
+        // borderLeft: "10px solid #1E90FF",
         backgroundColor: "white",
       }}
     >

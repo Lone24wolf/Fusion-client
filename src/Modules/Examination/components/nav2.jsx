@@ -81,6 +81,12 @@ export default function Nav() {
       path: "/examination/validate",
       roles: ["Dean Academic"],
     },
+    {
+      title: "Download Grades",
+      path: "/examination/download-grades-prof",
+      roles: ["Professor","Assistant Professor","Associate Professor"],
+    },
+    
     { title: "Result", path: "/examination/result", roles: ["Student"] },
   ];
 

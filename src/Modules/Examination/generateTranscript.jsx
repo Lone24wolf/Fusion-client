@@ -49,8 +49,14 @@ function GenerateTranscript() {
       try {
         setLoading(true);
         const { data } = await axios.get(generate_transcript_form, {
-          headers: { Authorization: `Token ${token}`, 'X-User-Role':'acadadmin' },
+          params: {
+            role: userRole
+          },
+          headers: { 
+            Authorization: `Token ${token}` 
+          }
         });
+        
 
         // Remove duplicates
         const uniqueprogramme = [...new Set(data.programmes || [])];
@@ -196,7 +202,7 @@ function GenerateTranscript() {
             borderRadius: "15px",
             padding: "20px",
             boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.15)",
-            borderLeft: "10px solid #1E90FF",
+            // borderLeft: "10px solid #1E90FF",
           }}
         >
           <Stack spacing="lg">

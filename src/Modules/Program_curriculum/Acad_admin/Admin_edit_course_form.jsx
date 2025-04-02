@@ -19,6 +19,7 @@ import {
   fetchAllCourses,
   fetchCourseDetails,
 } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_edit_course_form() {
   const form = useForm({
@@ -126,9 +127,8 @@ function Admin_edit_course_form() {
   }, [id]);
 
   const handleSubmit = async (values) => {
-    const apiUrl =
-      "http://127.0.0.1:8000/programme_curriculum/api/admin_add_course/";
-    console.log("Form Values:", values);
+    const apiUrl = `${host}/programme_curriculum/api/admin_update_course/${id}/`;
+    const token = localStorage.getItem("authToken");
 
     const payload = {
       name: values.courseName,
@@ -152,25 +152,28 @@ function Admin_edit_course_form() {
       disciplines: values.discipline,
       pre_requisit_courses: values.preRequisiteCourse,
       pre_requisits: values.preRequisites,
-      maxSeats: values.maxSeats,
     };
-    console.log("Payload: ", payload);
+
     try {
       const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
+        },
         body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         const data = await response.json();
-        alert("Course added successfully!");
-        console.log("Response Data:", data);
-        navigate("/programme_curriculum/admin_courses");
+        alert("Course updated successfully!");
+        navigate(`/programme_curriculum/admin_course/${data.course_id}`);
       } else {
-        const errorText = await response.text();
-        console.error("Error:", errorText);
-        alert("Failed to add course.");
+        const errorData = await response.json();
+        console.error("Error:", errorData);
+        alert(
+          `Failed to update course: ${errorData.error || response.statusText}`,
+        );
       }
     } catch (error) {
       console.error("Network Error:", error);

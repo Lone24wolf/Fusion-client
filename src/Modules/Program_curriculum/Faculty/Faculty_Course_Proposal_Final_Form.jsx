@@ -10,20 +10,27 @@ import {
   TextInput,
   Table,
   MultiSelect,
+  // Select,
+  Checkbox,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 // import { useNavigate } from "react-router-dom";
-import { fetchDisciplinesData, fetchAllCourses } from "../api/api";
+import {
+  fetchDisciplinesData,
+  fetchAllCourses,
+  fetchFacultyCourseProposalCourseData,
+} from "../api/api";
 import { host } from "../../../routes/globalRoutes";
 
-function Admin_add_course_proposal_form() {
+function FacultyCourseProposalFinalForm() {
   const form = useForm({
     initialValues: {
       courseName: "",
       courseCode: "",
       courseCredit: 4,
-      courseVersion: "1.0",
+      courseVersion: 1,
       lectureHours: 3,
       tutorialHours: 1,
       practicalHours: 2,
@@ -41,12 +48,20 @@ function Admin_add_course_proposal_form() {
       project: 10,
       labEvaluation: 15,
       attendance: 5,
+      maxSeats: 90,
+      workingCourse: false,
     },
   });
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("id");
+  const username = useSelector((state) => state.user.roll_no);
+  const role = useSelector((state) => state.user.role);
+  // const { id } = useParams();
   const [disciplines, setDisciplines] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [course, setCourse] = useState([]);
 
   useEffect(() => {
     const fetchDisciplines = async () => {
@@ -69,11 +84,11 @@ function Admin_add_course_proposal_form() {
     const fetchCourses = async () => {
       try {
         const response = await fetchAllCourses();
-        // console.log("Courses data:", response);
+        console.log("Courses data:", response);
 
-        const courseList = response.map((course) => ({
-          name: `${course.name} (${course.code})`,
-          id: course.id,
+        const courseList = response.map((c) => ({
+          name: `${c.name} (${c.code})`,
+          id: c.id,
         }));
         setCourses(courseList);
       } catch (error) {
@@ -81,12 +96,55 @@ function Admin_add_course_proposal_form() {
       }
     };
 
+    const loadCourseDetails = async () => {
+      try {
+        const response = await fetchFacultyCourseProposalCourseData(id);
+        const data = await response.json();
+        console.log(data.data);
+        setCourse(data.data.proposal);
+        console.log(course);
+        form.setValues({
+          courseName: data.data.proposal.name,
+          courseCode: data.data.proposal.code,
+          courseCredit: data.data.proposal.credit,
+          // courseVersion: data.data.proposal.version,
+          lectureHours: data.data.proposal.lecture_hours,
+          tutorialHours: data.data.proposal.tutorial_hours,
+          practicalHours: data.data.proposal.pratical_hours,
+          discussionHours: data.data.proposal.discussion_hours,
+          projectHours: data.data.proposal.project_hours,
+          discipline: data.data.proposal.discipline.map((dis) =>
+            JSON.stringify(dis),
+          ),
+          preRequisites: data.data.proposal.pre_requisits,
+          preRequisiteCourse: data.data.proposal.pre_requisits_courses.map(
+            (c) => JSON.stringify(c.id),
+          ),
+          syllabus: data.data.proposal.syllabus,
+          references: data.data.proposal.ref_books,
+          quiz1: data.data.proposal.percent_quiz_1,
+          midsem: data.data.proposal.percent_midsem,
+          quiz2: data.data.proposal.percent_quiz_2,
+          endsem: data.data.proposal.percent_endsem,
+          project: data.data.proposal.percent_project,
+          labEvaluation: data.data.proposal.percent_lab_evaluation,
+          attendance: data.data.proposal.percent_course_attendance,
+          maxSeats: data.data.proposal.max_seats,
+        });
+      } catch (err) {
+        console.error("Error fetching course details: ", err);
+      }
+    };
+
     fetchDisciplines();
     fetchCourses();
-  }, []);
+    loadCourseDetails();
+  }, [id]);
+  console.log(form.values);
 
   const handleSubmit = async (values) => {
-    const apiUrl = `${host}/programme_curriculum/api/admin_add_course/`;
+    const apiUrl = `${host}/programme_curriculum/api/forward_course_forms/${id}/?username=${username}&des=${role}`;
+    const token = localStorage.getItem("authToken");
     console.log("Form Values:", values);
 
     const payload = {
@@ -111,22 +169,25 @@ function Admin_add_course_proposal_form() {
       disciplines: values.discipline,
       pre_requisit_courses: values.preRequisiteCourse,
       pre_requisits: values.preRequisites,
-      max_seats: values.maxSeats,
+      maxSeats: values.maxSeats,
+      working_course: values.workingCourse,
     };
     console.log("Payload: ", payload);
     try {
       const response = await fetch(apiUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          Authorization: `Token ${token}`,
+        },
         body: JSON.stringify(payload),
       });
 
       if (response.ok) {
-        localStorage.setItem("AdminCoursesCachechange", "true");
+        localStorage.setItem("FacultyCoursesCachechange", "true");
         const data = await response.json();
         alert("Course added successfully!");
         console.log("Response Data:", data);
-        navigate("/programme_curriculum/admin_courses");
+        navigate("/programme_curriculum/faculty_courses");
       } else {
         const errorText = await response.text();
         console.error("Error:", errorText);
@@ -138,32 +199,10 @@ function Admin_add_course_proposal_form() {
     }
   };
 
-  // const breadcrumbItems = [
-  //   { title: "Program and Curriculum", href: "#" },
-  //   { title: "Curriculums", href: "#" },
-  //   { title: "CSE UG Curriculum", href: "#" },
-  // ].map((item, index) => (
-  //   <Anchor href={item.href} key={index}>
-  //     {item.title}
-  //   </Anchor>
-  // ));
-  // console.log(form);
   return (
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
-      {/* {console.log("Fin : ", disciplines)}
-      {console.log("CourFin: ", courses)} */}
-      {/* <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
-
-      <Group spacing="xs" className="program-options" position="center" mt="md">
-        <Text>Programmes</Text>
-        <Text className="active">Curriculums</Text>
-        <Text>Courses</Text>
-        <Text>Disciplines</Text>
-        <Text>Batches</Text>
-      </Group> */}
-
       <Container
         fluid
         style={{
@@ -326,7 +365,7 @@ function Admin_add_course_proposal_form() {
                       <td
                         style={{ border: "2px solid #1976d2", padding: "10px" }}
                       >
-                        <TextInput
+                        <NumberInput
                           placeholder="1.0"
                           value={form.values.courseVersion}
                           onChange={(event) =>
@@ -415,6 +454,7 @@ function Admin_add_course_proposal_form() {
                     }}
                     step={1}
                   />
+
                   <NumberInput
                     label="Discussion Hours"
                     placeholder="0"
@@ -471,6 +511,13 @@ function Admin_add_course_proposal_form() {
                     step={1}
                   />
                 </Group>
+                <Checkbox
+                  label="Working Course"
+                  checked={form.values.workingCourse}
+                  onChange={(event) =>
+                    form.setFieldValue("workingCourse", event.target.checked)
+                  }
+                />
                 {/* Discipline and Others */}
                 <MultiSelect
                   label="From Discipline"
@@ -492,6 +539,17 @@ function Admin_add_course_proposal_form() {
                   required
                   searchable
                 />
+                {/* <Select
+                  label="From Discipline"
+                  placeholder="Select Discipline"
+                  data={disciplines}
+                  value={form.values.discipline}
+                  onChange={(value) => form.setFieldValue("discipline", value)}
+                  required
+                  searchable
+                  clearable
+                  nothingFound="No disciplines found"
+                /> */}
                 <Textarea
                   label="Pre-requisites"
                   placeholder="None"
@@ -506,10 +564,10 @@ function Admin_add_course_proposal_form() {
                 <MultiSelect
                   label="Pre-requisite Course"
                   placeholder="Select Course"
-                  data={courses.map((course) => ({
-                    label: course.name,
-                    value: course.id.toString(),
-                    ...course,
+                  data={courses.map((c) => ({
+                    label: c.name,
+                    value: c.id.toString(),
+                    ...c,
                   }))}
                   value={
                     Array.isArray(form.values.preRequisiteCourse)
@@ -681,4 +739,4 @@ function Admin_add_course_proposal_form() {
   );
 }
 
-export default Admin_add_course_proposal_form;
+export default FacultyCourseProposalFinalForm;

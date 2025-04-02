@@ -12,9 +12,13 @@ import {
 } from "@mantine/core";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
+// import { useMediaQuery } from "@mantine/hooks";
 import { fetchCurriculumData } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
+// import { useMediaQuery } from "@mantine/hooks";
 
 function Admin_edit_programme_form() {
+  // const isMobile = useMediaQuery("(max-width: 768px)");
   const { id } = useParams();
   const navigate = useNavigate();
   const [programmeData, setProgrammeData] = useState([]);
@@ -68,7 +72,7 @@ function Admin_edit_programme_form() {
       };
       console.log("Edited Programme Data Submitted:", submitData);
       const response = await fetch(
-        `http://127.0.0.1:8000/programme_curriculum/api/admin_edit_programme/${id}/`,
+        `${host}/programme_curriculum/api/admin_edit_programme/${id}/`,
         {
           method: "POST",
           body: JSON.stringify(submitData),
@@ -76,6 +80,7 @@ function Admin_edit_programme_form() {
       );
       const result = await response.json();
       if (response.ok) {
+        localStorage.setItem("AdminProgrammesCachechange", "true");
         alert("Programme updated successfully!");
         console.log(response);
         navigate("/programme_curriculum/acad_view_all_programme");
@@ -187,23 +192,6 @@ function Admin_edit_programme_form() {
           </div>
 
           {/* Right Panel Buttons */}
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-            }}
-          >
-            <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <a href="/programme_curriculum/acad_admin_add_curriculum_form">
-                <Button className="right-btn-programme">Add Curriculum</Button>
-              </a>
-              <a href="/programme_curriculum/acad_admin_add_discipline_form">
-                <Button className="right-btn-programme">Add Discipline</Button>
-              </a>
-            </Group>
-          </div>
         </div>
       </Container>
 

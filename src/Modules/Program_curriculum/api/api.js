@@ -1,6 +1,7 @@
 import axios from "axios";
+import { host } from "../../../routes/globalRoutes";
 
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = host;
 
 export const studentFetchSemesterData = async (id) => {
   try {
@@ -432,6 +433,154 @@ export const fetchBatchData = async (batch_id) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching program data: ", error);
+    throw error;
+  }
+};
+
+export const fetchFacultiesData = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_faculties/`,
+    );
+    return response.data.faculties;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
+    throw error;
+  }
+};
+
+export const fetchFacultyCourseProposalData = async (username, designation) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/view_course_proposal_forms/?username=${username}&des=${designation}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    // console.log(response);
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
+    throw error;
+  }
+};
+
+export const fetchFacultySuperiorData = async (username, designation) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(
+      `${BASE_URL}/programme_curriculum/api/get_superior_data/?uploaderId=${username}&uploaderDes=${designation}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch superior data");
+    }
+
+    // console.log(response);
+    return response;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
+    throw error;
+  }
+};
+
+export const fetchFacultyOutwardFilesData = async (username, designation) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(
+      `${BASE_URL}/programme_curriculum/api/outward_files/?username=${username}&des=${designation}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch superior data");
+    }
+
+    // console.log(response);
+    return response;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
+    throw error;
+  }
+};
+
+export const fetchFacultyInwardFilesData = async (username, designation) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(
+      `${BASE_URL}/programme_curriculum/api/inward_files/?username=${username}&des=${designation}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch superior data");
+    }
+
+    // console.log(response);
+    return response;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
+    throw error;
+  }
+};
+export const fetchFacultyViewInwardFilesData = async (
+  fileId,
+  username,
+  designation,
+) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(
+      `${BASE_URL}/programme_curriculum/api/view_inward_files/${fileId}/?username=${username}&des=${designation}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch superior data");
+    }
+
+    // console.log(response);
+    return response;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
+    throw error;
+  }
+};
+export const fetchFacultyCourseProposalCourseData = async (id) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(
+      `${BASE_URL}/programme_curriculum/api/forward_course_forms_II/?id=${id}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch superior data");
+    }
+
+    // console.log(response);
+    return response;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
     throw error;
   }
 };

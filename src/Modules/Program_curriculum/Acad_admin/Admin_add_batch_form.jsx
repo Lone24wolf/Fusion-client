@@ -11,25 +11,40 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import axios from "axios";
+import { Link, useLocation } from "react-router-dom";
+import { useMediaQuery } from "@mantine/hooks";
 import {
   fetchDisciplines,
   fetchBatchName,
   fetchGetUnlinkedCurriculum,
 } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_add_batch_form() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const [batchNames, setBatchNames] = useState([]); // State for batch names
   const [disciplines, setDisciplines] = useState([]); // State for disciplines
   const [unlinkedCurriculums, setUnlinkedCurriculums] = useState([]); // State for unlinked curriculums
   const [loading, setLoading] = useState(true); // State for loading
   const [error, setError] = useState(null); // State for error handling
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  // Check if the curriculum_id query parameter exists in the URL
+  const hasCurriculumId = queryParams.has("curriculum_id");
+
+  // Extract curriculum_id only if it exists in the URL
+  const curriculumId = hasCurriculumId
+    ? queryParams.get("curriculum_id")
+    : null;
+
   const form = useForm({
     initialValues: {
       batchName: "",
       discipline: "",
       batchYear: 2024,
-      disciplineBatch: "",
+      disciplineBatch: curriculumId || "",
       runningBatch: false,
     },
   });
@@ -61,6 +76,7 @@ function Admin_add_batch_form() {
 
   const handleSubmit = async () => {
     try {
+      localStorage.setItem("AdminBatchesCachechange", "true");
       const token = localStorage.getItem("authToken");
       if (!token) {
         throw new Error("Authorization token is required");
@@ -74,7 +90,7 @@ function Admin_add_batch_form() {
       };
       console.log(payload);
       const response = await axios.post(
-        "http://127.0.0.1:8000/programme_curriculum/api/admin_add_batch/",
+        `${host}/programme_curriculum/api/admin_add_batch/`,
         payload,
         {
           headers: {
@@ -117,12 +133,38 @@ function Admin_add_batch_form() {
         fluid
         style={{
           display: "flex",
-          justifyContent: "left",
-          alignItems: "left",
+          flexDirection: isMobile ? "column" : "row", // Stack on small screens
+          alignItems: isMobile ? "center" : "flex-start",
           width: "100%",
           margin: "0 0 0 -3.2vw",
         }}
       >
+        {/* Buttons Section (Moves Above Form on Small Screens) */}
+        {isMobile && (
+          <Group
+            spacing="md"
+            direction="column"
+            style={{ width: "100%", marginTop: "1rem", paddingLeft: "2rem" }}
+          >
+            <Link
+              to="/programme_curriculum/acad_admin_add_curriculum_form"
+              style={{ textDecoration: "none" }}
+            >
+              <Button className="right-btn-batch" style={{ minWidth: "143px" }}>
+                Add Curriculum
+              </Button>
+            </Link>
+            <Link
+              to="/programme_curriculum/acad_admin_add_discipline_form"
+              style={{ textDecoration: "none" }}
+            >
+              <Button className="right-btn-batch" style={{ minWidth: "143px" }}>
+                Add Discipline
+              </Button>
+            </Link>
+          </Group>
+        )}
+
         <div
           style={{
             maxWidth: "290vw",
@@ -131,6 +173,7 @@ function Admin_add_batch_form() {
             gap: "2rem",
             padding: "2rem",
             flex: 4,
+            flexDirection: isMobile ? "column" : "row", // Stack on small screens
           }}
         >
           {/* Form Section */}
@@ -149,17 +192,15 @@ function Admin_add_batch_form() {
                   Batch Form
                 </Text>
 
-                {/* Batch Name Dropdown */}
                 <Select
                   label="Batch Name"
                   placeholder="-- Select Batch Name --"
-                  data={batchNames} // Use the batchNames state directly
+                  data={batchNames}
                   value={form.values.batchName}
                   onChange={(value) => form.setFieldValue("batchName", value)}
                   required
                 />
 
-                {/* Discipline Dropdown */}
                 <Select
                   label="Select Discipline"
                   placeholder="-- Select Discipline --"
@@ -184,8 +225,8 @@ function Admin_add_batch_form() {
                   label="Select Curriculum for Batch"
                   placeholder="-- Select Curriculum for Batch Students --"
                   data={unlinkedCurriculums.map((curriculum) => ({
-                    value: curriculum.id.toString(), // Convert the ID to a string
-                    label: curriculum.name, // Use the curriculum name as the label
+                    value: curriculum.id.toString(),
+                    label: curriculum.name,
                   }))}
                   value={form.values.disciplineBatch}
                   onChange={(value) =>
@@ -217,36 +258,32 @@ function Admin_add_batch_form() {
             </form>
           </div>
 
-          {/* Right Panel Buttons */}
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-            }}
-          >
-            <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <a
-                href="/programme_curriculum/acad_admin_add_curriculum_form"
-                style={{ textDecoration: "none" }}
-              >
-                <Button className="right-btn-batch">Add Curriculum</Button>
-              </a>
-              <a
-                href="/programme_curriculum/acad_admin_add_batch_form"
-                style={{ textDecoration: "none" }}
-              >
-                <Button className="right-btn-batch">Add Another Batch</Button>
-              </a>
-              <a
-                href="/programme_curriculum/acad_admin_add_discipline_form"
-                style={{ textDecoration: "none" }}
-              >
-                <Button className="right-btn-batch">Add Discipline</Button>
-              </a>
-            </Group>
-          </div>
+          {/* Right Panel Buttons (Only Show on Large Screens) */}
+          {!isMobile && (
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+              }}
+            >
+              <Group spacing="md" direction="column" style={{ width: "100%" }}>
+                <Link
+                  to="/programme_curriculum/acad_admin_add_curriculum_form"
+                  style={{ textDecoration: "none" }}
+                >
+                  <Button className="right-btn-batch">Add Curriculum</Button>
+                </Link>
+                <Link
+                  to="/programme_curriculum/acad_admin_add_discipline_form"
+                  style={{ textDecoration: "none" }}
+                >
+                  <Button className="right-btn-batch">Add Discipline</Button>
+                </Link>
+              </Group>
+            </div>
+          )}
         </div>
       </Container>
 

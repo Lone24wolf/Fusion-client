@@ -1,31 +1,37 @@
 import React, { useState, useEffect } from "react";
 import {
-  TextInput,
   Select,
-  Checkbox,
+  Input,
   NumberInput,
   Button,
   Group,
   Text,
   Container,
   Stack,
-  Notification,
+  Checkbox,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import { useMediaQuery } from "@mantine/hooks";
 import { fetchAllProgrammes } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function AdminAddCurriculumForm() {
-  const [formData, setFormData] = useState({
-    curriculumName: "",
-    programme: "",
-    workingCurriculum: false,
-    versionNo: 1.0,
-    numSemesters: 1,
-    numCredits: 0,
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const form = useForm({
+    initialValues: {
+      curriculumName: "",
+      programme: "",
+      workingCurriculum: false,
+      versionNo: 1.0,
+      numSemesters: 1,
+      numCredits: 0,
+    },
   });
-  const [loading, setLoading] = useState(false);
-  const [notification, setNotification] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const [ugData, setUgData] = useState([]);
   const [pgData, setPgData] = useState([]);
   const [phdData, setPhdData] = useState([]);
@@ -35,11 +41,10 @@ function AdminAddCurriculumForm() {
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
-        const token = localStorage.getItem("authToken"); // Retrieve the auth token
+        const token = localStorage.getItem("authToken");
         if (!token) throw new Error("Authorization token not found");
 
         const response = await fetchAllProgrammes(token);
-        console.log(response);
 
         setUgData(response.ug_programmes || []);
         setPgData(response.pg_programmes || []);
@@ -54,61 +59,6 @@ function AdminAddCurriculumForm() {
 
     fetchPrograms();
   }, []);
-
-  const handleChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setNotification(null);
-
-    const payload = {
-      curriculum_name: formData.curriculumName,
-      programme: formData.programme,
-      working_curriculum: formData.workingCurriculum,
-      version_no: formData.versionNo,
-      no_of_semester: formData.numSemesters,
-      num_credits: formData.numCredits,
-    };
-
-    try {
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        throw new Error("Authorization token is required");
-      }
-      console.log(token);
-      const response = await axios.post(
-        "http://127.0.0.1:8000/programme_curriculum/api/admin_add_curriculum/",
-        payload,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        },
-      );
-      setNotification({
-        message: response.data.message || "Curriculum added successfully!",
-        color: "green",
-      });
-      setFormData({
-        curriculumName: "",
-        programme: "",
-        workingCurriculum: false,
-        versionNo: 1.0,
-        numSemesters: 1,
-        numCredits: 0,
-      });
-    } catch (err) {
-      setNotification({
-        message: err.response?.data?.message || "Failed to add curriculum.",
-        color: "red",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const programOptions = [
     ...ugData.map((prog) => ({
@@ -125,93 +75,207 @@ function AdminAddCurriculumForm() {
     })),
   ];
 
-  return (
-    <Container size="lg" style={{ marginTop: "2rem" }}>
-      <Text
-        size="xl"
-        weight={700}
-        align="center"
-        style={{ marginBottom: "2rem" }}
-      >
-        Add Curriculum Form
-      </Text>
+  const handleSubmit = async (values) => {
+    localStorage.setItem("AdminCurriculumsCachechange", "true");
+    const payload = {
+      curriculum_name: values.curriculumName,
+      programme: values.programme,
+      working_curriculum: values.workingCurriculum,
+      version_no: values.versionNo,
+      no_of_semester: values.numSemesters,
+      num_credits: values.numCredits,
+    };
 
-      {notification && (
-        <Notification
-          color={notification.color}
-          onClose={() => setNotification(null)}
-        >
-          {notification.message}
-        </Notification>
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("Authorization token is required");
+      }
+
+      const response = await axios.post(
+        `${host}/programme_curriculum/api/admin_add_curriculum/`,
+        payload,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+      if (response.status === 201) {
+        alert("Curriculum added successfully!");
+        navigate("/programme_curriculum/acad_view_all_working_curriculums");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Failed to add curriculum.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Container
+      fluid
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        padding: "2rem",
+      }}
+    >
+      {/* Buttons move above the form on mobile screens */}
+      {isMobile && (
+        <Group spacing="md" position="center" mb="lg">
+          <Link to="/programme_curriculum/acad_admin_add_programme_form">
+            <Button
+              className="right-btn-programme"
+              style={{ minWidth: "143px" }}
+            >
+              Add Programme
+            </Button>
+          </Link>
+          <Link to="/programme_curriculum/acad_admin_add_discipline_form">
+            <Button
+              className="right-btn-programme"
+              style={{ minWidth: "143px" }}
+            >
+              Add Discipline
+            </Button>
+          </Link>
+        </Group>
       )}
 
-      <form
-        onSubmit={handleSubmit}
-        style={{ maxWidth: "500px", margin: "auto" }}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          gap: "2rem",
+        }}
       >
-        <Stack spacing="lg">
-          <TextInput
-            label="Curriculum Name"
-            placeholder="Enter curriculum name"
-            value={formData.curriculumName}
-            onChange={(e) => handleChange("curriculumName", e.target.value)}
-            required
-          />
+        {/* Form */}
+        <div style={{ flex: 4 }}>
+          <form
+            onSubmit={form.onSubmit(handleSubmit)}
+            style={{
+              backgroundColor: "#fff",
+              padding: "2rem",
+              borderRadius: "8px",
+              boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Stack spacing="lg">
+              <Text size="xl" weight={700} align="center">
+                Add Curriculum Form
+              </Text>
 
-          <Select
-            label="Programme"
-            placeholder="Select a programme"
-            data={loadingPrograms ? [] : programOptions}
-            value={formData.programme}
-            onChange={(value) => handleChange("programme", value)}
-            required
-            disabled={loadingPrograms}
-            error={error}
-          />
+              <Input
+                label="Curriculum Name"
+                placeholder="Enter Curriculum Name"
+                value={form.values.curriculumName}
+                onChange={(event) =>
+                  form.setFieldValue("curriculumName", event.target.value)
+                }
+                required
+              />
 
-          <Checkbox
-            label="Working Curriculum"
-            checked={formData.workingCurriculum}
-            onChange={(e) =>
-              handleChange("workingCurriculum", e.target.checked)
-            }
-          />
+              <Select
+                label="Programme"
+                placeholder="-- Select Programme --"
+                data={loadingPrograms ? [] : programOptions}
+                value={form.values.programme}
+                onChange={(value) => form.setFieldValue("programme", value)}
+                required
+                disabled={loadingPrograms}
+                error={error}
+              />
 
-          <NumberInput
-            label="Curriculum Version No"
-            value={formData.versionNo}
-            onChange={(value) => handleChange("versionNo", value)}
-            required
-            min={0.1}
-            precision={1}
-          />
+              <Checkbox
+                label="Working Curriculum"
+                checked={form.values.workingCurriculum}
+                onChange={(event) =>
+                  form.setFieldValue("workingCurriculum", event.target.checked)
+                }
+              />
 
-          <NumberInput
-            label="Number of Semesters"
-            value={formData.numSemesters}
-            onChange={(value) => handleChange("numSemesters", value)}
-            required
-            min={1}
-          />
+              <NumberInput
+                label="Curriculum Version"
+                value={form.values.versionNo}
+                onChange={(value) => form.setFieldValue("versionNo", value)}
+                required
+                min={0.1}
+                precision={1}
+              />
 
-          <NumberInput
-            label="Number of Credits"
-            value={formData.numCredits}
-            onChange={(value) => handleChange("numCredits", value)}
-            required
-            min={0}
-          />
-        </Stack>
+              <NumberInput
+                label="Number of Semesters"
+                value={form.values.numSemesters}
+                onChange={(value) => form.setFieldValue("numSemesters", value)}
+                required
+                min={1}
+              />
 
-        <Group position="right" mt="lg">
-          <Button variant="outline" onClick={() => setFormData({})}>
-            Cancel
-          </Button>
-          <Button type="submit" loading={loading}>
-            Submit
-          </Button>
-        </Group>
-      </form>
+              <NumberInput
+                label="Number of Credits"
+                value={form.values.numCredits}
+                onChange={(value) => form.setFieldValue("numCredits", value)}
+                required
+                min={0}
+              />
+            </Stack>
+
+            <Group position="right" mt="lg">
+              <Button
+                variant="outline"
+                onClick={() => form.reset()}
+                className="cancel-btn"
+              >
+                Cancel
+              </Button>
+              <Button type="submit" className="submit-btn" loading={loading}>
+                Submit
+              </Button>
+            </Group>
+          </form>
+        </div>
+
+        {/* Buttons remain on the right for larger screens */}
+        {!isMobile && (
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-start",
+            }}
+          >
+            <Group spacing="md" direction="column" style={{ width: "100%" }}>
+              <Link to="/programme_curriculum/acad_admin_add_programme_form">
+                <Button
+                  className="right-btn-programme"
+                  style={{ minWidth: "143px" }}
+                >
+                  Add Programme
+                </Button>
+              </Link>
+              <Link to="/programme_curriculum/acad_admin_add_discipline_form">
+                <Button
+                  className="right-btn-programme"
+                  style={{ minWidth: "143px" }}
+                >
+                  Add Discipline
+                </Button>
+              </Link>
+            </Group>
+          </div>
+        )}
+      </div>
+
+      <style>{`
+        .right-btn-programme {
+          width: 15vw;
+        }
+      `}</style>
     </Container>
   );
 }

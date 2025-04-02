@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import {
   NumberInput,
   Textarea,
@@ -12,12 +13,15 @@ import {
   MultiSelect,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
-import { fetchDisciplinesData, fetchAllCourses } from "../api/api";
+import {
+  fetchAllCourses,
+  // fetchCourseDetails,
+} from "../api/api";
 import { host } from "../../../routes/globalRoutes";
 
-function Admin_add_course_proposal_form() {
+function Faculty_add_course_proposal_form() {
   const form = useForm({
     initialValues: {
       courseName: "",
@@ -41,52 +45,59 @@ function Admin_add_course_proposal_form() {
       project: 10,
       labEvaluation: 15,
       attendance: 5,
+      uploader: "",
+      uploader_name: "",
+      Designation: "",
+      Title: "",
+      Description: "",
     },
   });
-
+  const role = useSelector((state) => state.user.role);
+  console.log(useSelector((state) => state.user));
+  const uploader_fullname = useSelector((state) => state.user.username);
+  const uploader_username = useSelector((state) => state.user.roll_no);
+  console.log(uploader_username);
   const navigate = useNavigate();
-  const [disciplines, setDisciplines] = useState([]);
+  const { id } = useParams();
+  // const [disciplines, setDisciplines] = useState([]);
   const [courses, setCourses] = useState([]);
+  // const [course, setCourse] = useState([]);
+  console.log(form.values);
 
   useEffect(() => {
-    const fetchDisciplines = async () => {
-      try {
-        const response = await fetchDisciplinesData();
-        // console.log(response);
-
-        // const data = [...d.name, ...d.acronym, ...d.id];
-
-        const disciplineList = response.map((discipline) => ({
-          name: `${discipline.name} (${discipline.acronym})`,
-          id: discipline.id,
-        }));
-        setDisciplines(disciplineList);
-      } catch (fetchError) {
-        console.error("Error fetching disciplines: ", fetchError);
-      }
-    };
-
     const fetchCourses = async () => {
       try {
         const response = await fetchAllCourses();
         // console.log("Courses data:", response);
 
-        const courseList = response.map((course) => ({
-          name: `${course.name} (${course.code})`,
-          id: course.id,
+        const courseList = response.map((c) => ({
+          name: `${c.name} (${c.code})`,
+          id: c.id,
         }));
         setCourses(courseList);
       } catch (error) {
         console.error("Error fetching courses: ", error);
       }
     };
-
-    fetchDisciplines();
     fetchCourses();
-  }, []);
+    // loadCourseDetails();
+  }, [id]);
+  useEffect(() => {
+    if (role && uploader_fullname) {
+      try {
+        form.setValues({
+          Designation: role,
+          uploader: uploader_username,
+          uploader_name: uploader_fullname,
+        });
+      } catch (err) {
+        console.error("Error setting form values: ", err);
+      }
+    }
+  }, [role, uploader_fullname]);
 
   const handleSubmit = async (values) => {
-    const apiUrl = `${host}/programme_curriculum/api/admin_add_course/`;
+    const apiUrl = `${host}/programme_curriculum/api/new_course_proposal_file/`;
     console.log("Form Values:", values);
 
     const payload = {
@@ -111,7 +122,11 @@ function Admin_add_course_proposal_form() {
       disciplines: values.discipline,
       pre_requisit_courses: values.preRequisiteCourse,
       pre_requisits: values.preRequisites,
-      max_seats: values.maxSeats,
+      maxSeats: values.maxSeats,
+      Title: values.Title,
+      Description: values.Description,
+      uploader: values.uploader,
+      Designation: values.Designation,
     };
     console.log("Payload: ", payload);
     try {
@@ -122,11 +137,11 @@ function Admin_add_course_proposal_form() {
       });
 
       if (response.ok) {
-        localStorage.setItem("AdminCoursesCachechange", "true");
+        // localStorage.setItem("CoursesCachechange", "true");
         const data = await response.json();
         alert("Course added successfully!");
         console.log("Response Data:", data);
-        navigate("/programme_curriculum/admin_courses");
+        navigate("/programme_curriculum/faculty_view_course_proposal");
       } else {
         const errorText = await response.text();
         console.error("Error:", errorText);
@@ -203,7 +218,55 @@ function Admin_add_course_proposal_form() {
                 >
                   Course Form
                 </Text>
-
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div style={{ flex: 1, marginRight: "8px" }}>
+                    <Textarea
+                      label="Uploader"
+                      placeholder=""
+                      value={form.values.uploader_name}
+                      onChange={(event) =>
+                        form.setFieldValue(
+                          "uploader",
+                          event.currentTarget.value,
+                        )
+                      }
+                    />
+                  </div>
+                  <div style={{ flex: 1, marginLeft: "8px" }}>
+                    <Textarea
+                      label="Designation"
+                      placeholder=""
+                      value={form.values.Designation}
+                      onChange={(event) =>
+                        form.setFieldValue(
+                          "Designation",
+                          event.currentTarget.value,
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+                <Textarea
+                  label="Title"
+                  placeholder="Enter Title"
+                  value={form.values.Title}
+                  onChange={(event) =>
+                    form.setFieldValue("Title", event.currentTarget.value)
+                  }
+                />
+                <Textarea
+                  label="Description"
+                  placeholder="Enter Description"
+                  value={form.values.Description}
+                  onChange={(event) =>
+                    form.setFieldValue("Description", event.currentTarget.value)
+                  }
+                />
                 <Table
                   striped
                   highlightOnHover
@@ -213,7 +276,7 @@ function Admin_add_course_proposal_form() {
                     <tr>
                       <td
                         style={{
-                          border: "2px solid #1976d2",
+                          border: "1px solid #1976d2",
                           padding: "10px",
                           fontWeight: "bold",
                           color: "#1976d2",
@@ -222,7 +285,7 @@ function Admin_add_course_proposal_form() {
                         Course Name:
                       </td>
                       <td
-                        style={{ border: "2px solid #1976d2", padding: "10px" }}
+                        style={{ border: "1px solid #1976d2", padding: "10px" }}
                       >
                         <TextInput
                           placeholder="Discrete Mathematics"
@@ -248,7 +311,7 @@ function Admin_add_course_proposal_form() {
                     <tr>
                       <td
                         style={{
-                          border: "2px solid #1976d2",
+                          border: "1px solid #1976d2",
                           padding: "10px",
                           fontWeight: "bold",
                           color: "#1976d2",
@@ -257,7 +320,7 @@ function Admin_add_course_proposal_form() {
                         Course Code:
                       </td>
                       <td
-                        style={{ border: "2px solid #1976d2", padding: "10px" }}
+                        style={{ border: "1px solid #1976d2", padding: "10px" }}
                       >
                         <TextInput
                           placeholder="NS205c"
@@ -283,7 +346,7 @@ function Admin_add_course_proposal_form() {
                     <tr>
                       <td
                         style={{
-                          border: "2px solid #1976d2",
+                          border: "1px solid #1976d2",
                           padding: "10px",
                           fontWeight: "bold",
                           color: "#1976d2",
@@ -292,7 +355,7 @@ function Admin_add_course_proposal_form() {
                         Credit:
                       </td>
                       <td
-                        style={{ border: "2px solid #1976d2", padding: "10px" }}
+                        style={{ border: "1px solid #1976d2", padding: "10px" }}
                       >
                         <NumberInput
                           placeholder="4"
@@ -315,7 +378,7 @@ function Admin_add_course_proposal_form() {
                     <tr>
                       <td
                         style={{
-                          border: "2px solid #1976d2",
+                          border: "1px solid #1976d2",
                           padding: "10px",
                           fontWeight: "bold",
                           color: "#1976d2",
@@ -324,7 +387,7 @@ function Admin_add_course_proposal_form() {
                         Version:
                       </td>
                       <td
-                        style={{ border: "2px solid #1976d2", padding: "10px" }}
+                        style={{ border: "1px solid #1976d2", padding: "10px" }}
                       >
                         <TextInput
                           placeholder="1.0"
@@ -415,6 +478,7 @@ function Admin_add_course_proposal_form() {
                     }}
                     step={1}
                   />
+
                   <NumberInput
                     label="Discussion Hours"
                     placeholder="0"
@@ -472,26 +536,6 @@ function Admin_add_course_proposal_form() {
                   />
                 </Group>
                 {/* Discipline and Others */}
-                <MultiSelect
-                  label="From Discipline"
-                  placeholder="Select Discipline"
-                  data={disciplines.map((discipline) => ({
-                    label: discipline.name,
-                    value: discipline.id.toString(), // Ensure value is a string for the MultiSelect component
-                    ...discipline,
-                  }))}
-                  value={
-                    Array.isArray(form.values.discipline)
-                      ? form.values.discipline.map(String) // Convert integers to strings for the MultiSelect component
-                      : []
-                  }
-                  onChange={(value) => {
-                    const integerValues = value ? value.map(Number) : []; // Convert selected strings back to integers
-                    form.setFieldValue("discipline", integerValues);
-                  }}
-                  required
-                  searchable
-                />
                 <Textarea
                   label="Pre-requisites"
                   placeholder="None"
@@ -506,10 +550,10 @@ function Admin_add_course_proposal_form() {
                 <MultiSelect
                   label="Pre-requisite Course"
                   placeholder="Select Course"
-                  data={courses.map((course) => ({
-                    label: course.name,
-                    value: course.id.toString(),
-                    ...course,
+                  data={courses.map((c) => ({
+                    label: c.name,
+                    value: c.id.toString(),
+                    ...c,
                   }))}
                   value={
                     Array.isArray(form.values.preRequisiteCourse)
@@ -681,4 +725,4 @@ function Admin_add_course_proposal_form() {
   );
 }
 
-export default Admin_add_course_proposal_form;
+export default Faculty_add_course_proposal_form;

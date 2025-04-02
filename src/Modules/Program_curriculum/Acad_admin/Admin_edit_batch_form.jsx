@@ -18,10 +18,12 @@ import {
   fetchGetUnlinkedCurriculum,
   fetchBatchData, // Add this function to fetch batch data by ID
 } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_edit_batch_form() {
   const [searchParams] = useSearchParams();
   const batchId = searchParams.get("batch"); // Get the batch ID from the URL
+  const curriculumId = searchParams.get("curriculum_id");
   const navigate = useNavigate(); // For navigation after form submission
   const [batchNames, setBatchNames] = useState([]); // State for batch names
   const [disciplines, setDisciplines] = useState([]); // State for disciplines
@@ -58,10 +60,12 @@ function Admin_edit_batch_form() {
         // Fetch existing batch data
         const existingBatchData = await fetchBatchData(batchId);
         console.log(existingBatchData.curriculum);
-        setUnlinkedCurriculums((prevUnlinkedCurriculums) => [
-          ...prevUnlinkedCurriculums, // Spread the previous state
-          ...existingBatchData.curriculum.map((curriculum) => curriculum), // Append the new curriculum
-        ]); // Add the existing curriculum to the unlinked curriculums list
+        if (existingBatchData.curriculum) {
+          setUnlinkedCurriculums((prevUnlinkedCurriculums) => [
+            ...prevUnlinkedCurriculums,
+            ...existingBatchData.curriculum.map((curriculum) => curriculum),
+          ]);
+        }
         console.log(unlinkedCurriculums);
         form.setValues({
           batchName: existingBatchData.batch.name,
@@ -69,7 +73,7 @@ function Admin_edit_batch_form() {
           batchYear: existingBatchData.batch.year,
           disciplineBatch: existingBatchData.batch.curriculum_id
             ? existingBatchData.batch.curriculum_id.toString()
-            : "",
+            : curriculumId || "",
           runningBatch: existingBatchData.batch.running_batch,
         });
       } catch (err) {
@@ -85,6 +89,7 @@ function Admin_edit_batch_form() {
 
   const handleSubmit = async () => {
     try {
+      localStorage.setItem("AdminBatchesCachechange", "true");
       const token = localStorage.getItem("authToken");
       if (!token) {
         throw new Error("Authorization token is required");
@@ -98,7 +103,7 @@ function Admin_edit_batch_form() {
       };
       console.log(payload);
       const response = await axios.put(
-        `http://127.0.0.1:8000/programme_curriculum/api/admin_edit_batch/${batchId}/`, // Use PUT request for editing
+        `${host}/programme_curriculum/api/admin_edit_batch/${batchId}/`, // Use PUT request for editing
         payload,
         {
           headers: {
@@ -201,7 +206,7 @@ function Admin_edit_batch_form() {
                   placeholder="-- Select Curriculum for Batch Students --"
                   data={unlinkedCurriculums.map((curriculum) => ({
                     value: curriculum.id.toString(),
-                    label: curriculum.name,
+                    label: `${curriculum.name} - v${curriculum.version}`,
                   }))}
                   value={form.values.disciplineBatch}
                   onChange={(value) =>
@@ -239,7 +244,7 @@ function Admin_edit_batch_form() {
           </div>
 
           {/* Right Panel Buttons */}
-          <div
+          {/* <div
             style={{
               flex: 1,
               display: "flex",
@@ -248,26 +253,26 @@ function Admin_edit_batch_form() {
             }}
           >
             <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <a
-                href="/programme_curriculum/acad_admin_add_curriculum_form"
+              <Link
+                to="/programme_curriculum/acad_admin_add_curriculum_form"
                 style={{ textDecoration: "none" }}
               >
                 <Button className="right-btn-batch">Add Curriculum</Button>
-              </a>
-              <a
-                href="/programme_curriculum/acad_admin_add_batch_form"
+              </Link>
+              <Link
+                to="/programme_curriculum/acad_admin_add_batch_form"
                 style={{ textDecoration: "none" }}
               >
                 <Button className="right-btn-batch">Add Another Batch</Button>
-              </a>
-              <a
-                href="/programme_curriculum/acad_admin_add_discipline_form"
+              </Link>
+              <Link
+                to="/programme_curriculum/acad_admin_add_discipline_form"
                 style={{ textDecoration: "none" }}
               >
                 <Button className="right-btn-batch">Add Discipline</Button>
-              </a>
+              </Link>
             </Group>
-          </div>
+          </div> */}
         </div>
       </Container>
 

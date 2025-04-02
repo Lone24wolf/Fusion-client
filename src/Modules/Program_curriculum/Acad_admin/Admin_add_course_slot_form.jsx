@@ -22,6 +22,7 @@ import {
   fetchCourseSlotTypeChoices,
   fetchSemesterDetails,
 } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_add_course_slot_form() {
   const [courses, setCourses] = useState([]);
@@ -97,8 +98,8 @@ function Admin_add_course_slot_form() {
   // const { semesterid, curriculumid } = useParams();
   const [searchParams] = useSearchParams();
   // Get the values from the URL
-  const semesterid = searchParams.get("semesterid");
-  const curriculumid = searchParams.get("curriculumid");
+  const semesterid = searchParams.get("semester");
+  const curriculumid = searchParams.get("curriculum");
   console.log(semesterid, curriculumid);
 
   useEffect(() => {
@@ -198,7 +199,7 @@ function Admin_add_course_slot_form() {
       };
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
-        "http://127.0.0.1:8000/programme_curriculum/api/admin_add_courseslot/",
+        `${host}/programme_curriculum/api/admin_add_courseslot/`,
         formData,
         {
           headers: {

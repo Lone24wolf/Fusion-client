@@ -37,6 +37,7 @@ function VerifyStudentRegistration() {
 
   useEffect(() => {
     const fetchBatches = async () => {
+      setLoading(true);
       const token = localStorage.getItem("authToken");
       if (!token) {
         setError(new Error("No token found"));
@@ -49,7 +50,7 @@ function VerifyStudentRegistration() {
             Authorization: `Token ${token}`,
           },
         });
-        console.log("Fetched Batches:", response.data);
+        console.log("Fetched Batches:", response.data.batches);
         setBatches(response.data.batches);
       } catch (fetchError) {
         setError(fetchError);
@@ -59,6 +60,7 @@ function VerifyStudentRegistration() {
     };
 
     fetchBatches();
+    console.log(batches, loading);
   }, []);
 
   // Fetch student data from API
@@ -202,16 +204,15 @@ function VerifyStudentRegistration() {
         label="Batch"
         placeholder={loading ? "Loading batches..." : "Select Batch"}
         value={batch}
-        onChange={setBatch}
-        data={
-          loading
-            ? [{ value: "", label: "Loading..." }] // Show "Loading..." option
-            : batches.map((bat) => ({
-                value: bat.batch_id.toString(),
-                label: `${bat.name} ${bat.discipline} ${bat.year}`,
-              }))
-        }
+        onChange={(val) => {
+          setBatch(val);
+        }}
+        data={batches.map((bat) => ({
+          value: bat.batch_id.toString(),
+          label: `${bat.name} ${bat.discipline} ${bat.year}`,
+        }))}
         disabled={loading}
+        searchable
       />
 
       <Group position="center" mt="md">

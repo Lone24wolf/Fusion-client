@@ -84,11 +84,12 @@ function StudentCourses() {
       // console.log("Fetched Courses:", response.data);
       if (response.status === 200) {
         alert("Course dropped Successfully!");
-        handleGetCourses();
+        await handleGetCourses();
       }
     } catch (fetchError) {
       setError(fetchError);
     } finally {
+      setDropModalOpen(false);
       setLoading(false);
     }
   };

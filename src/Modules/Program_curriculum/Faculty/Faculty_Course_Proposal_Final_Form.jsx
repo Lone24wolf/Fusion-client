@@ -10,24 +10,27 @@ import {
   TextInput,
   Table,
   MultiSelect,
+  // Select,
+  Checkbox,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 // import { useNavigate } from "react-router-dom";
 import {
   fetchDisciplinesData,
   fetchAllCourses,
-  fetchCourseDetails,
+  fetchFacultyCourseProposalCourseData,
 } from "../api/api";
 import { host } from "../../../routes/globalRoutes";
 
-function Admin_edit_course_form() {
+function FacultyCourseProposalFinalForm() {
   const form = useForm({
     initialValues: {
       courseName: "",
       courseCode: "",
       courseCredit: 4,
-      courseVersion: "1.0",
+      courseVersion: 1,
       lectureHours: 3,
       tutorialHours: 1,
       practicalHours: 2,
@@ -45,11 +48,17 @@ function Admin_edit_course_form() {
       project: 10,
       labEvaluation: 15,
       attendance: 5,
+      maxSeats: 90,
+      workingCourse: false,
     },
   });
 
   const navigate = useNavigate();
-  const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("id");
+  const username = useSelector((state) => state.user.roll_no);
+  const role = useSelector((state) => state.user.role);
+  // const { id } = useParams();
   const [disciplines, setDisciplines] = useState([]);
   const [courses, setCourses] = useState([]);
   const [course, setCourse] = useState([]);
@@ -58,6 +67,10 @@ function Admin_edit_course_form() {
     const fetchDisciplines = async () => {
       try {
         const response = await fetchDisciplinesData();
+        // console.log(response);
+
+        // const data = [...d.name, ...d.acronym, ...d.id];
+
         const disciplineList = response.map((discipline) => ({
           name: `${discipline.name} (${discipline.acronym})`,
           id: discipline.id,
@@ -85,32 +98,38 @@ function Admin_edit_course_form() {
 
     const loadCourseDetails = async () => {
       try {
-        const data = await fetchCourseDetails(id);
-        console.log(data);
-        setCourse(data);
+        const response = await fetchFacultyCourseProposalCourseData(id);
+        const data = await response.json();
+        console.log(data.data);
+        setCourse(data.data.proposal);
+        console.log(course);
         form.setValues({
-          courseName: data.name,
-          courseCode: data.code,
-          courseCredit: data.credit,
-          courseVersion: data.version,
-          lectureHours: data.lecture_hours,
-          tutorialHours: data.tutorial_hours,
-          practicalHours: data.pratical_hours,
-          discussionHours: data.discussion_hours,
-          projectHours: data.project_hours,
-          discipline: data.disciplines.length>0?data.disciplines.map((d) => JSON.stringify(d)):[],
-          preRequisites: data.pre_requisits,
-          preRequisiteCourse: data.pre_requisit_courses.length>0?data.pre_requisit_courses.map((c) => JSON.stringify(c)):[],
-          syllabus: data.syllabus,
-          references: data.ref_books,
-          quiz1: data.percent_quiz_1,
-          midsem: data.percent_midsem,
-          quiz2: data.percent_quiz_2,
-          endsem: data.percent_endsem,
-          project: data.percent_project,
-          labEvaluation: data.percent_lab_evaluation,
-          attendance: data.percent_course_attendance,
-          maxSeats: data.max_seats,
+          courseName: data.data.proposal.name,
+          courseCode: data.data.proposal.code,
+          courseCredit: data.data.proposal.credit,
+          // courseVersion: data.data.proposal.version,
+          lectureHours: data.data.proposal.lecture_hours,
+          tutorialHours: data.data.proposal.tutorial_hours,
+          practicalHours: data.data.proposal.pratical_hours,
+          discussionHours: data.data.proposal.discussion_hours,
+          projectHours: data.data.proposal.project_hours,
+          discipline: data.data.proposal.discipline.map((dis) =>
+            JSON.stringify(dis),
+          ),
+          preRequisites: data.data.proposal.pre_requisits,
+          preRequisiteCourse: data.data.proposal.pre_requisits_courses.map(
+            (c) => JSON.stringify(c.id),
+          ),
+          syllabus: data.data.proposal.syllabus,
+          references: data.data.proposal.ref_books,
+          quiz1: data.data.proposal.percent_quiz_1,
+          midsem: data.data.proposal.percent_midsem,
+          quiz2: data.data.proposal.percent_quiz_2,
+          endsem: data.data.proposal.percent_endsem,
+          project: data.data.proposal.percent_project,
+          labEvaluation: data.data.proposal.percent_lab_evaluation,
+          attendance: data.data.proposal.percent_course_attendance,
+          maxSeats: data.data.proposal.max_seats,
         });
       } catch (err) {
         console.error("Error fetching course details: ", err);
@@ -121,10 +140,12 @@ function Admin_edit_course_form() {
     fetchCourses();
     loadCourseDetails();
   }, [id]);
-  // console.log(form.values);
+  console.log(form.values);
+
   const handleSubmit = async (values) => {
-    const apiUrl = `${host}/programme_curriculum/api/admin_update_course/${id}/`;
+    const apiUrl = `${host}/programme_curriculum/api/forward_course_forms/${id}/?username=${username}&des=${role}`;
     const token = localStorage.getItem("authToken");
+    console.log("Form Values:", values);
 
     const payload = {
       name: values.courseName,
@@ -148,11 +169,13 @@ function Admin_edit_course_form() {
       disciplines: values.discipline,
       pre_requisit_courses: values.preRequisiteCourse,
       pre_requisits: values.preRequisites,
+      maxSeats: values.maxSeats,
+      working_course: values.workingCourse,
     };
-
+    console.log("Payload: ", payload);
     try {
       const response = await fetch(apiUrl, {
-        method: "PUT",
+        method: "POST",
         headers: {
           Authorization: `Token ${token}`,
         },
@@ -160,27 +183,26 @@ function Admin_edit_course_form() {
       });
 
       if (response.ok) {
+        localStorage.setItem("FacultyCoursesCachechange", "true");
         const data = await response.json();
-        alert("Course updated successfully!");
-        navigate(`/programme_curriculum/admin_course/${data.course_id}`);
+        alert("Course added successfully!");
+        console.log("Response Data:", data);
+        navigate("/programme_curriculum/faculty_courses");
       } else {
-        const errorData = await response.json();
-        console.error("Error:", errorData);
-        alert(
-          `Failed to update course: ${errorData.error || response.statusText}`,
-        );
+        const errorText = await response.text();
+        console.error("Error:", errorText);
+        alert("Failed to add course.");
       }
     } catch (error) {
       console.error("Network Error:", error);
       alert("An error occurred. Please try again.");
     }
   };
+
   return (
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
-     
-
       <Container
         fluid
         style={{
@@ -343,7 +365,7 @@ function Admin_edit_course_form() {
                       <td
                         style={{ border: "2px solid #1976d2", padding: "10px" }}
                       >
-                        <TextInput
+                        <NumberInput
                           placeholder="1.0"
                           value={form.values.courseVersion}
                           onChange={(event) =>
@@ -489,6 +511,13 @@ function Admin_edit_course_form() {
                     step={1}
                   />
                 </Group>
+                <Checkbox
+                  label="Working Course"
+                  checked={form.values.workingCourse}
+                  onChange={(event) =>
+                    form.setFieldValue("workingCourse", event.target.checked)
+                  }
+                />
                 {/* Discipline and Others */}
                 <MultiSelect
                   label="From Discipline"
@@ -510,6 +539,17 @@ function Admin_edit_course_form() {
                   required
                   searchable
                 />
+                {/* <Select
+                  label="From Discipline"
+                  placeholder="Select Discipline"
+                  data={disciplines}
+                  value={form.values.discipline}
+                  onChange={(value) => form.setFieldValue("discipline", value)}
+                  required
+                  searchable
+                  clearable
+                  nothingFound="No disciplines found"
+                /> */}
                 <Textarea
                   label="Pre-requisites"
                   placeholder="None"
@@ -699,4 +739,4 @@ function Admin_edit_course_form() {
   );
 }
 
-export default Admin_edit_course_form;
+export default FacultyCourseProposalFinalForm;

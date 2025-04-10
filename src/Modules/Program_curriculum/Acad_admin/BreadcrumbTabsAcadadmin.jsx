@@ -3,11 +3,30 @@ import { CaretCircleLeft, CaretCircleRight } from "@phosphor-icons/react";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import classes from "../../Dashboard/Dashboard.module.css";
+import { useSelector } from "react-redux";
 
 function BreadcrumbTabsAcadadmin() {
+  const role = useSelector((state) => state.user.role);
   const navigate = useNavigate();
   const location = useLocation();
   const tabsListRef = useRef(null);
+
+  // Store role in localStorage and track changes
+  useEffect(() => {
+    const storedRole = localStorage.getItem('userRole');
+    
+    // If role exists and is different from stored role, update localStorage
+    if (role) {
+      if (storedRole !== role) {
+        localStorage.setItem('userRole', role);
+        
+        // If storedRole exists and is different (role changed), redirect to first URL
+        if (storedRole && storedRole !== role) {
+          navigate(breadcrumbItems[0].url);
+        }
+      }
+    }
+  }, [role, navigate]);
 
   const breadcrumbItems = [
     {
@@ -27,30 +46,48 @@ function BreadcrumbTabsAcadadmin() {
     },
   ];
 
-  // Initialize with checking for exact match, defaulting to "0" if no match
+  const getCachedTab = () => localStorage.getItem("activeTab") || "0";
+
   const initialActiveTab = () => {
     const currentPath = location.pathname;
     const index = breadcrumbItems.findIndex((item) => item.url === currentPath);
-    return index !== -1 ? index.toString() : "0";
+    return index !== -1 ? index.toString() : getCachedTab();
   };
 
   const [activeTab, setActiveTab] = useState(initialActiveTab());
 
-  // Only update tab if there's an exact match
+  useEffect(() => {
+    localStorage.setItem("activeTab", activeTab);
+  }, [activeTab]);
+
   useEffect(() => {
     const currentPath = location.pathname;
     const index = breadcrumbItems.findIndex((item) => item.url === currentPath);
     if (index !== -1) {
       setActiveTab(index.toString());
     }
-    // If no exact match, keep the current active tab
   }, [location.pathname]);
+
+  // Effect to check for role changes during the component's lifecycle
+  useEffect(() => {
+    const checkRoleChange = () => {
+      const storedRole = localStorage.getItem('userRole');
+      if (storedRole && role && storedRole !== role) {
+        localStorage.setItem('userRole', role);
+        navigate(breadcrumbItems[0].url);
+      }
+    };
+
+    // Set interval to periodically check role changes
+    const intervalId = setInterval(checkRoleChange, 1000);
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [role, navigate, breadcrumbItems]);
 
   const handleTabChange = (direction) => {
     const currentIndex = parseInt(activeTab, 10);
     const newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1;
-
-    // Ensure index is within bounds
     if (newIndex >= 0 && newIndex < breadcrumbItems.length) {
       navigate(breadcrumbItems[newIndex].url);
     }

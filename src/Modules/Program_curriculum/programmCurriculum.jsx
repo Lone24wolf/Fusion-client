@@ -1,7 +1,7 @@
-// src/programmeCurriculum.jsx
 import React, { useState, useEffect } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import PropTypes from 'prop-types';
 import { Layout } from "../../components/layout";
 import AdminViewAllCourses from "./Acad_admin/Admin_view_all_courses";
 import AdminViewACourse from "./Acad_admin/Admin_view_a_course";
@@ -20,8 +20,8 @@ import ViewAllBatches from "./View_all_batches";
 import ViewACourse from "./View_a_course";
 import ViewAllWorkingCurriculums from "./View_all_working_curriculums";
 import ViewAllProgrammes from "./View_all_programmes";
-import BDesAcadView from "./Acad_admin/BDesAcadView";
-import BDesstudView from "./Student/BDesStudView";
+import ProgrammeCurriculumView from "./Acad_admin/ProgrammeCurriculumView";
+import ProgrammeCurriculumStudView from "./Student/ProgrammeCurriculumStudView";
 import DisciplineAcad from "./Acad_admin/DisciplineAcad";
 import DisciplineStud from "./Student/DisciplineStud";
 import FacultyCourseProposal from "./Faculty/Faculty_course_proposal";
@@ -35,10 +35,12 @@ import ViewInwardFile from "./Faculty/ViewInwardFile";
 import ViewSemesterOfACurriculum from "./ViewSemesterOfACurriculum";
 import InwardFile from "./Faculty/InwardFiles";
 import OutwardFile from "./Faculty/OutwardFiles";
-import BDesView from "./Faculty/BDesView";
+import ProgrammeCurriculumFacultyView from "./Faculty/ProgrammeCurriculumFacultyView";
 import Discipline from "./Faculty/Discipline";
 import StudCourseSlotDetails from "./Student/StudCourseSlotDetails";
 import StudSemesterInfo from "./Student/StudSemesterinfo";
+import FacultyEditCourseProposalForm from "./Faculty/Faculty_edit_course_proposal_form";
+
 // forms
 import AdminAddBatchForm from "./Acad_admin/Admin_add_batch_form";
 import AdminAddCourseProposalForm from "./Acad_admin/Admin_add_course_proposal_form";
@@ -63,76 +65,74 @@ import BreadcrumbTabsAcadadmin from "./Acad_admin/BreadcrumbTabsAcadadmin";
 import BreadcrumbTabs from "./Student/BreadcrumbTabsStudent";
 import BreadcrumbTabsFaculty from "./Faculty/BreadcrumbTagsFaculty";
 
-export default function ProgrammeCurriculumRoutes() {
+// Define role groups outside component
+const ADMIN_ROLES = ["acadadmin", "studentacadadmin"];
+const FACULTY_ROLES = [
+  "Professor",
+  "Assistant Professor",
+  "Associate Professor",
+  "Dean Academic",
+  "HOD (CSE)",
+  "HOD (ECE)",
+  "HOD (ME)",
+  "HOD (NS)",
+  "HOD (Design)",
+  "HOD (Liberal Arts)",
+];
+const STUDENT_ROLES = ["student", "Guest-User"];
+
+// Protected route component moved outside
+const ProtectedRoute = ({ allowedRoles, children }) => {
   const role = useSelector((state) => state.user.role);
+  const [isLoading, setIsLoading] = useState(role === "Guest-User");
+  const [hasAccess, setHasAccess] = useState(allowedRoles.includes(role));
 
-  // Define role groups
-  const ADMIN_ROLES = ["acadadmin", "studentacadadmin"];
-  const FACULTY_ROLES = [
-    "Professor",
-    "Assistant Professor",
-    "Associate Professor",
-    "Dean Academic",
-    "HOD (CSE)",
-    "HOD (ECE)",
-    "HOD (ME)",
-    "HOD (NS)",
-    "HOD (Design)",
-    "HOD (Liberal Arts)",
-  ];
-  const STUDENT_ROLES = ["student", "Guest-User"];
-
-  // Protected route component
-  // Modified ProtectedRoute component with timeout
-  const ProtectedRoute = ({ allowedRoles, children }) => {
-    const [isLoading, setIsLoading] = useState(role === "Guest-User");
-    const [hasAccess, setHasAccess] = useState(allowedRoles.includes(role));
-
-    useEffect(() => {
-      let timer;
-      // Only apply delay if role is Guest-User
-      if (role === "Guest-User") {
-        timer = setTimeout(() => {
-          setHasAccess(allowedRoles.includes(role));
-          setIsLoading(false);
-        }, 2000);
-      } else {
-        // Immediate check for other roles
+  useEffect(() => {
+    let timer;
+    if (role === "Guest-User") {
+      timer = setTimeout(() => {
         setHasAccess(allowedRoles.includes(role));
         setIsLoading(false);
-      }
-
-      return () => {
-        if (timer) clearTimeout(timer);
-      };
-    }, [role, allowedRoles]);
-
-    if (isLoading) {
-      return <div>Loading...</div>;
+      }, 2000);
+    } else {
+      setHasAccess(allowedRoles.includes(role));
+      setIsLoading(false);
     }
 
-    return hasAccess ? children : <Navigate to="/dashboard" />;
-  };
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [role, allowedRoles]);
 
-  // Determine which navigation tabs to show based on role
-  const NavTab = () => {
-    const TabComponent = 
-      STUDENT_ROLES.includes(role)
-        ? BreadcrumbTabs
-        : FACULTY_ROLES.includes(role)
-          ? BreadcrumbTabsFaculty
-          : ADMIN_ROLES.includes(role)
-            ? BreadcrumbTabsAcadadmin
-            : () => null;
-    
-    return (
-      <>
-        <Breadcrumb />
-        <TabComponent />
-      </>
-    );
-  };
+  if (isLoading) return <div>Loading...</div>;
+  return hasAccess ? children : <Navigate to="/dashboard" />;
+};
 
+ProtectedRoute.propTypes = {
+  allowedRoles: PropTypes.arrayOf(PropTypes.string).isRequired,
+  children: PropTypes.node.isRequired
+};
+
+// NavTab component moved outside
+const NavTab = () => {
+  const role = useSelector((state) => state.user.role);
+  const TabComponent = STUDENT_ROLES.includes(role)
+    ? BreadcrumbTabs
+    : FACULTY_ROLES.includes(role)
+      ? BreadcrumbTabsFaculty
+      : ADMIN_ROLES.includes(role)
+        ? BreadcrumbTabsAcadadmin
+        : () => null;
+
+  return (
+    <>
+      <Breadcrumb />
+      <TabComponent />
+    </>
+  );
+};
+
+export default function ProgrammeCurriculumRoutes() {
   return (
     <>
       <Routes>
@@ -187,7 +187,7 @@ export default function ProgrammeCurriculumRoutes() {
             <ProtectedRoute allowedRoles={ADMIN_ROLES}>
               <Layout>
                 <NavTab />
-                <BDesAcadView />
+                <ProgrammeCurriculumView />
               </Layout>
             </ProtectedRoute>
           }
@@ -250,7 +250,7 @@ export default function ProgrammeCurriculumRoutes() {
           }
         />
         <Route
-          path="/faculty_course_view"
+          path="/faculty_course_view/:id"
           element={
             <ProtectedRoute allowedRoles={FACULTY_ROLES}>
               <Layout>
@@ -342,7 +342,7 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <ProtectedRoute allowedRoles={FACULTY_ROLES}>
               <Layout>
-              <NavTab />
+                <NavTab />
                 <ViewInwardFile />
               </Layout>
             </ProtectedRoute>
@@ -375,8 +375,8 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <ProtectedRoute allowedRoles={FACULTY_ROLES}>
               <Layout>
-              <NavTab />
-                <BDesView />
+                <NavTab />
+                <ProgrammeCurriculumFacultyView />
               </Layout>
             </ProtectedRoute>
           }
@@ -421,6 +421,17 @@ export default function ProgrammeCurriculumRoutes() {
               <Layout>
                 <NavTab />
                 <SemesterInfo />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+          <Route
+          path="/faculty_course_instructor"
+          element={
+            <ProtectedRoute allowedRoles={[...FACULTY_ROLES, ...ADMIN_ROLES]}>
+              <Layout>
+                <NavTab />
+                <AdminViewAllCourseInstructors />
               </Layout>
             </ProtectedRoute>
           }
@@ -488,7 +499,7 @@ export default function ProgrammeCurriculumRoutes() {
             <ProtectedRoute allowedRoles={[...STUDENT_ROLES, ...FACULTY_ROLES]}>
               <Layout>
                 <NavTab />
-                <BDesstudView />
+                <ProgrammeCurriculumStudView />
               </Layout>
             </ProtectedRoute>
           }
@@ -731,8 +742,19 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <ProtectedRoute allowedRoles={FACULTY_ROLES}>
               <Layout>
-              <NavTab />
+                <NavTab />
                 <FacultyCourseProposalFinalForm />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit_course_proposal_form/:id"
+          element={
+            <ProtectedRoute allowedRoles={FACULTY_ROLES}>
+              <Layout>
+                <NavTab />
+                <FacultyEditCourseProposalForm />
               </Layout>
             </ProtectedRoute>
           }
